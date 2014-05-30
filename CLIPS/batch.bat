@@ -1,3 +1,5 @@
 (load "main.clp")
 (load "env.clp")
 (load "agent.clp")
+(load "percept.clp")
+(reset)
