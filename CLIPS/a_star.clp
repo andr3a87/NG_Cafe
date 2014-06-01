@@ -8,33 +8,6 @@
 
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 
-;   Rappresentazione grafica del labirinto
-;   - - - - - - - -
-;   |W|W|W|W|W|G|W|W|W|W|W|W|W|G|W|W|	10
-;    - - - - - - - - - - - - - - - -
-;   |W| | | |W| | |W| | | | |W| | |W|	9
-;    - - - - - - - - - - - - - - - -
-;   |W| | | |W| | |W| | | | |W| | |W|	8
-;    - - - - - - - - - - - - - - - -
-;   |W| | | |W| | |W|W|W| | |W|W| |W|	7
-;    - - - - - - - - - - - - - - - -
-;   |W| | | |W| | | | |W| | |W| | |G|	6
-;    - - - - - - - - - - - - - - - -
-;   |W| | | |W| | |W| |W| |W|W| |W|W|	5
-;    - - - - - - - - - - - - - - - -
-;   |W| |W| | | | |W| | | | |W| | |W|	4
-;    - - - - - - - - - - - - - - - -
-;   |W| |W| | |W|W|W|W| |W|W|W|W| |W	3
-;    - - - - - - - - - - - - - - - -
-;   |W| | |W|W| | |W| | |W| |W| | |W	2
-;    - - - - - - - - - - - - - - - -
-;   |W| | | | | | |W| | | | | | |W|W|	1
-;    - - - - - - - - - - - - - - - -
-;   |W|W|W|W|G|W|W|W|W|W|W|W|G|W|W|W|	0
-;    - - - - - - - - - - - - - - - -
-;    0 1 2 3 4 5 6 7 8 9 101112131415
-                   
-
 (defrule S0
     (K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d)
              (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?)
@@ -436,7 +409,6 @@
 ;   (printout t " stati generati gia' in open (open-worse) " ?worse crlf)
 ;   (printout t " stati generati gia' in open (open-better) " ?better crlf)
     (focus CLEAN)
-    (halt)
 )
 
 (defmodule CLEAN (import ASTAR ?ALL) (export ?ALL))
