@@ -6,7 +6,7 @@
 (deftemplate newnode (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
                   (slot pos-c) (slot direction))
 
-
+(deftemplate plane (slot pos-start) (slot pos-end) (slot exec-astar-sol) )
 
 ;   Rappresentazione grafica del labirinto
 ;   - - - - - - - -
@@ -41,6 +41,7 @@
     )
 =>
     (assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
+    (assert(start ?r ?c))    
     (assert(current 0))
     (assert(lastnode 0))
     (assert(open-worse 0))
@@ -57,37 +58,8 @@
      (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))  
         => (printout t " Esiste soluzione per goal (" ?r "," ?c ") con costo "  ?g crlf)
            (assert (stampa ?id))
-           
+           (focus PRINT)     
 )
-
-
-
-(defrule stampaSol
-(declare (salience 101))
-?f<-(stampa ?id)
-    (node (ident ?id) (father ?anc&~NA))  
-    (exec-astar ?anc ?id ?oper ?d ?r ?c)
-=> (printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
-   (assert (stampa ?anc))
-   (retract ?f)
-)
-
-(defrule stampa-fine
-(declare (salience 102))
-       (stampa ?id)
-       (node (ident ?id) (father ?anc&NA))
-       (open-worse ?worse)
-       (open-better ?better)
-       (alreadyclosed ?closed)
-       (numberofnodes ?n )  
-=> (printout t " stati espansi " ?n crlf)
-   (printout t " stati generati gia' in closed " ?closed crlf)
-   (printout t " stati generati gia' in open (open-worse) " ?worse crlf)
-   (printout t " stati generati gia' in open (open-better) " ?better crlf)
-   (focus CLEAN)
-   (halt)
-)
-
 
 (defrule forward-apply-north
 	(declare (salience 50))
@@ -191,8 +163,8 @@
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
  	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+    (retract ?f1)
+    (focus NEW)
 )
 
 (defrule turnleft-apply-north
@@ -423,10 +395,59 @@
            (retract ?f1 ?f2)
            (pop-focus))
 
+(defmodule PRINT (import ASTAR ?ALL) (export ?ALL))
+
+(defrule print0
+    (declare (salience 3))
+    (stampa ?id)
+    (exec-astar ?anc ?id $?)
+=>
+    (assert (stampa ?anc))
+)
+
+
+(defrule stampaSol
+	(declare (salience 2))
+    ?f<-(stampa ?id)
+	(node (ident ?id) (father ?anc&~NA))  
+	(exec-astar ?anc ?id ?oper ?d ?r ?c)
+    (start ?rs ?cs)    
+    (goal ?rg ?cg)
+=> 
+	(printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
+    (assert (plane (pos-start ?rs ?rg) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c)))
+	(retract ?f)
+    
+)
+
+(defrule stampa-fine
+    (declare (salience 1))
+    (stampa ?id)
+    (node (ident ?id) (father ?anc&NA))
+    (open-worse ?worse)
+    (open-better ?better)
+    (alreadyclosed ?closed)
+    (numberofnodes ?n )  
+=> 
+;   (printout t " stati espansi " ?n crlf)
+;   (printout t " stati generati gia' in closed " ?closed crlf)
+;   (printout t " stati generati gia' in open (open-worse) " ?worse crlf)
+;   (printout t " stati generati gia' in open (open-better) " ?better crlf)
+    (focus CLEAN)
+    (halt)
+)
+
 (defmodule CLEAN (import ASTAR ?ALL) (export ?ALL))
 
 (defrule clean-node
+    (declare (salience 1))
     ?fn <- (node)
 =>
     (retract ?fn)
+)
+(defrule clean-exec
+    (declare (salience 1))
+    ?fe <- (exec-astar $?)
+=>
+    (retract ?fe)
 )
