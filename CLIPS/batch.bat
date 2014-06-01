@@ -7,4 +7,4 @@
 (reset)
 (run 257)
 (assert (exec (step 0) (action Forward)))
-(run 190)
+(run 170)

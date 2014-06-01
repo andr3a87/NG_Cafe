@@ -6,7 +6,7 @@
 (deftemplate newnode (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
                   (slot pos-c) (slot direction))
 
-(deftemplate plane (slot pos-start) (slot pos-end) (slot exec-astar-sol) )
+(deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 
 ;   Rappresentazione grafica del labirinto
 ;   - - - - - - - -
@@ -58,6 +58,7 @@
      (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))  
         => (printout t " Esiste soluzione per goal (" ?r "," ?c ") con costo "  ?g crlf)
            (assert (stampa ?id))
+           (assert (cost-solution ?g))
            (focus PRINT)     
 )
 
@@ -412,10 +413,11 @@
 	(node (ident ?id) (father ?anc&~NA))  
 	(exec-astar ?anc ?id ?oper ?d ?r ?c)
     (start ?rs ?cs)    
-    (goal ?rg ?cg)
+    (goal-astar ?rg ?cg)
+    (cost-solution ?g)
 => 
 	(printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
-    (assert (plane (pos-start ?rs ?rg) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c)))
+    (assert (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g))) 
 	(retract ?f)
     
 )
