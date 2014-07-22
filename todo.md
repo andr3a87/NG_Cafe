@@ -3,7 +3,7 @@
 
 * creare le regole per eseguire il piano creato da astar (plane)
 
-# Domande da fare a Balossino
+# Domande da fare a Torasso
 
 * inserire una regola nella generazione della mappa in modo da evitare la creazione di un tavolo con 4 sedie
 
