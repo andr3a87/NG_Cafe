@@ -1,7 +1,7 @@
 ;// AGENT
 
 
-(defmodule AGENT (import MAIN ?ALL)(export ?ALL))
+(defmodule AGENT (import MAIN ?ALL) (export ?ALL))
 
 ; � l'ultimo passaggio, la fotografia, perch� � atemporale.
 ; � l'ultimo passaggio, la fotografia, perch� � atemporale.
@@ -13,7 +13,6 @@
 (deftemplate K-cell  (slot pos-r) (slot pos-c) 
                    (slot contains (allowed-values Wall Person  Empty Parking Table Seat TrashBasket
                                                       RecyclableBasket DrinkDispenser FoodDispenser)))
-
 
 
 (deftemplate K-agent
@@ -47,7 +46,9 @@
 	(slot answer) 
 	
 )
-        
+(deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
+
+
 (defrule  beginagent1
     (declare (salience 11))
     (status (step 0))

@@ -1,12 +1,10 @@
 (defmodule ASTAR (import AGENT ?ALL) (export ?ALL))
 
- 
+
 (deftemplate node (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
                   (slot pos-c) (slot direction) (slot open))
 (deftemplate newnode (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
                   (slot pos-c) (slot direction))
-
-(deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 
 (defrule S0
     (K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d)
@@ -21,6 +19,7 @@
     (assert(open-better 0))
     (assert(alreadyclosed 0))
     (assert(numberofnodes 0))
+	(assert (ciccio))
     
 )
 
