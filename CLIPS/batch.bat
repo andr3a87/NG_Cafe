@@ -4,6 +4,7 @@
 (load "agent.clp")
 (load "percept.clp")
 (load "a_star.clp")
+(load "messages.clp")
 (reset)
 (run 257)
 (assert (exec (step 0) (action Forward)))

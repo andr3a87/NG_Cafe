@@ -43,9 +43,9 @@
 (deftemplate inform
 	(slot request-id)
     (slot table) 
-	(slot answer) 
-	
+	(slot answer (allowed-values accepted delayed rejected)) 
 )
+
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 
 
@@ -90,18 +90,14 @@
     (exec (step ?i))
  => (focus MAIN))
 
-(defrule go-astar
-    (msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
-    (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen))
-=>
-    (assert (goal-astar 2 7))    
-    (focus ASTAR)
-)
-;(defrule answer-msg-order
-;	?f1<-(msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
+;(defrule go-astar
+;    (msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
+;    (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen))
 ;=>
-;	(assert (inform (request-id ?f1) (table ?sen) (answer accepted)))
+;    (assert (goal-astar 2 7))    
+;    (focus ASTAR)
 ;)
+
 	
 ; alcune azioni per testare il sistema
 ; (assert (exec (step 0) (action Forward)))
