@@ -40,12 +40,6 @@
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc (slot step))
 
-(deftemplate inform
-	(slot request-id)
-    (slot table) 
-	(slot answer (allowed-values accepted delayed rejected)) 
-)
-
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 (deftemplate start-astar (slot pos-r) (slot pos-c))
 
