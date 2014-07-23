@@ -1,11 +1,12 @@
 ; Un ordine da parte del tavolo arriva solo se il tavolo è pulito o se è sporco ma è stata inviata in precedenza una finish.
-
 ;Attiva quando ricevo un ordine da un tavolo pulito. Inform con accepted
+
 (defrule answer-msg-order1
 	?f1<-(msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
-	(K-table (table-id ?sen) (clean yes))
+	(K-table (pos-r ?r)(pos-c ?c)(table-id ?sen) (clean yes))
 =>
 	(assert (inform (request-id ?f1) (table ?sen) (answer accepted)))
+	(assert (start-astar (pos-r ?r) (pos-c ?c)))
 )
  
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. Inform con delayed

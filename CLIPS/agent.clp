@@ -47,7 +47,7 @@
 )
 
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
-
+(deftemplate start-astar (slot pos-r) (slot pos-c))
 
 (defrule  beginagent1
     (declare (salience 11))
@@ -90,14 +90,22 @@
     (exec (step ?i))
  => (focus MAIN))
 
-;(defrule go-astar
-;    (msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
-;    (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen))
-;=>
-;    (assert (goal-astar 2 7))    
-;    (focus ASTAR)
-;)
+(defrule go-astar
+    (declare (salience 100))
+	(start-astar (pos-r ?r) (pos-c ?c))
+	(K-agent (pos-r ?r1) (pos-c ?c1))
+	(not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
+=>
+    (assert (goal-astar ?r ?c))
+    (focus ASTAR)
+)
 
+(defrule clean-start-astar
+    (declare (salience 50))				   
+    ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
+=>
+    (retract ?f1)
+)
 	
 ; alcune azioni per testare il sistema
 ; (assert (exec (step 0) (action Forward)))

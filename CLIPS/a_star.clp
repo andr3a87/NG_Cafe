@@ -1,6 +1,5 @@
 (defmodule ASTAR (import AGENT ?ALL) (export ?ALL))
 
-
 (deftemplate node (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
                   (slot pos-c) (slot direction) (slot open))
 (deftemplate newnode (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
@@ -19,14 +18,33 @@
     (assert(open-better 0))
     (assert(alreadyclosed 0))
     (assert(numberofnodes 0))
-	(assert (ciccio))
-    
+)
+;Definiamo i goal.
+;Se la cella di destinazione è vuota il goal è rappresentato da (goal-astar ?r ?c)
+;Se la cella di destianzione è un tavolo il goal è rappresentato dalle 4 celle adiacenti al tavolo.
+(defrule S0-goal-table
+    (K-agent (step ?) (time ?) (direction ?d) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
+	(goal-astar ?r ?c)
+	(K-cell (pos-r ?r) (pos-c ?c) (contains Table))
+=>
+    (assert (end-astar (- ?r 1) ?c))
+	(assert (end-astar (+ ?r 1) ?c))
+	(assert (end-astar ?r (- ?c 1)))
+	(assert (end-astar ?r (+ ?c 1)))
+)
+
+(defrule S0-goal-empty
+    (K-agent (step ?) (time ?) (direction ?d) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
+	(goal-astar ?r ?c)
+	(K-cell (pos-r ?r) (pos-c ?c) (contains Empty))
+=>
+    (assert (end-astar ?r ?c))
 )
 
 (defrule achieved-goal
 (declare (salience 100))
      (current ?id)
-     (goal-astar ?r ?c)
+     (end-astar ?r ?c)
      (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))  
         => (printout t " Esiste soluzione per goal (" ?r "," ?c ") con costo "  ?g crlf)
            (assert (stampa ?id))
@@ -423,4 +441,10 @@
     ?fe <- (exec-astar $?)
 =>
     (retract ?fe)
+)
+(defrule clean-goal
+    (declare(salience 1))
+	?fg <- (goal-astar $?)
+=>
+    (retract ?fg)
 )
