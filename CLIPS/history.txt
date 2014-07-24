@@ -8,7 +8,7 @@
 
 (personstatus 	
 	(step 0)
-        (time 0)
+  (time 0)
 	(ident C2)
 	(pos-r 8)
 	(pos-c 10)
@@ -17,14 +17,14 @@
 
 (personstatus 	
 	(step 0)
-        (time 0)
+  (time 0)
 	(ident C3)
 	(pos-r 3)
 	(pos-c 4)
 	(activity seated))
 		
 (event (step 1) (type request) (source T4) (food 1) (drink 1)) 
-(event (step 3) (type request) (source T3) (food 3) (drink 2)) 
+(event (step 5) (type request) (source T3) (food 3) (drink 2)) 
 (event (step 9) (type finish) (source T4))
 (event (step 12) (type request) (source T4) (food 0) (drink 2)) 
 

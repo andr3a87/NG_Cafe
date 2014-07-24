@@ -41,7 +41,7 @@
 
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 (deftemplate start-astar (slot pos-r) (slot pos-c))
-(deftemplate run-astar (multislot pos-start) (multislot pos-end))
+(deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
 
 (defrule  beginagent1
     (declare (salience 11))
@@ -95,6 +95,7 @@
     (assert (goal-astar ?r ?c))
     (focus ASTAR)
 )
+
 ; Regola per non ripetere astar su un percorso su cui è stato appena calcolato il piano.
 (defrule clean-start-astar
     (declare (salience 5))				   
@@ -102,7 +103,7 @@
 		(plane (pos-start ?r1 ?c1) (pos-end ?r ?c))
 =>
     (retract ?f1)
-	  (assert (run-astar (pos-start ?r1 ?c1) (pos-end ?r ?c)))
+	  (assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 )
 
 	
