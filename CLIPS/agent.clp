@@ -11,8 +11,7 @@
 
 
 (deftemplate K-cell  (slot pos-r) (slot pos-c) 
-                   (slot contains (allowed-values Wall Person  Empty Parking Table Seat TrashBasket
-                                                      RecyclableBasket DrinkDispenser FoodDispenser)))
+                     (slot contains (allowed-values Wall Person  Empty Parking Table Seat TB RB DD FD)))
 
 
 (deftemplate K-agent
@@ -90,7 +89,7 @@
 	(K-agent (pos-r ?r1) (pos-c ?c1))
 	(not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 =>
-    (assert (goal-astar ?r ?c))
+    (assert (goal-astar 7 5))
     (focus ASTAR)
 )
 

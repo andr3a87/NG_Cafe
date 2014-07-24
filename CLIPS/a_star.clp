@@ -21,11 +21,10 @@
 )
 ;Definiamo i goal.
 ;Se la cella di destinazione è vuota il goal è rappresentato da (goal-astar ?r ?c)
-;Se la cella di destianzione è un tavolo il goal è rappresentato dalle 4 celle adiacenti al tavolo.
+;Se la cella di destianzione è un tavolo,un dispancer o un cestino il goal è rappresentato dalle 4 celle adiacenti al tavolo.
 (defrule S0-goal-table
-    (K-agent (step ?) (time ?) (direction ?d) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
 	(goal-astar ?r ?c)
-	(K-cell (pos-r ?r) (pos-c ?c) (contains Table))
+	(K-cell (pos-r ?r) (pos-c ?c) (contains Table|DD|FD|TB|RB))
 =>
     (assert (end-astar (- ?r 1) ?c))
 	(assert (end-astar (+ ?r 1) ?c))
@@ -34,7 +33,6 @@
 )
 
 (defrule S0-goal-empty
-    (K-agent (step ?) (time ?) (direction ?d) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
 	(goal-astar ?r ?c)
 	(K-cell (pos-r ?r) (pos-c ?c) (contains Empty))
 =>
