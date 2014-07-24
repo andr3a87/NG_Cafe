@@ -2,6 +2,7 @@
 ; Attiva quando ricevo un ordine da un tavolo pulito. Inform con accepted
 
 (defrule answer-msg-order1
+  (declare (salience 70))
 	?f1<-(msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 	(K-table (pos-r ?r)(pos-c ?c)(table-id ?sen) (clean yes))
 =>
@@ -11,6 +12,7 @@
  
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. Inform con delayed
 (defrule answer-msg-order2
+  (declare (salience 70))
 	?f1<-(msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 	(K-table (table-id ?sen) (clean no))
 =>

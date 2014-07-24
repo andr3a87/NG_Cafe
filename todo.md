@@ -19,6 +19,7 @@ Serviamo le richieste in ordine di arrivo.
 * Come funzion la checkFinish, se un tavolo viene marcato sporco non appena consegno il cibo? Se deve intercorrere un tempo constante dal momento in cui avviene la consegna per terminare la consumazione non posso calcolarmelo a priori senza fare la checkFinish?
 * Devo rispondere a delle richieste di tipo Finish?
 * Ci sono più dispancer e/o cestini?
+* Cosa serve result nella struttura status
 
 # Regole di costruzione della mappa
 

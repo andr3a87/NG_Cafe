@@ -94,7 +94,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 1) forward ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 1) Forward ?d ?r ?c)
               (newnode (ident (+ ?n 1)) (pos-r ?r1) (pos-c ?c1) (direction ?d)
                        (gcost (+ ?g 2)) (fcost (+ (abs (- ?x ?r1)) (abs (- ?y ?c1)) ?g 1))
 
@@ -121,7 +121,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 2) turnleft ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 2) Turnleft ?d ?r ?c)
               (newnode (ident (+ ?n 2)) (pos-r ?r) (pos-c ?c) (direction east)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
@@ -147,7 +147,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 3) turnleft ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 3) Turnleft ?d ?r ?c)
               (newnode (ident (+ ?n 3)) (pos-r ?r) (pos-c ?c) (direction south)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
@@ -173,7 +173,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 4) turnleft ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 4) Turnleft ?d ?r ?c)
               (newnode (ident (+ ?n 4)) (pos-r ?r) (pos-c ?c) (direction west)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
@@ -199,7 +199,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 5) turnleft ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 5) Turnleft ?d ?r ?c)
               (newnode (ident (+ ?n 5)) (pos-r ?r) (pos-c ?c) (direction north)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
@@ -225,7 +225,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 6) turnright ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 6) Turnright ?d ?r ?c)
               (newnode (ident (+ ?n 6)) (pos-r ?r) (pos-c ?c) (direction west)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
@@ -251,7 +251,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 7) turnright ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 7) Turnright ?d ?r ?c)
               (newnode (ident (+ ?n 7)) (pos-r ?r) (pos-c ?c) (direction north)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
@@ -277,7 +277,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 8) turnright ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 8) Turnright ?d ?r ?c)
               (newnode (ident (+ ?n 8)) (pos-r ?r) (pos-c ?c) (direction east)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
@@ -303,7 +303,7 @@
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
 	
-   => (assert (exec-astar ?curr (+ ?n 9) turnright ?d ?r ?c)
+   => (assert (exec-astar ?curr (+ ?n 9) Turnright ?d ?r ?c)
               (newnode (ident (+ ?n 9)) (pos-r ?r) (pos-c ?c) (direction south)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
@@ -441,8 +441,16 @@
     (retract ?fe)
 )
 (defrule clean-goal
-    (declare(salience 1))
-	?fg <- (goal-astar $?)
+    (declare (salience 1))
+    ?fe <- (end-astar $?)
+=>
+    (retract ?fe)
+)
+(defrule clean
+(declare(salience 1))
+	  ?fg <- (goal-astar $?)
+		?fs <- (start $?)
 =>
     (retract ?fg)
+		(retract ?fs)
 )

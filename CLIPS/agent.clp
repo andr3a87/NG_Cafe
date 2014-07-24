@@ -41,6 +41,7 @@
 
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 (deftemplate start-astar (slot pos-r) (slot pos-c))
+(deftemplate run-astar (multislot pos-start) (multislot pos-end))
 
 (defrule  beginagent1
     (declare (salience 11))
@@ -79,26 +80,31 @@
         (modify ?f (result no)))
 
 (defrule exec_act
+    (declare (salience 100))
     (status (step ?i))
     (exec (step ?i))
  => (focus MAIN))
 
+; Regola per avviare la ricerca con ASTAR.
 (defrule go-astar
-    (declare (salience 100))
+  (declare (salience 10))
 	(start-astar (pos-r ?r) (pos-c ?c))
 	(K-agent (pos-r ?r1) (pos-c ?c1))
 	(not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 =>
-    (assert (goal-astar 7 5))
+    (assert (goal-astar ?r ?c))
     (focus ASTAR)
 )
-
+; Regola per non ripetere astar su un percorso su cui è stato appena calcolato il piano.
 (defrule clean-start-astar
-    (declare (salience 50))				   
+    (declare (salience 5))				   
     ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
+		(plane (pos-start ?r1 ?c1) (pos-end ?r ?c))
 =>
     (retract ?f1)
+	  (assert (run-astar (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 )
+
 	
 ; alcune azioni per testare il sistema
 ; (assert (exec (step 0) (action Forward)))
