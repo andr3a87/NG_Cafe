@@ -1,6 +1,6 @@
 # Todo NG_Cafè
 
-1.  Creare le regole per eseguire il piano creato da astar (plane)
+1.  Creare le regole per eseguire il piano creato da astar (plane) /FATTO!!
 2.  Gestire Ordine di un tavolo
 3.  Gestire Pulizia di un tavolo
 4.  Ottimizzazioni
@@ -8,7 +8,13 @@
 # Strategie
 
 Serviamo le richieste in ordine di arrivo.
+
+La regola exec_act per l'esecuzione di un azione ha priorita 100.
+Le regole per gestire le percezioni hanno priorira 90.
+Le regole per eseguire un piano generato da astar hanno priorita 80.
+Le regole per ripondere a un messaggio di ordinazione o rimozione cibo hanno priorita 70.
  
+
 
 # Domande da fare a Torasso
 
@@ -20,6 +26,7 @@ Serviamo le richieste in ordine di arrivo.
 * Devo rispondere a delle richieste di tipo Finish?
 * Ci sono più dispancer e/o cestini?
 * Cosa serve result nella struttura status
+* Quando rispondo a un tavolo delayed?
 
 # Regole di costruzione della mappa
 
