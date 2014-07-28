@@ -16,25 +16,25 @@
 
 (deftemplate K-agent
 	(slot step)
-    (slot time) 
+  (slot time) 
 	(slot pos-r) 
 	(slot pos-c) 
 	(slot direction) 
 	(slot l-drink)
-    (slot l-food)
-    (slot l_d_waste)
-    (slot l_f_waste)
+  (slot l-food)
+  (slot l_d_waste)
+  (slot l_f_waste)
 )
 
 (deftemplate K-table
 	(slot step)
-    (slot time)
-    (slot pos-r)
-    (slot pos-c)
+  (slot time)
+  (slot pos-r)
+  (slot pos-c)
 	(slot table-id)
 	(slot clean (allowed-values yes no))
 	(slot l-drink)
-    (slot l-food)
+  (slot l-food)
 )
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc (slot step))
@@ -42,6 +42,10 @@
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 (deftemplate start-astar (slot pos-r) (slot pos-c))
 (deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
+
+(deftemplate distance-fd (multislot pos-start) (multislot pos-end) (slot distance))
+(deftemplate distance-dd (multislot pos-start) (multislot pos-end) (slot distance))
+
 
 (defrule  beginagent1
     (declare (salience 11))
@@ -59,7 +63,7 @@
     (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
 => 
     (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)
-                              (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
+    (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
     ;All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
     (assert (last-perc (step -1)))
 )
@@ -72,8 +76,9 @@
 =>
     (assert (K-table (step 0) (time 0) (pos-r ?r) (pos-c ?c) (table-id ?tid) (clean yes) (l-drink 0) (l-food 0) ))
 )
+
 (defrule ask_act
- ?f <-   (status (step ?i))
+         ?f <-   (status (step ?i))
     =>  (printout t crlf crlf)
         (printout t "action to be executed at step:" ?i)
         (printout t crlf crlf)
@@ -104,6 +109,21 @@
 =>
     (retract ?f1)
 	  (assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?r ?c)))
+)
+
+(defrule start-astar
+    (declare (salience 10))
+    ?f1<-(distance-fd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
+     =>
+    (retract ?f1)
+		(assert (start-astar (pos-r ?rfo) (pos-c ?cfo)))
+)
+
+(defrule do-LoadFood
+   (distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
+	 (K-agent (pos-r ?ra) (pos-c ?ca))
+=>
+	 (assert (GRANDE))
 )
 
 	

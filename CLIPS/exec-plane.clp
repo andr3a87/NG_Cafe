@@ -12,16 +12,15 @@
   (retract ?f1)
   (assert (start ?id))
   (assert (exec (step ?s) (action ?oper)))
-	
 )
 
 (defrule clean-start
   (declare (salience 79))
   ?f1 <- (start ?father)
-	?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
+  ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
   =>
   (retract ?f1)
-	(retract ?f2)
-	(assert (start 0))
+  (retract ?f2)
+  (assert (start 0))
 )
   

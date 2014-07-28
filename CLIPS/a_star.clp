@@ -6,19 +6,20 @@
                   (slot pos-c) (slot direction))
 
 (defrule S0
-    (K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d)
-             (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?)
-    )
+	(K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d)
+	 (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?)
+	)
 =>
-    (assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
-    (assert(start ?r ?c))    
-    (assert(current 0))
-    (assert(lastnode 0))
-    (assert(open-worse 0))
-    (assert(open-better 0))
-    (assert(alreadyclosed 0))
-    (assert(numberofnodes 0))
+	(assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
+	(assert(start ?r ?c))    
+	(assert(current 0))
+	(assert(lastnode 0))
+	(assert(open-worse 0))
+	(assert(open-better 0))
+	(assert(alreadyclosed 0))
+	(assert(numberofnodes 0))		
 )
+
 ;Definiamo i goal.
 ;Se la cella di destinazione è vuota il goal è rappresentato da (goal-astar ?r ?c)
 ;Se la cella di destianzione è un tavolo,un dispancer o un cestino il goal è rappresentato dalle 4 celle adiacenti al tavolo.
@@ -26,7 +27,7 @@
 	(goal-astar ?r ?c)
 	(K-cell (pos-r ?r) (pos-c ?c) (contains Table|DD|FD|TB|RB))
 =>
-    (assert (end-astar (- ?r 1) ?c))
+  (assert (end-astar (- ?r 1) ?c))
 	(assert (end-astar (+ ?r 1) ?c))
 	(assert (end-astar ?r (- ?c 1)))
 	(assert (end-astar ?r (+ ?c 1)))
@@ -36,7 +37,7 @@
 	(goal-astar ?r ?c)
 	(K-cell (pos-r ?r) (pos-c ?c) (contains Empty))
 =>
-    (assert (end-astar ?r ?c))
+  (assert (end-astar ?r ?c))
 )
 
 (defrule achieved-goal

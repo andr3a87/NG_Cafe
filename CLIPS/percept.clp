@@ -24,7 +24,7 @@
 	?f9 <- (K-cell (pos-r =(+ ?r 1)) (pos-c =(+ ?c 1)))
 
 => 
-  (modify ?fa (step ?s) (time ?t) (pos-r ?r) (pos-c ?c) (direction west))
+    (modify ?fa (step ?s) (time ?t) (pos-r ?r) (pos-c ?c) (direction west))
 	(modify ?f1 (contains ?x1))
 	(modify ?f2 (contains ?x2))
 	(modify ?f3 (contains ?x3))
@@ -123,10 +123,10 @@
 	?fs <- (last-perc (step ?old-s))
 	(test (> ?s ?old-s))
 	(perc-vision 
-        (time ?t) (step ?s) (pos-r ?r) (pos-c ?c) (direction north) 
-	    (perc1 ?x1) (perc2 ?x2) (perc3 ?x3)
-	    (perc4 ?x4) (perc5 ?x5) (perc6 ?x6)
-	    (perc7 ?x7) (perc8 ?x8) (perc9 ?x9)
+		(time ?t) (step ?s) (pos-r ?r) (pos-c ?c) (direction north) 
+		(perc1 ?x1) (perc2 ?x2) (perc3 ?x3)
+		(perc4 ?x4) (perc5 ?x5) (perc6 ?x6)
+		(perc7 ?x7) (perc8 ?x8) (perc9 ?x9)
 	)
 	?fa <- (K-agent (step ?) (time ?) (pos-r ?) (pos-c ?) (direction ?) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
 

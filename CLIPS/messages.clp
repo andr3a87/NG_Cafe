@@ -7,7 +7,7 @@
 	(K-table (pos-r ?r)(pos-c ?c)(table-id ?sen) (clean yes))
 =>
 	(assert (exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-	(assert (start-astar (pos-r ?r) (pos-c ?c)))
+	;(assert (start-astar (pos-r ?r) (pos-c ?c)))
 )
  
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. Inform con delayed
@@ -16,5 +16,5 @@
 	?f1<-(msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 	(K-table (table-id ?sen) (clean no))
 =>
-    (assert (exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
+  (assert (exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
 )

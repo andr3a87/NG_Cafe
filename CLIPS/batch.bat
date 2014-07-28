@@ -5,6 +5,7 @@
 (load "percept.clp")
 (load "messages.clp")
 (load "exec-plane.clp")
+(load "manage-order.clp")
 (load "a_star.clp")
 
 (reset)
