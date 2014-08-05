@@ -3,11 +3,11 @@
 
 (defmodule AGENT (import MAIN ?ALL) (export ?ALL))
 
-; � l'ultimo passaggio, la fotografia, perch� � atemporale.
-; � l'ultimo passaggio, la fotografia, perch� � atemporale.
+; ? l'ultimo passaggio, la fotografia, perch? ? atemporale.
+; ? l'ultimo passaggio, la fotografia, perch? ? atemporale.
 ; qui dentro ci serve per capire quando e dove si muovono gli agenti umani: il resto resta sempre cosi
 ; il tempo non ha senso se non facciamo roba sofisticata tipo previsione di spostamenti.
-; per lui il mondo � cos� come l'ha percepito all'ultimo istante.eprc
+; per lui il mondo ? cos? come l'ha percepito all'ultimo istante.eprc
 
 
 (deftemplate K-cell  (slot pos-r) (slot pos-c) 
@@ -111,7 +111,8 @@
 	  (assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 )
 
-(defrule start-astar
+;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il food dispenser
+(defrule start-astar-fd
     (declare (salience 10))
     ?f1<-(distance-fd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
      =>
@@ -119,11 +120,20 @@
 		(assert (start-astar (pos-r ?rfo) (pos-c ?cfo)))
 )
 
+;per asserire che mi trovo in una cella adiacente (step = (- ?i 1), (K-cell (pos-r ?r) (pos-c ?c)
 (defrule do-LoadFood
-   (distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
+    (declare (salience 10))
+   ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
+   	 (start-astar (pos-r ?rfo) (pos-c ?cfo))
 	 (K-agent (pos-r ?ra) (pos-c ?ca))
+	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
+	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
+	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+	 )
 =>
-	 (assert (GRANDE))
+	 
+	 ;(assert (GRANDE))
 )
 
 	
