@@ -94,6 +94,7 @@
 (defrule go-astar
   (declare (salience 10))
 	(start-astar (pos-r ?r) (pos-c ?c))
+
 	(K-agent (pos-r ?r1) (pos-c ?c1))
 	(not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 =>
@@ -112,7 +113,7 @@
 )
 
 ;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il food dispenser
-(defrule start-astar-fd
+(defrule start-astar
     (declare (salience 10))
     ?f1<-(distance-fd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
      =>
@@ -121,20 +122,51 @@
 )
 
 ;per asserire che mi trovo in una cella adiacente (step = (- ?i 1), (K-cell (pos-r ?r) (pos-c ?c)
+;regola per caricare il cibo. Non c'è precondizione sullo spazio perchè eseguirà sempre come prima azione la load food
+;dopo che è stata eseguità la modify ritratto il fatto start-astar per non far ri-eseguire la do-Load
 (defrule do-LoadFood
     (declare (salience 10))
    ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
-   	 (start-astar (pos-r ?rfo) (pos-c ?cfo))
-	 (K-agent (pos-r ?ra) (pos-c ?ca))
+   	 (msg-to-agent (step ?s) (food-order ?fo))
+   	 ?f1<-(start-astar (pos-r ?rfo) (pos-c ?cfo))
+	 ?f2<-(K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	 )
 =>
-	 
+	 (modify ?f2 (l-food ?fo))
+	 (retract ?f1)
 	 ;(assert (GRANDE))
 )
+;sia start-astar-dd che do-LoadDrink sono da mettere apposto
+;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il drink dispenser
+(defrule start-astar-dd
+    (declare (salience 9))
+    ?f1<-(distance-dd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
+     =>
+    (retract ?f1)
+		(assert (start-astar-dd (pos-r ?rfo) (pos-c ?cfo)))
+)
+
+(defrule do-LoadDrink
+    (declare (salience 9))
+   ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
+   	 (msg-to-agent (step ?s) (drink-order ?do))
+   	 ?f1<-(start-astar-dd (pos-r ?rfo) (pos-c ?cfo))
+	 ?f2<-(K-agent (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
+	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
+	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
+	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+	 )
+=>
+	 (modify ?f2 (l-food ?do))
+	 (retract ?f1)
+	 ;(assert (GRANDE))
+)
+
 
 	
 ; alcune azioni per testare il sistema
