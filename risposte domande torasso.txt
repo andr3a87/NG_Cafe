@@ -1,0 +1,42 @@
+1) Inserire una regola per la generazione di mappe in modo da evitare la creazione di un tavolo a 4 sedie.
+
+   Le sedie non sono necessariamente disposte nei 4 punti cardinali attorno al tavolo. Ad esempio una disposizione
+   legale che permette di avere 4 sedie ad un tavolo è la seguente:
+   |S|S| |
+   | |T|S|
+   | |S| |
+   con il riquadro ad ovest del tavolo come unico punto per rendere accessibile il tavolo al robot
+
+2) Può capitare che il tavolo mandi un ordinazione anche se  è ancora sporco? (meccanismo invio finish/invio ordinazione)
+   Non si è spiegato molto bene su questo punto. Ha detto le solite cose riguardo al non complicarsi troppo la vita e
+   quindi di non mettersi in situazioni troppo complicate.
+
+3) Appena vengono consegnati i cibi e/o bevande il tavolo diventa immediatamente sporco?
+   Si il tavolo risulta immediatamente sporco non appena il robot consegna anche solo un unita di food/drink. Se però
+   il robot tenta di pulire immediatamente il tavolo, si becca una penalità gigantesca perchè le persone non hanno
+   ancora consumato nulla e di conseguenza, anche se la pulizia del tavolo è un operazione fattibile, non è corretto
+   farla in quel momento.
+
+4) Funzionamento generale della checkfinish. Quando va fatta? Perchè va fatta? Deve passare un tempo prefissato per
+   poterla fare?
+   La CheckFinish funziona in un modo differente da come l'avevamo capita noi. A detta del prof non è il robot che
+   si recupera da solo lo stato del tavolo, ma in realtà c'è un botta e risposta fra lui e il tavolo. Il robot
+   domanda semplicemente al tavolo se può pulire; il tavolo gli da risposta positiva o negativa sulla base dello
+   stato della consumazione da parte dei clienti seduti al tavolo, dato che la consumazione non è istantanea. Viene
+   impiegata un unità di tempo per poter consumare un food o un drink. Non è obbligatorio eseguire le CheckFinish
+   anzi si può avere un sistema finale che non ne fa uso alcuno e risulta ugualmente efficente. Il prof. suggeriva
+   infatti di proporre un sistema che fa utilizzo della CheckFinish e uno che non la usa e di verificare i vari
+   vantaggi/svantaggi di entrambe le strategie.
+
+5) Devo inviare un qualche tipo di risposta ai tavolo che mi inviano una finish?
+   No, non devo rispondere quand ricevo un messaggio di finish
+
+6) A cosa serve il campo result nel deftemplate status?
+   Non si ricordava a cosa servisse, ma ha detto che se non veniva mai modificato non serviva a nulla ed è li solo
+   perchè vari pezzi di codice sono copiati/incollati da vecchi progetti
+
+7) Gli ho accennato la strategia che stavamo usando (memorizzare i plan)
+   Dopo avergliela spiegata a grandi linee il prof ci ha suggerito che in fasi di testing dovremo tenere traccia
+   in qualche modo di quante volte riusciamo ad evitare la ri-pianificazione usando questa nostra strategia.
+   Ha detto che era interessante fare sta cosa perchè cosi possiamo vedere se è stato veramente utile introdurre
+   questa tecnica o se alla fine bene o male i robot è sempre costretto a ripianificare
