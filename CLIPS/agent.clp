@@ -90,10 +90,10 @@
     (exec (step ?i))
  => (focus MAIN))
 
-; Regola per avviare la ricerca con ASTAR.
+; Regola per avviare la ricerca con ASTAR se non è stato calcolato un piano.
 (defrule go-astar
   (declare (salience 10))
-	(start-astar (type food|drink) (pos-r ?r) (pos-c ?c))
+	(start-astar (type food|drink|del_food|del_drink) (pos-r ?r) (pos-c ?c))
 
 	(K-agent (pos-r ?r1) (pos-c ?c1))
 	(not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
@@ -102,7 +102,7 @@
     (focus ASTAR)
 )
 
-; Regola per non ripetere astar su un percorso su cui è stato appena calcolato il piano.
+; Regola per non ripetere astar su un percorso su cui è stato appena calcolato il piano e per eseguire un piano
 (defrule clean-start-astar
     (declare (salience 5))				   
     ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
@@ -165,6 +165,57 @@
 	 (retract ?f1)
 	 (assert (exec (step ?ks) (action LoadDrink) (param1 ?rfo) (param2 ?cfo)))
 )
+
+(defrule start-astar-delivery_f
+    (declare (salience 5))
+    (msg-to-agent (sender ?t))
+    (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
+    
+     =>
+	(assert (start-astar (type del_food) (pos-r ?rfo) (pos-c ?cfo)))
+)
+
+(defrule do-DeliveryFood
+    (declare (salience 5))
+   	 (msg-to-agent (step ?s) (sender ?t) (food-order ?fo))
+   	 (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
+	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
+	 (test (> ?lf 0))
+	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
+	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
+	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+	 )
+=>
+	 ;(retract ?f1)
+	 (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
+)
+
+(defrule start-astar-delivery_d
+    (declare (salience 5))
+    (msg-to-agent (sender ?t))
+    (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
+    
+     =>
+	(assert (start-astar (type del_drink) (pos-r ?rfo) (pos-c ?cfo)))
+)
+
+(defrule do-DeliveryDrink
+    (declare (salience 5))
+   	 (msg-to-agent (step ?s) (sender ?t) (food-order ?fo))
+   	 (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
+	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
+	 (test (> ?ld 0))
+	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
+	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
+	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+	 )
+=>
+	 ;(retract ?f1)
+	 (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
+)
+
 
 
 	
