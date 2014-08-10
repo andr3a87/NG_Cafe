@@ -129,18 +129,15 @@
    	 (msg-to-agent (step ?s) (food-order ?fo))
    	 ?f1<-(start-astar (type food) (pos-r ?rfo) (pos-c ?cfo))
    	 ;i 2 l_waste servono per non far eseguire la do-Load con dello sporco sul robot
-	 ?f2<-(K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-	 ;condizione per caricare il cibo solo se ho ancora spazio
-	 (test (< (+ ?lf ?ld) 4))
+	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	 )
 =>
-	 (modify ?f2 (l-food ?fo))
 	 (retract ?f1)
-	 ;(assert (GRANDE))
+	 (assert (exec (step ?ks) (action LoadFood) (param1 ?rfo) (param2 ?cfo)))
 )
 
 ;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il drink dispenser
@@ -155,21 +152,18 @@
 ;come do-loadFood con l'unica differenza che qui carica le bevande
 (defrule do-LoadDrink
     (declare (salience 10))
-   ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
+   ;(distance-dd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
    	 (msg-to-agent (step ?s) (drink-order ?do))
    	 ?f1<-(start-astar (type drink) (pos-r ?rfo) (pos-c ?cfo))
-	 ?f2<-(K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-	 ;condizione per caricare il cibo solo se ho ancora spazio
-	 (test (< (+ ?lf ?ld) 4))
+	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	 )
 =>
-	 (modify ?f2 (l-drink ?do))
 	 (retract ?f1)
-	 ;(assert (GRANDE))
+	 (assert (exec (step ?ks) (action LoadDrink) (param1 ?rfo) (param2 ?cfo)))
 )
 
 
