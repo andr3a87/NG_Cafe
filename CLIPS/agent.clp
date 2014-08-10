@@ -40,7 +40,7 @@
 (deftemplate last-perc (slot step))
 
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
-(deftemplate start-astar (slot pos-r) (slot pos-c))
+(deftemplate start-astar (slot type) (slot pos-r) (slot pos-c))
 (deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
 
 (deftemplate distance-fd (multislot pos-start) (multislot pos-end) (slot distance))
@@ -93,7 +93,7 @@
 ; Regola per avviare la ricerca con ASTAR.
 (defrule go-astar
   (declare (salience 10))
-	(start-astar (pos-r ?r) (pos-c ?c))
+	(start-astar (type food|drink) (pos-r ?r) (pos-c ?c))
 
 	(K-agent (pos-r ?r1) (pos-c ?c1))
 	(not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
@@ -113,23 +113,25 @@
 )
 
 ;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il food dispenser
-(defrule start-astar
+(defrule start-astar-fd
     (declare (salience 10))
     ?f1<-(distance-fd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
      =>
     (retract ?f1)
-		(assert (start-astar (pos-r ?rfo) (pos-c ?cfo)))
+		(assert (start-astar (type food) (pos-r ?rfo) (pos-c ?cfo)))
 )
 
-;per asserire che mi trovo in una cella adiacente (step = (- ?i 1), (K-cell (pos-r ?r) (pos-c ?c)
-;regola per caricare il cibo. Non c'è precondizione sullo spazio perchè eseguirà sempre come prima azione la load food
+;regola per caricare il cibo
 ;dopo che è stata eseguità la modify ritratto il fatto start-astar per non far ri-eseguire la do-Load
 (defrule do-LoadFood
     (declare (salience 10))
    ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
    	 (msg-to-agent (step ?s) (food-order ?fo))
-   	 ?f1<-(start-astar (pos-r ?rfo) (pos-c ?cfo))
-	 ?f2<-(K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
+   	 ?f1<-(start-astar (type food) (pos-r ?rfo) (pos-c ?cfo))
+   	 ;i 2 l_waste servono per non far eseguire la do-Load con dello sporco sul robot
+	 ?f2<-(K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+	 ;condizione per caricare il cibo solo se ho ancora spazio
+	 (test (< (+ ?lf ?ld) 4))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
@@ -140,29 +142,32 @@
 	 (retract ?f1)
 	 ;(assert (GRANDE))
 )
-;sia start-astar-dd che do-LoadDrink sono da mettere apposto
+
 ;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il drink dispenser
 (defrule start-astar-dd
-    (declare (salience 9))
+    (declare (salience 10))
     ?f1<-(distance-dd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
      =>
     (retract ?f1)
-		(assert (start-astar-dd (pos-r ?rfo) (pos-c ?cfo)))
+		(assert (start-astar (type drink) (pos-r ?rfo) (pos-c ?cfo)))
 )
 
+;come do-loadFood con l'unica differenza che qui carica le bevande
 (defrule do-LoadDrink
-    (declare (salience 9))
+    (declare (salience 10))
    ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
    	 (msg-to-agent (step ?s) (drink-order ?do))
-   	 ?f1<-(start-astar-dd (pos-r ?rfo) (pos-c ?cfo))
-	 ?f2<-(K-agent (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
+   	 ?f1<-(start-astar (type drink) (pos-r ?rfo) (pos-c ?cfo))
+	 ?f2<-(K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+	 ;condizione per caricare il cibo solo se ho ancora spazio
+	 (test (< (+ ?lf ?ld) 4))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	 )
 =>
-	 (modify ?f2 (l-food ?do))
+	 (modify ?f2 (l-drink ?do))
 	 (retract ?f1)
 	 ;(assert (GRANDE))
 )
