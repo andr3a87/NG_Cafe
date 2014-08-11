@@ -388,7 +388,7 @@
 (defmodule PRINT (import ASTAR ?ALL) (export ?ALL))
 
 (defrule print0
-    (declare (salience 3))
+    (declare (salience 4))
     (stampa ?id)
     (exec-astar ?anc ?id $?)
 =>
@@ -397,7 +397,7 @@
 
 
 (defrule stampaSol
-	(declare (salience 2))
+	(declare (salience 3))
     ?f<-(stampa ?id)
 	(node (ident ?id) (father ?anc&~NA))  
 	(exec-astar ?anc ?id ?oper ?d ?r ?c)
@@ -409,6 +409,16 @@
     (assert (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g))) 
 	(retract ?f)
     
+)
+
+(defrule stampaSolZeroCost
+	(declare (salience 2))
+	?f<-(stampa ?id)
+	(start ?rs ?cs)    
+	(goal-astar ?rg ?cg)
+    	(cost-solution 0)
+=>
+	(assert(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg)(cost 0)))
 )
 
 (defrule stampa-fine

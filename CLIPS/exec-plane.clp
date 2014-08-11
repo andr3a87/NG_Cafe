@@ -15,12 +15,13 @@
 )
 
 (defrule clean-start
-  (declare (salience 79))
+  (declare (salience 78))
   ?f1 <- (start ?father)
   ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
   =>
   (retract ?f1)
   (retract ?f2)
   (assert (start 0))
+  (assert (plan-executed))
 )
   
