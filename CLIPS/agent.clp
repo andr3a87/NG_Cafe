@@ -41,6 +41,9 @@
 (deftemplate start-astar (slot type) (slot pos-r) (slot pos-c))
 (deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
 
+; memorizza la quantità di roba che l'agente deve caricare o scaricare
+(deftemplate agent-truckload-counter (slot type)(slot qty))
+
 (deftemplate distance-fd (multislot pos-start) (multislot pos-end) (slot distance))
 (deftemplate distance-dd (multislot pos-start) (multislot pos-end) (slot distance))
 
@@ -111,13 +114,15 @@
 )
 
 ;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il food dispenser
+;aggiunto il contatore che servirà per eseguire le load fintanto che devo caricare food
 (defrule start-astar-fd
     (declare (salience 10))
     ?f1<-(distance-fd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
+    (msg-to-agent (step ?s) (food-order ?fo))
      =>
     (retract ?f1)
 		(assert (start-astar (type food) (pos-r ?rfo) (pos-c ?cfo)))
-		(assert (do-loadfood))
+		(assert (agent-truckload-counter (type loadFood)(qty ?fo)))
 )
 
 ;regola per caricare il cibo
@@ -125,32 +130,35 @@
 (defrule do-LoadFood
     (declare (salience 10))
    ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
-   	 (msg-to-agent (step ?s) (food-order ?fo))
-   	 ?f1<-(plan-executed)
-   	 ?f2<-(do-loadfood)
-   	 ;?f1<-(start-astar (type food) (pos-r ?rfo) (pos-c ?cfo))
+   	(msg-to-agent (step ?s) (food-order ?fo))
+   	?f1<-(plan-executed)
+	?f2<-(agent-truckload-counter (type loadFood)(qty ?q))
+	(test (> ?q 0))
+	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+	(test (< (+ ?lf ?ld) 4))
    	 (FoodDispenser (FD-id FD1) (pos-r ?rfo) (pos-c ?cfo))
-	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	 )
-	 (not (exec (step =(- ?ks 1))(action LoadFood)(param1 ?rfo)(param2 ?cfo)))
+	 ;(not (exec (step =(- ?ks 1))(action LoadFood)(param1 ?rfo)(param2 ?cfo)))
 =>
 	 (retract ?f1)
-	 (retract ?f2)
+	 (modify ?f2 (qty (- ?q 1)))
 	 (assert (exec (step ?ks) (action LoadFood) (param1 ?rfo) (param2 ?cfo)))
 )
 
 ;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il drink dispenser
+;aggiunto il contatore che servirà per eseguire le load fintanto che devo caricare drink
 (defrule start-astar-dd
     (declare (salience 10))
     ?f1<-(distance-dd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
+    (msg-to-agent (step ?s) (drink-order ?do))
      =>
     (retract ?f1)
 		(assert (start-astar (type drink) (pos-r ?rfo) (pos-c ?cfo)))
-		(assert (do-loaddrink))
+		(assert (agent-truckload-counter (type loadDrink)(qty ?do)))
 )
 
 ;come do-loadFood con l'unica differenza che qui carica le bevande
@@ -159,19 +167,20 @@
    ;(distance-dd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
    	 (msg-to-agent (step ?s) (drink-order ?do))
    	 ?f1<-(plan-executed)
-   	 ?f2<-(do-loaddrink)
-   	 ;?f1<-(start-astar (type drink) (pos-r ?rfo) (pos-c ?cfo))
+   	 ?f2<-(agent-truckload-counter (type loadDrink)(qty ?q))
+   	 (test (> ?q 0))
+	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+	 (test (< (+ ?lf ?ld) 4))
    	 (DrinkDispenser (DD-id DD1) (pos-r ?rfo) (pos-c ?cfo))
-	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	 )
-	 (not (exec (step =(- ?ks 1))(action LoadFood)(param1 ?rfo)(param2 ?cfo)))
+	 ;(not (exec (step =(- ?ks 1))(action LoadFood)(param1 ?rfo)(param2 ?cfo)))
 =>
 	 (retract ?f1)
-	 (retract ?f2)
+	 (modify ?f2 (qty (- ?q 1)))
 	 (assert (exec (step ?ks) (action LoadDrink) (param1 ?rfo) (param2 ?cfo)))
 )
 
