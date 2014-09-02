@@ -411,12 +411,14 @@
     
 )
 
+;regola per generare un fatto di tipo plane, quando deve essere eseguito un piano a costo 0
 (defrule stampaSolZeroCost
 	(declare (salience 2))
 	?f<-(stampa ?id)
 	(start ?rs ?cs)    
 	(goal-astar ?rg ?cg)
-    	(cost-solution 0)
+    	;(cost-solution 0)
+    	(not(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) ))
 =>
 	(assert(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg)(cost 0)))
 )
