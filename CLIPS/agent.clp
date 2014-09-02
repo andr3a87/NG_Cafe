@@ -1,25 +1,22 @@
 ;// AGENT
 
-
 (defmodule AGENT (import MAIN ?ALL) (export ?ALL))
 
-; ? l'ultimo passaggio, la fotografia, perch? ? atemporale.
-; ? l'ultimo passaggio, la fotografia, perch? ? atemporale.
+; è l'ultimo passaggio, la fotografia, perchè è atemporale.
+; è l'ultimo passaggio, la fotografia, perchè è atemporale.
 ; qui dentro ci serve per capire quando e dove si muovono gli agenti umani: il resto resta sempre cosi
 ; il tempo non ha senso se non facciamo roba sofisticata tipo previsione di spostamenti.
-; per lui il mondo ? cos? come l'ha percepito all'ultimo istante.eprc
+; per lui il mondo è così come l'ha percepito all'ultimo istante perc
 
-
-(deftemplate K-cell  (slot pos-r) (slot pos-c) 
+(deftemplate K-cell  (slot pos-r) (slot pos-c)
                      (slot contains (allowed-values Wall Person  Empty Parking Table Seat TB RB DD FD)))
-
 
 (deftemplate K-agent
 	(slot step)
-  (slot time) 
-	(slot pos-r) 
-	(slot pos-c) 
-	(slot direction) 
+  (slot time)
+	(slot pos-r)
+	(slot pos-c)
+	(slot direction)
 	(slot l-drink)
   (slot l-food)
   (slot l_d_waste)
@@ -36,6 +33,7 @@
 	(slot l-drink)
   (slot l-food)
 )
+
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc (slot step))
 
@@ -46,22 +44,22 @@
 (deftemplate distance-fd (multislot pos-start) (multislot pos-end) (slot distance))
 (deftemplate distance-dd (multislot pos-start) (multislot pos-end) (slot distance))
 
-
+; copia le prior cell sulla struttura K-cell
 (defrule  beginagent1
     (declare (salience 11))
     (status (step 0))
     (not (exec (step 0)))
-    (prior-cell (pos-r ?r) (pos-c ?c) (contains ?x)) 
+    (prior-cell (pos-r ?r) (pos-c ?c) (contains ?x))
 =>
     (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x)))
 )
-            
+
 (defrule  beginagent2
     (declare (salience 11))
     (status (step 0))
     (not (exec (step 0)))
     (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
-=> 
+=>
     (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)
     (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
     ;All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
@@ -104,7 +102,7 @@
 
 ; Regola per non ripetere astar su un percorso su cui è stato appena calcolato il piano e per eseguire un piano
 (defrule clean-start-astar
-    (declare (salience 15))				   
+    (declare (salience 15))
     ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
 		(plane (pos-start ?r1 ?c1) (pos-end ?r ?c))
 =>
@@ -181,7 +179,7 @@
     (declare (salience 5))
     (msg-to-agent (sender ?t))
     (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-    
+
      =>
 	(assert (start-astar (type del_food) (pos-r ?rfo) (pos-c ?cfo)))
 	(assert (do-deliveryf))
@@ -211,7 +209,7 @@
     (declare (salience 5))
     (msg-to-agent (sender ?t))
     (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-    
+
      =>
 	(assert (start-astar (type del_drink) (pos-r ?rfo) (pos-c ?cfo)))
 	(assert (do-deliveryd))
@@ -238,7 +236,7 @@
 
 
 
-	
+
 ; alcune azioni per testare il sistema
 ; (assert (exec (step 0) (action Forward)))
 ; (assert (exec (step 1) (action Inform) (param1 T4) (param2 2) (param3 accepted)))
