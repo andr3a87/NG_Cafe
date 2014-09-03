@@ -21,35 +21,32 @@
 (defrule strategy-start-search-service-table
   (declare (salience 70))
   (exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
-	(not (intention-service-table (sender ?sen)))
+  ;
+  ; da controllare, controlla che non ci siano altre strategie per altri tavoli attive
+  ; ATTENZIONE!
+  ;
+	(not (strategy-service-table (table-id ?id) (phase ?ph)))
 	(last-intention (step ?s1))
 	(test (> ?s ?s1))
 	=>
-	(assert (strategy-table-to-serve (step -1) (sen -1) (done no)))
+	(assert (strategy-service-table (step -1) (table-id -1) (phase 1)))
 )
 
 (defrule strategy-search-table-to-serve
 	(status (step ?current))
-	?f <- (strategy-table-to-serve (step ?s1) (sen ?sen1) (done no))
-	(exec (step ?s2&:(< ?s2 ?current)) (action Inform) (param1 ?sen2) (param2 ?t) (param3 accepted))
+	?f <- (strategy-service-table (step ?as) (table-id ?table) (phase 1))
+	(exec (step ?s2&:(< ?s2 ?current)) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
 	(last-intention (step ?s1))
 	(test (> ?s2 ?s1))
+  (test (> ?s2 ?as))
 	=>
-	(modify ?f (step ?s2) (sen ?sen2))
+	(modify ?f (step ?s2)(table-id ?sen))
 )
 
 (defrule strategy-found-table-to-serve
 	(last-intention (step ?s1))
-	?f <- (strategy-table-to-serve (step ?s) (sen ?sen) (done no))
-	(not (exec (step ?s2&:(< ?s2 ?s1)) (action Inform) (param1 ?sen2) (param2 ?t) (param3 accepted)))
+	?f <- (strategy-service-table (table-id ?id) (phase 1))
+	(not (exec (step ?s2&:(< ?s2 ?s1)) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
 	=>
-	(modify ?f (done yes))
+	(modify ?f (table-id ?id) (phase 2))
 )
-
-(defrule strategy-add-intention-service-table
-	?f <- (strategy-table-to-serve (step ?s) (sen ?sen) (done yes))
-	=>
-	(assert (strategy-service-table (table-id ?sen) (phase 2)))
-	(retract ?f)
-)
-
