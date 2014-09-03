@@ -3,9 +3,9 @@
 (load "env.clp")
 (load "agent.clp")
 (load "percept.clp")
-(load "messages.clp")
+(load "strategy1.clp")
 (load "exec-plane.clp")
-(load "manage-order.clp")
+;(load "manage-order.clp")
 (load "a_star.clp")
 
 (reset)

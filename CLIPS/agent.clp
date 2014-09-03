@@ -48,6 +48,10 @@
 (deftemplate distance-fd (multislot pos-start) (multislot pos-end) (slot distance))
 (deftemplate distance-dd (multislot pos-start) (multislot pos-end) (slot distance))
 
+(deftemplate intention-service-table (slot sender))
+(deftemplate strategy-table-to-serve (slot step)(slot sen)(slot done))
+(deftemplate last-intention (slot step))
+
 ; copia le prior cell sulla struttura K-cell
 (defrule  beginagent1
     (declare (salience 11))
@@ -69,6 +73,7 @@
     ;All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
     (assert (last-perc (step -1) (type movement)))
     (assert (last-perc (step -1) (type load)))
+    (assert (last-intention (step -1)))
 )
 
 (defrule  beginagent3
@@ -184,16 +189,16 @@
 	 (assert (exec (step ?ks) (action LoadDrink) (param1 ?rfo) (param2 ?cfo)))
 )
 
-(defrule start-astar-delivery_f
-    (declare (salience 5))
-    (msg-to-agent (sender ?t))
-    (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
-    (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
+;(defrule start-astar-delivery_f
+;    (declare (salience 5))
+;    (msg-to-agent (sender ?t))
+;    (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
+;    (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
+;
+;     =>
+;	(assert (start-astar (type del_food) (pos-r ?rfo) (pos-c ?cfo)))
+;	(assert (agent-truckload-counter (type deliveryFood)(qty ?lf)))
 
-     =>
-	(assert (start-astar (type del_food) (pos-r ?rfo) (pos-c ?cfo)))
-	(assert (agent-truckload-counter (type deliveryFood)(qty ?lf)))
-	
 )
 
 (defrule do-DeliveryFood
@@ -215,16 +220,16 @@
 	 (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
 )
 
-(defrule start-astar-delivery_d
-    (declare (salience 5))
-    (msg-to-agent (sender ?t))
-    (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
-    (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-
-     =>
-	(assert (start-astar (type del_drink) (pos-r ?rfo) (pos-c ?cfo)))
-	(assert (agent-truckload-counter (type deliveryDrink)(qty ?ld)))
-)
+;(defrule start-astar-delivery_d
+;    (declare (salience 5))
+;    (msg-to-agent (sender ?t))
+;    (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
+;    (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
+;
+;     =>
+;	(assert (start-astar (type del_drink) (pos-r ?rfo) (pos-c ?cfo)))
+;	(assert (agent-truckload-counter (type deliveryDrink)(qty ?ld)))
+;)
 
 (defrule do-DeliveryDrink
     (declare (salience 5))
