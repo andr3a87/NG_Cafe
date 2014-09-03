@@ -39,9 +39,9 @@
 )
 
 (defrule strategy-found-table-to-serve
-	(status (step ?current))
+	(last-intention (step ?s1))
 	?f <- (strategy-table-to-serve (step ?s) (sen ?sen) (done no))
-	(not (exec (step ?s2&:(< ?s2 ?current)) (action Inform) (param1 ?sen2) (param2 ?t) (param3 accepted)))
+	(not (exec (step ?s2&:(< ?s2 ?s1)) (action Inform) (param1 ?sen2) (param2 ?t) (param3 accepted)))
 	=>
 	(modify ?f (done yes))
 )
@@ -49,7 +49,7 @@
 (defrule strategy-add-intention-service-table
 	?f <- (strategy-table-to-serve (step ?s) (sen ?sen) (done yes))
 	=>
-	(assert (intention-service-table (sender ?sen)))
+	(assert (strategy-service-table (table-id ?sen) (phase 2)))
 	(retract ?f)
 )
 

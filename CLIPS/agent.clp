@@ -48,7 +48,7 @@
 (deftemplate distance-fd (multislot pos-start) (multislot pos-end) (slot distance))
 (deftemplate distance-dd (multislot pos-start) (multislot pos-end) (slot distance))
 
-(deftemplate intention-service-table (slot sender))
+(deftemplate strategy-service-table (slot table-id) (slot phase))
 (deftemplate strategy-table-to-serve (slot step)(slot sen)(slot done))
 (deftemplate last-intention (slot step))
 
