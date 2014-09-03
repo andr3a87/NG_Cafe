@@ -3,7 +3,7 @@
   (declare (salience 100))		
 	(status (step ?s))
     ;//per evitare di mandare sempre in esecuzione questa regola.Una volta eseguita non deve essere più attivabile.
-	?fs <- (last-perc (step ?old-s))
+	?fs <- (last-perc (step ?old-s) (type movement))
 	(test (> ?s ?old-s))
 	(perc-vision 
         (step ?s) (time ?t) (pos-r ?r) (pos-c ?c) (direction west) 
@@ -42,7 +42,7 @@
   (declare (salience 100))
 	(status (step ?s))
   ;//per evitare di mandare sempre in esecuzione questa regola.Una volta eseguita non deve essere più attivabile.
-	?fs <- (last-perc (step ?old-s))
+	?fs <- (last-perc (step ?old-s) (type movement))
 	(test (> ?s ?old-s))
 	(perc-vision 
         (step ?s) (time ?t) (pos-r ?r) (pos-c ?c) (direction east) 
@@ -81,7 +81,7 @@
   (declare (salience 100))
 	(status (step ?s))
     ;//per evitare di mandare sempre in esecuzione questa regola.Una volta eseguita non deve essere più attivabile.
-	?fs <- (last-perc (step ?old-s))
+	?fs <- (last-perc (step ?old-s)(type movement))
 	(test (> ?s ?old-s))
 	(perc-vision 
         (step ?s) (time ?t) (pos-r ?r) (pos-c ?c) (direction south) 
@@ -120,7 +120,7 @@
   (declare (salience 100))
 	(status (step ?s))
     ;//per evitare di mandare sempre in esecuzione questa regola.Una volta eseguita non deve essere più attivabile.
-	?fs <- (last-perc (step ?old-s))
+	?fs <- (last-perc (step ?old-s) (type movement))
 	(test (> ?s ?old-s))
 	(perc-vision 
 		(time ?t) (step ?s) (pos-r ?r) (pos-c ?c) (direction north) 
@@ -152,4 +152,30 @@
 	(modify ?f9 (contains ?x9))
 	(modify ?fs (step ?s))
 
+)
+
+(defrule k-percept-load-food
+	(declare(salience 100))
+	(perc-load (time ?t) (step ?s) (load yes))
+	?fs <- (last-perc (step ?old-s) (type load))
+	(test (> ?s ?old-s) )
+	?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+	(exec (step =(- ?s 1))(action LoadFood))
+	=>
+	(modify ?f1(l-food(+ ?lf 1)))
+	(modify ?fs (step ?s)))
+		
+)
+
+(defrule k-percept-load-drink
+	(declare(salience 100))
+	(perc-load (time ?t) (step ?s) (load yes))
+	?fs <- (last-perc (step ?old-s) (type load))
+	(test (> ?s ?old-s))
+	?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+	(exec (step =(- ?s 1))(action LoadDrink))
+	=>
+	(modify ?f1(l-drink(+ ?ld 1))) 
+	(modify ?fs (step ?s))
+		
 )

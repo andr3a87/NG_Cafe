@@ -35,7 +35,8 @@
 )
 
 ; step dell'ultima percezione esaminata
-(deftemplate last-perc (slot step))
+(deftemplate last-perc (slot step) (slot type (allowed-values movement load)))
+;(deftemplate last-perc-load (slot step))
 
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 (deftemplate start-astar (slot type) (slot pos-r) (slot pos-c))
@@ -66,7 +67,8 @@
     (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)
     (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
     ;All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
-    (assert (last-perc (step -1)))
+    (assert (last-perc (step -1) (type movement)))
+    (assert (last-perc (step -1) (type load)))
 )
 
 (defrule  beginagent3
@@ -131,7 +133,6 @@
     (declare (salience 10))
    ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
    	(msg-to-agent (step ?s) (food-order ?fo))
-   	?f1<-(plan-executed)
 	?f2<-(agent-truckload-counter (type loadFood)(qty ?q))
 	(test (> ?q 0))
 	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
@@ -144,7 +145,6 @@
 	 )
 	 ;(not (exec (step =(- ?ks 1))(action LoadFood)(param1 ?rfo)(param2 ?cfo)))
 =>
-	 (retract ?f1)
 	 (modify ?f2 (qty (- ?q 1)))
 	 (assert (exec (step ?ks) (action LoadFood) (param1 ?rfo) (param2 ?cfo)))
 )
@@ -166,7 +166,6 @@
     (declare (salience 10))
    ;(distance-dd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
    	 (msg-to-agent (step ?s) (drink-order ?do))
-   	 ?f1<-(plan-executed)
    	 ?f2<-(agent-truckload-counter (type loadDrink)(qty ?q))
    	 (test (> ?q 0))
 	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
@@ -179,7 +178,6 @@
 	 )
 	 ;(not (exec (step =(- ?ks 1))(action LoadFood)(param1 ?rfo)(param2 ?cfo)))
 =>
-	 (retract ?f1)
 	 (modify ?f2 (qty (- ?q 1)))
 	 (assert (exec (step ?ks) (action LoadDrink) (param1 ?rfo) (param2 ?cfo)))
 )
