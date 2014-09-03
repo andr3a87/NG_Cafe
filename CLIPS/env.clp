@@ -349,7 +349,7 @@
                               (drink-order ?nd) (food-order ?nf))
 	)
 	(retract ?f1)
-	(printout t crlf " ENVIRONMENT:" crlf)
+  (printout t crlf " ENVIRONMENT:" crlf)
 	(printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
 )
 

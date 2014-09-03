@@ -8,7 +8,7 @@
   (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
   (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id ?oper ?d ?r ?c) (cost ?g))
   (status (step ?s))
-  =>
+=>
   (retract ?f1)
   (assert (start ?id))
   (assert (exec (step ?s) (action ?oper)))
@@ -18,10 +18,10 @@
   (declare (salience 78))
   ?f1 <- (start ?father)
   ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
-  =>
+=>
   (retract ?f1)
   (retract ?f2)
   (assert (start 0))
   (assert (plan-executed))
 )
-  
+
