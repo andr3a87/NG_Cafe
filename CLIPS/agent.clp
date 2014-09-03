@@ -241,6 +241,14 @@
 	 (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
 )
 
+; rimuove il counter degli oggetti da caricare / scaricare nel caso l'agente abbia finito il suo lavoro (ossia il counter è a 0, gli oggetti sono stati spostati tutti)
+(defrule clean-truckload-counter
+  (declare (salience 10))
+  ?f1 <- (agent-truckload-counter (type ?t)(qty ?do))
+  (test (= ?do 0))
+  =>
+  (retract ?f1)
+)
 
 
 
