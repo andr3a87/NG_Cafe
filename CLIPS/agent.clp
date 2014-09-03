@@ -187,50 +187,52 @@
 (defrule start-astar-delivery_f
     (declare (salience 5))
     (msg-to-agent (sender ?t))
+    (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
     (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
 
      =>
 	(assert (start-astar (type del_food) (pos-r ?rfo) (pos-c ?cfo)))
-	(assert (do-deliveryf))
+	(assert (agent-truckload-counter (type deliveryFood)(qty ?lf)))
+	
 )
 
 (defrule do-DeliveryFood
     (declare (salience 5))
-   	 (msg-to-agent (step ?s) (sender ?t) (food-order ?fo))
+   	 (msg-to-agent (step ?s) (sender ?t))
    	 (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-   	 ?f1<-(plan-executed)
-   	 ?f2<-(do-deliveryf)
-	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
+   	 ?f2<-(agent-truckload-counter (type deliveryFood)(qty ?q))
+   	 (test (> ?q 0))
+	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
 	 (test (> ?lf 0))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	 )
-	 (not (exec (step =(- ?ks 1))(action DeliveryFood)(param1 ?rfo)(param2 ?cfo)))
+	 ;(not (exec (step =(- ?ks 1))(action DeliveryFood)(param1 ?rfo)(param2 ?cfo)))
 =>
-	 (retract ?f1)
-	 (retract ?f2)
+	 (modify ?f2 (qty (- ?q 1)))
 	 (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
 )
 
 (defrule start-astar-delivery_d
     (declare (salience 5))
     (msg-to-agent (sender ?t))
+    (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
     (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
 
      =>
 	(assert (start-astar (type del_drink) (pos-r ?rfo) (pos-c ?cfo)))
-	(assert (do-deliveryd))
+	(assert (agent-truckload-counter (type deliveryDrink)(qty ?ld)))
 )
 
 (defrule do-DeliveryDrink
     (declare (salience 5))
-   	 (msg-to-agent (step ?s) (sender ?t) (food-order ?fo))
+   	 (msg-to-agent (step ?s) (sender ?t))
    	 (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-   	 ?f1<-(plan-executed)
-   	 ?f2<-(do-deliveryd)
-	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
+   	 ?f2<-(agent-truckload-counter (type deliveryDrink)(qty ?q))
+   	 (test (> ?q 0))
+	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
 	 (test (> ?ld 0))
 	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
 	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
@@ -238,8 +240,7 @@
 	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
 	 )
 =>
-	 (retract ?f1)
-	 (retract ?f2)
+	 (modify ?f2 (qty (- ?q 1)))
 	 (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
 )
 
