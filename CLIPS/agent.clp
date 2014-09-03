@@ -198,8 +198,7 @@
 ;     =>
 ;	(assert (start-astar (type del_food) (pos-r ?rfo) (pos-c ?cfo)))
 ;	(assert (agent-truckload-counter (type deliveryFood)(qty ?lf)))
-
-)
+;)
 
 (defrule do-DeliveryFood
     (declare (salience 5))

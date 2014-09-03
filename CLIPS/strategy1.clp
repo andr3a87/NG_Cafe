@@ -40,8 +40,8 @@
 
 (defrule strategy-found-table-to-serve
 	(status (step ?current))
-	?f<-(strategy-table-to-serve (step ?s) (sen ?sen) (done no))
-	(not (exec (step ?s&:(< ?s ?current))))
+	?f <- (strategy-table-to-serve (step ?s) (sen ?sen) (done no))
+	(not (exec (step ?s2&:(< ?s2 ?current)) (action Inform) (param1 ?sen2) (param2 ?t) (param3 accepted)))
 	=>
 	(modify ?f (done yes))
 )
