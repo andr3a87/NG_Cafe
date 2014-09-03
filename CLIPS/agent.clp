@@ -12,9 +12,9 @@
                      (slot contains (allowed-values Wall Person  Empty Parking Table Seat TB RB DD FD)))
 
 (deftemplate K-agent
-	(slot step)
+  (slot step)
   (slot time)
-	(slot pos-r)
+  (slot pos-r)
 	(slot pos-c)
 	(slot direction)
 	(slot l-drink)
@@ -81,11 +81,13 @@
 )
 
 (defrule ask_act
-         ?f <-   (status (step ?i))
-    =>  (printout t crlf crlf)
-        (printout t "action to be executed at step:" ?i)
-        (printout t crlf crlf)
-        (modify ?f (result no)))
+  ?f <-   (status (step ?i))
+  =>
+  (printout t crlf crlf)
+  (printout t "action to be executed at step:" ?i)
+  (printout t crlf crlf)
+  (modify ?f (result no))
+)
 
 (defrule exec_act
     (declare (salience 100))

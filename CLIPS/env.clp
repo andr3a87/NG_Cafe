@@ -11,54 +11,54 @@
                                                       RecyclableBasket DrinkDispenser FoodDispenser)))
 
 (deftemplate agentstatus
-	(slot step)
-        (slot time)
-	(slot pos-r)
-	(slot pos-c)
-	(slot direction)
-	(slot l-drink)
-        (slot l-food)
-        (slot l_d_waste)
-        (slot l_f_waste)
+  (slot step)
+  (slot time)
+  (slot pos-r)
+  (slot pos-c)
+  (slot direction)
+  (slot l-drink)
+  (slot l-food)
+  (slot l_d_waste)
+  (slot l_f_waste)
 )
 
 
 (deftemplate tablestatus
-	(slot step)
-    (slot time)
-	(slot table-id)
-	(slot clean (allowed-values yes no))
-	(slot l-drink)
-    (slot l-food)
+  (slot step)
+  (slot time)
+  (slot table-id)
+  (slot clean (allowed-values yes no))
+  (slot l-drink)
+  (slot l-food)
 )
 
 (deftemplate orderstatus	;// tiente traccia delle ordinazioni
-	(slot step)
-        (slot time)		;// tempo corrente
-	(slot arrivaltime)	;// momento in cui � arrivata l'ordinazione
-	(slot requested-by)	;// tavolo richiedente
-	(slot drink-order)
-        (slot food-order)
-        (slot drink-deliv)
-        (slot food-deliv)
-        (slot answer (allowed-values pending accepted delayed rejected))
+  (slot step)
+  (slot time)		;// tempo corrente
+  (slot arrivaltime)	;// momento in cui � arrivata l'ordinazione
+  (slot requested-by)	;// tavolo richiedente
+  (slot drink-order)
+  (slot food-order)
+  (slot drink-deliv)
+  (slot food-deliv)
+  (slot answer (allowed-values pending accepted delayed rejected))
 )
 
 (deftemplate cleanstatus
 	(slot step)
-        (slot time)
+  (slot time)
 	(slot arrivaltime)
 	(slot requested-by)	;// tavolo richiedente
 )
 
 (deftemplate personstatus 	;// informazioni sulla posizione delle persone
 	(slot step)
-        (slot time)
+  (slot time)
 	(slot ident)
 	(slot pos-r)
 	(slot pos-c)
 	(slot activity)   ;// activity seated se cliente seduto, stand se in piedi, oppure path
-        (slot move)
+  (slot move)
 )
 
 (deftemplate personmove	;// modella i movimenti delle persone. l'environment deve tenere conto dell'interazione di tanti agenti. Il mondo cambia sia per le azioni del robot, si per le azioni degli operatori. Il modulo environment deve gestire le interazioni.
@@ -68,11 +68,11 @@
 )
 
 (deftemplate event   	;// gli eventi sono le richieste dei tavoli: ordini e finish
-	(slot step)
-	(slot type (allowed-values request finish))
-	(slot source)
-	(slot food)
-        (slot drink)
+  (slot step)
+  (slot type (allowed-values request finish))
+  (slot source)
+  (slot food)
+  (slot drink)
 )
 
 
@@ -90,66 +90,66 @@
 
 
 (defrule creation2
-	(declare (salience 24))
-?f1<-	(create-history)
+  (declare (salience 24))
+  ?f1<-	(create-history)
 =>
-   	(load-facts "history.txt")
-        (retract ?f1)
+  (load-facts "history.txt")
+  (retract ?f1)
 )
 
 (defrule creation3
-         (declare (salience 23))
-         (create-initial-setting)
-         (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
+  (declare (salience 23))
+  (create-initial-setting)
+  (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
 =>
-         (assert (tablestatus (step 0) (time 0) (table-id ?tb) (clean yes) (l-drink 0) (l-food 0)))
+  (assert (tablestatus (step 0) (time 0) (table-id ?tb) (clean yes) (l-drink 0) (l-food 0)))
 )
 
 
 (defrule creation411
-         (declare (salience 22))
-         (create-initial-setting)
-         (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
-         (cell (pos-r ?rr&:(= ?rr (- ?r 1))) (pos-c ?c) (contains Empty))
+  (declare (salience 22))
+  (create-initial-setting)
+  (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
+  (cell (pos-r ?rr&:(= ?rr (- ?r 1))) (pos-c ?c) (contains Empty))
 =>
-         (assert (serviceTable ?tb (- ?r 1) ?c))
+  (assert (serviceTable ?tb (- ?r 1) ?c))
 )
 
 (defrule creation412
-         (declare (salience 22))
-         (create-initial-setting)
-         (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
-         (cell (pos-r ?rr&:(= ?rr (+ ?r 1))) (pos-c ?c) (contains Empty))
+  (declare (salience 22))
+  (create-initial-setting)
+  (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
+  (cell (pos-r ?rr&:(= ?rr (+ ?r 1))) (pos-c ?c) (contains Empty))
 =>
-         (assert (serviceTable ?tb (+ ?r 1) ?c))
+  (assert (serviceTable ?tb (+ ?r 1) ?c))
 )
 
 (defrule creation413
-         (declare (salience 22))
-         (create-initial-setting)
-         (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
-         (cell (pos-c ?cc&:(= ?cc (- ?c 1))) (pos-r ?r) (contains Empty))
+  (declare (salience 22))
+  (create-initial-setting)
+  (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
+  (cell (pos-c ?cc&:(= ?cc (- ?c 1))) (pos-r ?r) (contains Empty))
 =>
-         (assert (serviceTable ?tb ?r (- ?c 1)))
+  (assert (serviceTable ?tb ?r (- ?c 1)))
 )
 
 (defrule creation414
-         (declare (salience 22))
-         (create-initial-setting)
-         (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
-         (cell (pos-c ?cc&:(= ?cc (+ ?c 1))) (pos-r ?r) (contains Empty))
+  (declare (salience 22))
+  (create-initial-setting)
+  (Table (table-id ?tb) (pos-r ?r) (pos-c ?c))
+  (cell (pos-c ?cc&:(= ?cc (+ ?c 1))) (pos-r ?r) (contains Empty))
 =>
-         (assert (serviceTable ?tb ?r (+ ?c 1)))
+  (assert (serviceTable ?tb ?r (+ ?c 1)))
 )
 
 
 (defrule creation421
-         (declare (salience 22))
-         (create-initial-setting)
-         (TrashBasket (TB-id ?tb) (pos-r ?r) (pos-c ?c))
-         (cell (pos-r ?rr&:(= ?rr (- ?r 1))) (pos-c ?c) (contains Empty|Parking))
+  (declare (salience 22))
+  (create-initial-setting)
+  (TrashBasket (TB-id ?tb) (pos-r ?r) (pos-c ?c))
+  (cell (pos-r ?rr&:(= ?rr (- ?r 1))) (pos-c ?c) (contains Empty|Parking))
 =>
-         (assert (serviceTB ?tb (- ?r 1) ?c))
+  (assert (serviceTB ?tb (- ?r 1) ?c))
 )
 
 (defrule creation422

@@ -75,12 +75,12 @@
 )
 
 (deftemplate perc-bump  	;// percezione di urto contro persone o ostacoli
-	(slot step)
-    (slot time)
-	(slot pos-r)	;// la posizione in cui si trova (la stessa in cui era prima dell'urto)
-	(slot pos-c)
-	(slot direction)
-	(slot bump (allowed-values no yes)) ;//restituisce yes se sbatte
+  (slot step)
+  (slot time)
+  (slot pos-r)	;// la posizione in cui si trova (la stessa in cui era prima dell'urto)
+  (slot pos-c)
+  (slot direction)
+  (slot bump (allowed-values no yes)) ;//restituisce yes se sbatte
 )
 
 (deftemplate perc-load
