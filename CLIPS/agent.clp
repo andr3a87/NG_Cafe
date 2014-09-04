@@ -45,11 +45,12 @@
 ; memorizza la quantità di roba che l'agente deve caricare o scaricare
 (deftemplate agent-truckload-counter (slot type)(slot qty))
 
-(deftemplate distance-fd (multislot pos-start) (multislot pos-end) (slot distance))
-(deftemplate distance-dd (multislot pos-start) (multislot pos-end) (slot distance))
-
-(deftemplate strategy-service-table (slot step) (slot table-id) (slot phase))
+(deftemplate strategy-service-table (slot step) (slot table-id) (slot phase) (multislot pos-best-dispancer))
 (deftemplate last-intention (slot step))
+
+(deftemplate strategy-distance-dispancer (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink)))
+(deftemplate strategy-best-dispancer (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink)))
+(deftemplate best-dispancer (slot distance) (multislot pos-best-dispancer))
 
 ; copia le prior cell sulla struttura K-cell
 (defrule  beginagent1
@@ -73,6 +74,7 @@
     (assert (last-perc (step -1) (type movement)))
     (assert (last-perc (step -1) (type load)))
     (assert (last-intention (step -1)))
+    (assert (worst-dispancer 1000))
 )
 
 (defrule  beginagent3
@@ -121,17 +123,7 @@
 	  (assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 )
 
-;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il food dispenser
-;aggiunto il contatore che servirà per eseguire le load fintanto che devo caricare food
-(defrule start-astar-fd
-    (declare (salience 10))
-    ?f1<-(distance-fd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
-    (msg-to-agent (step ?s) (food-order ?fo))
-     =>
-    (retract ?f1)
-		(assert (start-astar (type food) (pos-r ?rfo) (pos-c ?cfo)))
-		(assert (agent-truckload-counter (type loadFood)(qty ?fo)))
-)
+
 
 ;regola per caricare il cibo
 ;dopo che è stata eseguità la modify ritratto il fatto start-astar per non far ri-eseguire la do-Load
@@ -155,17 +147,7 @@
 	 (assert (exec (step ?ks) (action LoadFood) (param1 ?rfo) (param2 ?cfo)))
 )
 
-;regola per eseguire astar dopo che è stato asserito un fatto con distanza man. per il drink dispenser
-;aggiunto il contatore che servirà per eseguire le load fintanto che devo caricare drink
-(defrule start-astar-dd
-    (declare (salience 10))
-    ?f1<-(distance-dd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
-    (msg-to-agent (step ?s) (drink-order ?do))
-     =>
-    (retract ?f1)
-		(assert (start-astar (type drink) (pos-r ?rfo) (pos-c ?cfo)))
-		(assert (agent-truckload-counter (type loadDrink)(qty ?do)))
-)
+
 
 ;come do-loadFood con l'unica differenza che qui carica le bevande
 (defrule do-LoadDrink

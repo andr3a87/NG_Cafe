@@ -2,15 +2,13 @@
 
 (deftemplate node (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
                   (slot pos-c) (slot direction) (slot open))
-(deftemplate newnode
-  (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
-                  (slot pos-c) (slot direction)
+
+(deftemplate newnode  (slot ident) (slot gcost) (slot fcost) (slot father) (slot pos-r)
+                      (slot pos-c) (slot direction)
 )
 
 (defrule S0
-	(K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d)
-    (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?)
-	)
+  (K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
 =>
 	(assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
 	(assert (start ?r ?c))
@@ -22,7 +20,7 @@
 	(assert (numberofnodes 0))
 )
 
-;Definiamo i goal.
+;Definiamo i goal. Sono di due tipi.
 ;Se la cella di destinazione è vuota il goal è rappresentato da (goal-astar ?r ?c)
 ;Se la cella di destianzione è un tavolo,un dispancer o un cestino il goal è rappresentato dalle 4 celle adiacenti al tavolo.
 (defrule S0-goal-table
@@ -43,14 +41,15 @@
 )
 
 (defrule achieved-goal
-(declare (salience 100))
-     (current ?id)
-     (end-astar ?r ?c)
-     (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))
-        => (printout t " Esiste soluzione per goal (" ?r "," ?c ") con costo "  ?g crlf)
-           (assert (stampa ?id))
-           (assert (cost-solution ?g))
-           (focus PRINT)
+  (declare (salience 100))
+  (current ?id)
+  (end-astar ?r ?c)
+  (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))
+=> 
+  (printout t " Esiste soluzione per goal (" ?r "," ?c ") con costo "  ?g crlf)
+  (assert (stampa ?id))
+  (assert (cost-solution ?g))
+  (focus PRINT)
 )
 
 (defrule forward-apply-north
