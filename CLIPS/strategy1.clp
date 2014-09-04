@@ -1,9 +1,6 @@
 ;strategia FIFO un tavolo alla volta
 
-;
-; FASE 1 della Strategia: Ricerca di un tavolo da servire, rispondere alle richieste di ordinazione da parte dei tavoli.
-;
-
+;Regole per rispondere alla richiesta ordini da parte dei tavoli.
 ;Attiva quando ricevo un ordine da un tavolo Inform con accepted
 (defrule answer-msg-order1
 	(declare (salience 70))
@@ -21,6 +18,10 @@
 =>
   (assert (exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
 )
+
+;
+; FASE 1 della Strategia: Ricerca di un tavolo da servire.
+;
 
 ;Se ho inviato delle Inform con accepted, e non sto servendo nessun tavolo, allora devo prendermi l'impegno di servire un tavolo. Quale? Strategia FIFO
 (defrule strategy-start-search-service-table
