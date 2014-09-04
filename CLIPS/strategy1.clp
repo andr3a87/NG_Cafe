@@ -111,37 +111,45 @@
 	?f1<-(best-dispancer (distance ?wd) (pos-best-dispancer ?rd ?cd))
 	(not(strategy-distance-dispancer  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
 	?f2<-(strategy-service-table (table-id ?id) (phase 2))
+	(K-cell (pos-r ?rd) (pos-c ?cd) (contains ?c))
 =>
-	(modify ?f2 (phase 3) (pos-best-dispancer ?rd ?cd))
+	(modify ?f2 (phase 3))
+	(assert (strategy-best-dispancer (pos-dispancer ?rd ?cd) (type ?c)))
 	(retract ?f1)
 )
 
 ;
-; FASE 3 della Strategia: Pianificare con astar un piano per raggiungere il dispancer più vicino. Eseguire il piano
+; FASE 3 della Strategia: Pianificare con astar un piano per raggiungere il dispancer più vicino. Eseguire il piano.
 ;
 
-;regola per avviare astar
-;aggiunto il contatore che servirà per eseguire le load fintanto che devo caricare food
+(defrule initializa-phase3
+	(declare (salience 75))
+	(strategy-service-table (table-id ?id) (phase 3))
+	(msg-to-agent (step ?s) (sender ?id) (food-order ?fo) (drink-order ?do))
+=>
+	(assert (agent-truckload-counter (type loadFood) (qty ?fo)))
+	(assert (agent-truckload-counter (type loadDrink) (qty ?do)))
+)
 
-;(defrule start-astar-fd
-;    (declare (salience 10))
-;    (strategy-service-table (table-id ?id) (phase 3) (pos-best-dispancer ?rdo ?cdo) )
-;    (msg-to-agent (step ?s) (food-order ?fo))
-;     =>
-;    ;(retract ?f1)
-;		(assert (start-astar (type food) (pos-r ?rfo) (pos-c ?cfo)))
-;		(assert (agent-truckload-counter (type loadFood) (qty ?fo)))
-;)
+;regole per avviare astar
+(defrule start-astar-to-dispancer
+    (declare (salience 70))
+    (strategy-service-table (table-id ?id) (phase 3) )
+    (strategy-best-dispancer (pos-dispancer ?rd ?cd) (type ?c))
+    (msg-to-agent (step ?s) (sender ?id) (food-order ?fo))
+=>
+	(assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+)
 
-;regola per eseguire astar
-;aggiunto il contatore che servirà per eseguire le load fintanto che devo caricare drink
-
-;(defrule start-astar-dd
-;    (declare (salience 10))
-;    ?f1<-(distance-dd (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance ?))
-;    (msg-to-agent (step ?s) (drink-order ?do))
-;     =>
-;    (retract ?f1)
-;		(assert (start-astar (type drink) (pos-r ?rfo) (pos-c ?cfo)))
-;		(assert (agent-truckload-counter (type loadDrink)(qty ?do)))
-;)
+;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
+(defrule clean-start-astar
+    (declare (salience 15))
+    (strategy-service-table (table-id ?id) (phase 3))
+    (strategy-best-dispancer (pos-dispancer ?rd ?cd) (type ?c))
+    ?f1<-(start-astar (pos-r ?rd) (pos-c ?cd))
+	(plane (pos-start ?r1 ?c1) (pos-end ?rd ?cd))
+=>
+    (retract ?f1)
+	(assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?rd ?cd)))
+	(focus EXEC-PLANE-ASTAR)
+)
