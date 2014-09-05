@@ -472,3 +472,16 @@
   (retract ?fg)
   (retract ?fs)
 )
+; da rimuovere quando in clips risolvono bug
+(defrule clean-init 
+(declare(salience 1))
+  ?f1<-(current ?)
+  ?f2<-(lastnode ?)
+  ?f3<-(open-worse ?)
+  ?f4<-(open-better ?)
+  ?f5<-(alreadyclosed ?)
+  ?f6<-(numberofnodes ?)
+  ?f7<-(cost-solution ?)
+=>
+  (retract ?f1 ?f2 ?f3 ?f4 ?f5 ?f6 ?f7)
+)
