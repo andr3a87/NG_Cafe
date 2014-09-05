@@ -76,9 +76,8 @@
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispenser
 (defrule distance-manhattan-fo
 	(declare (salience 70))
-	(strategy-service-table (table-id ?id) (phase 2))
-	(msg-to-agent (step ?s) (sender ?id) (food-order ?fo))
-	(test (> ?fo 0))
+	(strategy-service-table (table-id ?id) (phase 2) (fl ?fl))
+	(test (> ?fl 0))
 	(K-agent (pos-r ?ra) (pos-c ?ca))
 	(K-cell (pos-r ?rfo) (pos-c ?cfo) (contains FD))
 	=>
@@ -88,9 +87,8 @@
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser
 (defrule distance-manhattan-do
 	(declare (salience 70))
-	(strategy-service-table (table-id ?id) (phase 2))
-	(msg-to-agent (step ?s) (sender ?id) (drink-order ?do))
-	(test (> ?do 0))
+	(strategy-service-table (table-id ?id) (phase 2) (dl ?dl))
+	(test (> ?dl 0))
 	(K-agent (pos-r ?ra)(pos-c ?ca))
 	(K-cell (pos-r ?rdo) (pos-c ?cdo) (contains DD))
 	=>
@@ -221,7 +219,7 @@
 ;
 
 (defrule strategy-return-phase2
-	?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl)) 
+	?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl))
 	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
 	(test (< (+ ?lf ?ld) 4))
 	(test (or (> ?dl 0) (> ?fl 0)))
@@ -230,7 +228,7 @@
 )
 
 ;(defrule strategy-go-phase5
-;	?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl)) 
+;	?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl))
 ;	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
 ;	(test (< (+ ?lf ?ld) 4))
 ;	(test (or (> ?dl 0) (> ?fl 0)))
