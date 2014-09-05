@@ -145,7 +145,7 @@
 ;regole per avviare astar
 (defrule start-astar-to-dispenser
     (declare (salience 70))
-    (strategy-service-table (table-id ?id) (phase 3) )
+    (strategy-service-table (table-id ?id) (phase 3) (step ?s) )
     (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
     (msg-to-agent (step ?s) (sender ?id) (food-order ?fo))
 =>

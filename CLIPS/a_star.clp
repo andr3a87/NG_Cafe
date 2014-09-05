@@ -43,10 +43,11 @@
 (defrule achieved-goal
   (declare (salience 100))
   (current ?id)
+  (goal-astar ?gr ?gc)
   (end-astar ?r ?c)
   (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))
 =>
-  (printout t " Esiste soluzione per goal (" ?r "," ?c ") con costo "  ?g crlf)
+  (printout t " Esiste soluzione per goal (" ?gr "," ?gc ") in (" ?r "," ?c ")  con costo "  ?g crlf)
   (assert (stampa ?id))
   (assert (cost-solution ?g))
   (focus PRINT)
