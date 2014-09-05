@@ -154,7 +154,6 @@
 
 ;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
 (defrule clean-start-astar
-    (declare (salience 15))
     (strategy-service-table (table-id ?id) (phase 3))
     (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
     ?f1<-(start-astar (pos-r ?rd) (pos-c ?cd))
@@ -215,7 +214,7 @@
 )
 
 ;
-; FASE 4.5 della Strategia: Controllo se ritornare alla fase 2 per caricare altra roba o consegnare al tavolo
+; FASE 4.5 della Strategia: Controllo se ritornare alla fase 2 per caricare altra roba o andarea alla fase 5.
 ;
 
 (defrule strategy-return-phase2
@@ -227,11 +226,46 @@
 	(modify ?f1 (phase 2))
 )
 
-;(defrule strategy-go-phase5
-;	?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl))
-;	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-;	(test (< (+ ?lf ?ld) 4))
-;	(test (or (> ?dl 0) (> ?fl 0)))
-;=>
-;	(modify ?f1 (phase 2))
-;)
+(defrule strategy-go-phase5
+	?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl))
+	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+	(or (test (= (+ ?lf ?ld) 4))
+		(test (and (= ?dl 0) (= ?fl 0)))
+	)
+=>
+	(modify ?f1 (phase 5))
+)
+
+;
+; FASE 5 della Strategia: Esecuzione di astar per determinare il piano per arrivare al tavolo ed esecuzione del piano.
+;
+
+(defrule strategy-start-astar-to-table
+	(strategy-service-table (table-id ?id) (phase 5) (step ?s) )
+	(K-table (pos-r ?r) (pos-c ?c) (table-id ?id))
+=>
+	(assert (start-astar (pos-r ?r) (pos-c ?c)))
+)
+
+;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
+(defrule clean-start-astar-to-table
+    (strategy-service-table (table-id ?id) (phase 5))
+    ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
+	(plane (pos-start ?r1 ?c1) (pos-end ?r ?c))
+=>
+    (retract ?f1)
+	(assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?r ?c)))
+)
+
+;Eseguito il piano, il robot si trova vicino al tavolo.
+(defrule go-phase6
+	?f1<-(plan-executed)
+	?f2<-(strategy-service-table (table-id ?id) (phase 5))
+=>
+	(retract ?f1)
+	(modify ?f2 (phase 6))
+)
+
+;
+; FASE 6 della Strategia: il robot arrivato al tavolo da scaricare.
+; 
