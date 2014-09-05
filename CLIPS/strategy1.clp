@@ -266,5 +266,23 @@
 )
 
 ;
-; FASE 6 della Strategia: il robot arrivato al tavolo da scaricare.
-; 
+; FASE 6 della Strategia: il robot è arrivato al tavolo e deve scaricare.
+;
+
+(defrule do-DeliveryFood
+  (strategy-service-table (table-id ?id) (phase 6))
+  (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
+  (Table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo))
+  (test (> ?lf 0))
+=>
+  (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
+)
+
+(defrule do-DeliveryDrink
+  (strategy-service-table (table-id ?id) (phase 6))
+  (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
+  (Table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo))
+  (test (> ?ld 0))
+=>
+  (assert (exec (step ?ks) (action DeliveryDrink) (param1 ?rfo) (param2 ?cfo)))
+)

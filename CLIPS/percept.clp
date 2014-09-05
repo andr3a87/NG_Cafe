@@ -155,27 +155,49 @@
 )
 
 (defrule k-percept-load-food
-	(declare(salience 100))
-	(perc-load (time ?t) (step ?s) (load yes))
-	?fs <- (last-perc (step ?old-s) (type load))
-	(test (> ?s ?old-s) )
-	?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-	(exec (step =(- ?s 1))(action LoadFood))
-	=>
-	(modify ?f1(l-food(+ ?lf 1)))
-	(modify ?fs (step ?s))
-
+  (declare(salience 100))
+  (perc-load (time ?t) (step ?s) (load yes))
+  ?fs <- (last-perc (step ?old-s) (type load))
+  (test (> ?s ?old-s) )
+  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  (exec (step =(- ?s 1))(action LoadFood))
+=>
+  (modify ?f1(l-food(+ ?lf 1)))
+  (modify ?fs (step ?s))
 )
 
 (defrule k-percept-load-drink
-	(declare(salience 100))
-	(perc-load (time ?t) (step ?s) (load yes))
-	?fs <- (last-perc (step ?old-s) (type load))
-	(test (> ?s ?old-s))
-	?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-	(exec (step =(- ?s 1))(action LoadDrink))
-	=>
-	(modify ?f1(l-drink(+ ?ld 1)))
-	(modify ?fs (step ?s))
+  (declare(salience 100))
+  (perc-load (time ?t) (step ?s) (load yes))
+  ?fs <- (last-perc (step ?old-s) (type load))
+  (test (> ?s ?old-s))
+  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  (exec (step =(- ?s 1))(action LoadDrink))
+=>
+  (modify ?f1(l-drink(+ ?ld 1)))
+  (modify ?fs (step ?s))
+)
 
+(defrule k-percept-delivery-food
+  (declare(salience 100))
+  (perc-load (time ?t) (step ?s) (load no))
+  ?fs <- (last-perc (step ?old-s) (type load))
+  (test (> ?s ?old-s) )
+  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  (exec (step =(- ?s 1))(action LoadFood))
+=>
+  (modify ?f1(l-food(- ?lf 1)))
+  (modify ?fs (step ?s))
+)
+
+(defrule k-percept-delivery-drink
+  (declare(salience 100))
+  (perc-load (time ?t) (step ?s) (load no))
+  ?fs <- (last-perc (step ?old-s) (type load))
+  (test (> ?s ?old-s))
+  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  (exec (step =(- ?s 1))(action LoadDrink))
+=>
+  (modify ?f1(l-drink(- ?ld 1)))
+  (modify ?fs (step ?s))
 )
