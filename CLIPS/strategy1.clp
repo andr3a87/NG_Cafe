@@ -62,17 +62,17 @@
 )
 
 ;
-; FASE 2 della Strategia: Individuare il dispancer più vicino
+; FASE 2 della Strategia: Individuare il dispenser più vicino
 ;
 
-(defrule initializa-phase2
+(defrule initialize-phase2
 	(declare (salience 75))
 	(strategy-service-table (table-id ?id) (phase 2))
 =>
-	(assert (best-dispancer (distance 100000) (pos-best-dispancer null null)))
+	(assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
 )
 
-;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispancer
+;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispenser
 (defrule distance-manhattan-fo
 	(declare (salience 70))
 	(strategy-service-table (table-id ?id) (phase 2))
@@ -81,10 +81,10 @@
 	(K-agent (pos-r ?ra) (pos-c ?ca))
 	(K-cell (pos-r ?rfo) (pos-c ?cfo) (contains FD))
 	=>
-	(assert (strategy-distance-dispancer (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
+	(assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
 )
 
-;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispancer
+;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser
 (defrule distance-manhattan-do
 	(declare (salience 70))
 	(strategy-service-table (table-id ?id) (phase 2))
@@ -93,50 +93,60 @@
 	(K-agent (pos-r ?ra)(pos-c ?ca))
 	(K-cell (pos-r ?rdo) (pos-c ?cdo) (contains DD))
 	=>
-	(assert (strategy-distance-dispancer (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance (+ (abs(- ?ra ?rdo)) (abs(- ?ca ?cdo)))) (type drink)))
+	(assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance (+ (abs(- ?ra ?rdo)) (abs(- ?ca ?cdo)))) (type drink)))
 )
 
-;Regola che cerca il dispancer più vicino
-(defrule search-best-dispancer
+;Regola che cerca il dispenser più vicino
+(defrule search-best-dispenser
 	(declare (salience 60))
-	?f1<-(best-dispancer (distance ?wd))
-	(strategy-distance-dispancer  (pos-start ?ra ?ca) (pos-end ?rd ?cd) (distance ?d&:(< ?d ?wd)))
+	?f1<-(best-dispenser (distance ?wd))
+	(strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd ?cd) (distance ?d&:(< ?d ?wd)))
 =>
-	(modify ?f1 (distance ?d) (pos-best-dispancer ?rd ?cd))
+	(modify ?f1 (distance ?d) (pos-best-dispenser ?rd ?cd))
 )
 
-;Trovato il dispancer più vicino passo alla fase 3
-;Questa regola mi serve per indicare il fatto che non vi sono dispancer più vicini di quello trovato. Blocca la ricerca.
-(defrule found-best-dispancer
+;Trovato il dispenser più vicino passo alla fase 3
+;Questa regola mi serve per indicare il fatto che non vi sono dispenser più vicini di quello trovato. Blocca la ricerca.
+; @TODO ricordarsi di pulire (strategy-best-dispenser) alla fase 4
+(defrule found-best-dispenser
 	(declare (salience 60))
-	?f1<-(best-dispancer (distance ?wd) (pos-best-dispancer ?rd ?cd))
-	(not(strategy-distance-dispancer  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
+	?f1<-(best-dispenser (distance ?wd) (pos-best-dispenser ?rd ?cd))
+	(not(strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
 	?f2<-(strategy-service-table (table-id ?id) (phase 2))
 	(K-cell (pos-r ?rd) (pos-c ?cd) (contains ?c))
 =>
 	(modify ?f2 (phase 3))
-	(assert (strategy-best-dispancer (pos-dispancer ?rd ?cd) (type ?c)))
+	(assert (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c)))
 	(retract ?f1)
 )
 
+; pulisce le distanze ai dispensers
+(defrule clean-strategy-distance-dispenser
+  (strategy-service-table (table-id ?id) (phase 3))
+  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c)))
+  ?f1 <- (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd)))
+=>
+  (retract ?f1)
+)
+
 ;
-; FASE 3 della Strategia: Pianificare con astar un piano per raggiungere il dispancer più vicino. Eseguire il piano.
+; FASE 3 della Strategia: Pianificare con astar un piano per raggiungere il dispenser più vicino. Eseguire il piano.
 ;
 
-(defrule initializa-phase3
+(defrule initialize-phase3
 	(declare (salience 75))
 	(strategy-service-table (table-id ?id) (phase 3))
 	(msg-to-agent (step ?s) (sender ?id) (food-order ?fo) (drink-order ?do))
 =>
-	(assert (agent-truckload-counter (type loadFood) (qty ?fo)))
-	(assert (agent-truckload-counter (type loadDrink) (qty ?do)))
+	(assert (agent-truckload-counter (slot ?id) (type loadFood) (qty ?fo)))
+	(assert (agent-truckload-counter (slot ?id) (type loadDrink) (qty ?do)))
 )
 
 ;regole per avviare astar
-(defrule start-astar-to-dispancer
+(defrule start-astar-to-dispenser
     (declare (salience 70))
     (strategy-service-table (table-id ?id) (phase 3) )
-    (strategy-best-dispancer (pos-dispancer ?rd ?cd) (type ?c))
+    (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
     (msg-to-agent (step ?s) (sender ?id) (food-order ?fo))
 =>
 	(assert (start-astar (pos-r ?rd) (pos-c ?cd)))
@@ -146,7 +156,7 @@
 (defrule clean-start-astar
     (declare (salience 15))
     (strategy-service-table (table-id ?id) (phase 3))
-    (strategy-best-dispancer (pos-dispancer ?rd ?cd) (type ?c))
+    (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
     ?f1<-(start-astar (pos-r ?rd) (pos-c ?cd))
 	(plane (pos-start ?r1 ?c1) (pos-end ?rd ?cd))
 =>

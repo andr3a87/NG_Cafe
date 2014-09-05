@@ -24,7 +24,7 @@ Le regole per ripondere a un messaggio di ordinazione o rimozione cibo hanno pri
 * Appena vengono consegnati cibi e/o bevande il tavolo diventa sporco?
 * Come funzion la checkFinish, se un tavolo viene marcato sporco non appena consegno il cibo? Se deve intercorrere un tempo constante dal momento in cui avviene la consegna per terminare la consumazione non posso calcolarmelo a priori senza fare la checkFinish?
 * Devo rispondere a delle richieste di tipo Finish?
-* Ci sono più dispancer e/o cestini? **Si ci sono!**
+* Ci sono più dispenser e/o cestini? **Si ci sono!**
 * Cosa serve result nella struttura status
 * Quando rispondo a un tavolo delayed?	
 
@@ -35,10 +35,10 @@ Le regole per ripondere a un messaggio di ordinazione o rimozione cibo hanno pri
 
 
 #Cosa significa completare un ordine di prenotazione 
-* Calcolo distanza di manhattan per capire in quale dispancer andare.
+* Calcolo distanza di manhattan per capire in quale dispenser andare.
 * Calcolo Astar
 * Eseguo Astar
-* Se ho ancora spazio e ordini sull'altro dispancer calcolo Astar sull'altro dispancer.
+* Se ho ancora spazio e ordini sull'altro dispenser calcolo Astar sull'altro dispenser.
 * Eseguo Astar
 * Calcolo Astar per raggiungere il tavolo
 * Eseguo Astar

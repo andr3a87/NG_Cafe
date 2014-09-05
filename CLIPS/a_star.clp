@@ -22,7 +22,7 @@
 
 ;Definiamo i goal. Sono di due tipi.
 ;Se la cella di destinazione è vuota il goal è rappresentato da (goal-astar ?r ?c)
-;Se la cella di destianzione è un tavolo,un dispancer o un cestino il goal è rappresentato dalle 4 celle adiacenti al tavolo.
+;Se la cella di destianzione è un tavolo,un dispenser o un cestino il goal è rappresentato dalle 4 celle adiacenti al tavolo.
 (defrule S0-goal-table
 	(goal-astar ?r ?c)
 	(K-cell (pos-r ?r) (pos-c ?c) (contains Table|DD|FD|TB|RB))
@@ -45,7 +45,7 @@
   (current ?id)
   (end-astar ?r ?c)
   (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))
-=> 
+=>
   (printout t " Esiste soluzione per goal (" ?r "," ?c ") con costo "  ?g crlf)
   (assert (stampa ?id))
   (assert (cost-solution ?g))

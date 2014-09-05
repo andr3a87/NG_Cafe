@@ -43,14 +43,14 @@
 (deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
 
 ; memorizza la quantità di roba che l'agente deve caricare o scaricare
-(deftemplate agent-truckload-counter (slot type)(slot qty))
+(deftemplate agent-truckload-counter (slot table)(slot type)(slot qty))
 
-(deftemplate strategy-service-table (slot step) (slot table-id) (slot phase) (multislot pos-best-dispancer))
+(deftemplate strategy-service-table (slot step) (slot table-id) (slot phase) (multislot pos-best-dispenser))
 (deftemplate last-intention (slot step))
 
-(deftemplate strategy-distance-dispancer (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink)))
-(deftemplate strategy-best-dispancer (multislot pos-dispancer) (slot type (allowed-values DD FD)))
-(deftemplate best-dispancer (slot distance) (multislot pos-best-dispancer))
+(deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink)))
+(deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD)))
+(deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
 
 ; copia le prior cell sulla struttura K-cell
 (defrule  beginagent1
@@ -74,7 +74,7 @@
     (assert (last-perc (step -1) (type movement)))
     (assert (last-perc (step -1) (type load)))
     (assert (last-intention (step -1)))
-    (assert (worst-dispancer 1000))
+    (assert (worst-dispenser 1000))
 )
 
 (defrule  beginagent3

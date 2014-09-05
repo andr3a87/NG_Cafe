@@ -25,11 +25,11 @@ Il modulo agent per semplicità di sviluppo è suddiviso in vari file:
 
 	**FASE 1**: Ricerca e individuazione del tavolo da servire. Viene servito un tavolo alla volta in ordine di richiesta più vecchia (FIFO)
 	
-	**FASE 2**: Individuata la richiesta del tavolo da servire, si procede con l'individuare il dispancer più vicino.
+	**FASE 2**: Individuata la richiesta del tavolo da servire, si procede con l'individuare il dispenser più vicino.
 
-	**FASE 3**: Esecuzione di astar per determinare il piano per arrivare al dispancer ed esecuzione del piano.
+	**FASE 3**: Esecuzione di astar per determinare il piano per arrivare al dispenser ed esecuzione del piano.
 
-	**FASE 4**: Il robot arrivato al dispancer carica.
+	**FASE 4**: Il robot arrivato al dispenser carica.
 	**FASE 5**: Esecuzione di astar per determinare il piano per arrivare al tavolo ed esecuzione del piano.
     **FASE 6**: Il robot arrivato al tavolo scarica.
 
