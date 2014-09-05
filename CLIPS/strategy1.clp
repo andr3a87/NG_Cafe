@@ -123,8 +123,8 @@
 ; pulisce le distanze ai dispensers
 (defrule clean-strategy-distance-dispenser
   (strategy-service-table (table-id ?id) (phase 3))
-  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c)))
-  ?f1 <- (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd)))
+  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+  ?f1 <- (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d))
 =>
   (retract ?f1)
 )
@@ -138,8 +138,8 @@
 	(strategy-service-table (table-id ?id) (phase 3))
 	(msg-to-agent (step ?s) (sender ?id) (food-order ?fo) (drink-order ?do))
 =>
-	(assert (agent-truckload-counter (slot ?id) (type loadFood) (qty ?fo)))
-	(assert (agent-truckload-counter (slot ?id) (type loadDrink) (qty ?do)))
+	(assert (agent-truckload-counter (table ?id) (type loadFood) (qty ?fo)))
+	(assert (agent-truckload-counter (table ?id) (type loadDrink) (qty ?do)))
 )
 
 ;regole per avviare astar
