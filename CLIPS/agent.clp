@@ -45,7 +45,8 @@
 ; memorizza la quantità di roba che l'agente deve caricare o scaricare
 (deftemplate agent-truckload-counter (slot table)(slot type)(slot qty))
 
-(deftemplate strategy-service-table (slot step) (slot table-id) (slot phase) (multislot pos-best-dispenser))
+; fl = food to load, dl = drink to load
+(deftemplate strategy-service-table (slot step) (slot table-id) (slot phase) (multislot pos-best-dispenser) (slot fl) (slot dl))
 (deftemplate last-intention (slot step))
 
 (deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink)))
@@ -112,55 +113,6 @@
     (focus ASTAR)
 )
 
-
-
-
-
-
-;regola per caricare il cibo
-;dopo che è stata eseguità la modify ritratto il fatto start-astar per non far ri-eseguire la do-Load
-;(defrule do-LoadFood
-;    (declare (salience 10))
-;   ;(distance-fd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
-;   	(msg-to-agent (step ?s) (food-order ?fo))
-;	?f2<-(agent-truckload-counter (type loadFood)(qty ?q))
-;	(test (> ?q 0))
-;	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-;	(test (< (+ ?lf ?ld) 4))
-;   	 (FoodDispenser (FD-id FD1) (pos-r ?rfo) (pos-c ?cfo))
-;	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
-;	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
-;	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
-;	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
-;	 )
-;	 ;(not (exec (step =(- ?ks 1))(action LoadFood)(param1 ?rfo)(param2 ?cfo)))
-;=>
-;	 (modify ?f2 (qty (- ?q 1)))
-;	 (assert (exec (step ?ks) (action LoadFood) (param1 ?rfo) (param2 ?cfo)))
-;)
-
-
-
-;;come do-loadFood con l'unica differenza che qui carica le bevande
-;(defrule do-LoadDrink
-;    (declare (salience 10))
-;   ;(distance-dd (pos-start ? ?) (pos-end ?rfo ?cfo) (distance ?))
-;   	 (msg-to-agent (step ?s) (drink-order ?do))
-;   	 ?f2<-(agent-truckload-counter (type loadDrink)(qty ?q))
-;   	 (test (> ?q 0))
-;	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-;	 (test (< (+ ?lf ?ld) 4))
-;   	 (DrinkDispenser (DD-id DD1) (pos-r ?rfo) (pos-c ?cfo))
-;	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
-;	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
-;	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
-;	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
-;	 )
-;	 ;(not (exec (step =(- ?ks 1))(action LoadFood)(param1 ?rfo)(param2 ?cfo)))
-;=>
-;	 (modify ?f2 (qty (- ?q 1)))
-;	 (assert (exec (step ?ks) (action LoadDrink) (param1 ?rfo) (param2 ?cfo)))
-;)
 
 ;(defrule start-astar-delivery_f
 ;    (declare (salience 5))

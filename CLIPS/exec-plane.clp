@@ -1,3 +1,5 @@
+;@TODO gestire fallimento piano
+
 (deffacts initial-fact
   (start 0)
 )
