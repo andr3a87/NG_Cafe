@@ -27,10 +27,8 @@
 (defrule strategy-start-search-service-table
 	(declare (salience 70))
 	(exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
-	;
-	; da controllare, controlla che non ci siano altre strategie per altri tavoli attive
-	; ATTENZIONE!
-	;
+
+  ; @TODO cambiare per gestire più tavoli
 	(not (strategy-service-table (table-id ?id) (phase ?ph)))
 	(last-intention (step ?s1))
 	(test (> ?s ?s1))
@@ -66,7 +64,8 @@
 ; FASE 2 della Strategia: Individuare il dispenser più vicino
 ;
 
-(defrule initialize-phase2
+;
+(defrule strategy-initialize-phase2
 	(declare (salience 75))
 	(strategy-service-table (table-id ?id) (phase 2))
 =>

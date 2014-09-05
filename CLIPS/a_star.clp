@@ -444,28 +444,31 @@
 (defmodule CLEAN (import ASTAR ?ALL) (export ?ALL))
 
 (defrule clean-node
-    (declare (salience 1))
-    ?fn <- (node)
+  (declare (salience 1))
+  ?fn <- (node)
 =>
-    (retract ?fn)
+  (retract ?fn)
 )
+
 (defrule clean-exec
-    (declare (salience 1))
-    ?fe <- (exec-astar $?)
+  (declare (salience 1))
+  ?fe <- (exec-astar $?)
 =>
-    (retract ?fe)
+  (retract ?fe)
 )
+
 (defrule clean-goal
-    (declare (salience 1))
-    ?fe <- (end-astar $?)
+  (declare (salience 1))
+  ?fe <- (end-astar $?)
 =>
-    (retract ?fe)
+  (retract ?fe)
 )
+
 (defrule clean
-(declare(salience 1))
-	  ?fg <- (goal-astar $?)
-		?fs <- (start $?)
+  (declare(salience 1))
+  ?fg <- (goal-astar $?)
+  ?fs <- (start $?)
 =>
-    (retract ?fg)
-		(retract ?fs)
+  (retract ?fg)
+  (retract ?fs)
 )
