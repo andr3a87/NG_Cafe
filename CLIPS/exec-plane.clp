@@ -1,5 +1,3 @@
-(defmodule EXEC-PLANE-ASTAR (import AGENT ?ALL) (export ?ALL))
-
 (deffacts initial-fact
   (start 0)
 )

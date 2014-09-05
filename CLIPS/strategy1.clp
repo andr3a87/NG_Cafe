@@ -152,5 +152,14 @@
 =>
     (retract ?f1)
 	(assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?rd ?cd)))
-	(focus EXEC-PLANE-ASTAR)
+)
+
+;Eseguito il piano, il robot si trova vicino ad dispancer piu vicino.
+(defrule go-phase4
+	?f1<-(plan-executed)
+	?f2<-(strategy-service-table (table-id ?id) (phase 3))
+	?f3<-strategy-best-dispancer (pos-dispancer ?rd ?cd) (type ?c))
+=>
+	(retract ?f1)
+
 )
