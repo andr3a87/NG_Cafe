@@ -20,7 +20,7 @@
 (defrule run-plane-forward-north
   (declare (salience 80))
   ?f1 <- (start ?father)
-  (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
+  ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
   (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward north ?r ?c) (cost ?g))
   (K-cell (pos-r =(+ ?r 1)) (pos-c ?c) (contains ?con))
   (status (step ?s))
@@ -31,6 +31,9 @@
       (assert (start ?id))
       (assert (exec (step ?s) (action Forward)))
     else
+      (retract ?f1)
+      (retract ?f2)
+      (assert (start 0))
       (assert (plan-failed))
   )
 )
@@ -38,7 +41,7 @@
 (defrule run-plane-forward-south
   (declare (salience 80))
   ?f1 <- (start ?father)
-  (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
+  ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
   (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward south ?r ?c) (cost ?g))
   (K-cell (pos-r =(- ?r 1)) (pos-c ?c) (contains ?con))
   (status (step ?s))
@@ -49,6 +52,9 @@
       (assert (start ?id))
       (assert (exec (step ?s) (action Forward)))
     else
+      (retract ?f1)
+      (retract ?f2)
+      (assert (start 0))
       (assert (plan-failed))
   )
 )
@@ -56,7 +62,7 @@
 (defrule run-plane-forward-east
   (declare (salience 80))
   ?f1 <- (start ?father)
-  (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
+  ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
   (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward east ?r ?c) (cost ?g))
   (K-cell (pos-r ?r) (pos-c =(+ ?c 1)) (contains ?con))
   (status (step ?s))
@@ -67,6 +73,9 @@
       (assert (start ?id))
       (assert (exec (step ?s) (action Forward)))
     else
+      (retract ?f1)
+      (retract ?f2)
+      (assert (start 0))
       (assert (plan-failed))
   )
 )
@@ -74,7 +83,7 @@
 (defrule run-plane-forward-west
   (declare (salience 80))
   ?f1 <- (start ?father)
-  (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?g))
+  ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?g))
   (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward west ?r ?c) (cost ?g))
   (K-cell (pos-r ?r) (pos-c =(- ?c 1)) (contains ?con))
   (status (step ?s))
@@ -85,6 +94,9 @@
       (assert (start ?id))
       (assert (exec (step ?s) (action Forward)))
     else
+      (retract ?f1)
+      (retract ?f2)
+      (assert (start 0))
       (assert (plan-failed))
   )
 )
