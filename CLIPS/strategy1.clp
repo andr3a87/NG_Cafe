@@ -25,7 +25,7 @@
 
 ;Se ho inviato delle Inform con accepted, e non sto servendo nessun tavolo, allora devo prendermi l'impegno di servire un tavolo. Quale? Strategia FIFO
 (defrule strategy-start-search-service-table
-	(declare (salience 70))
+  (declare (salience 70))
 	(exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
 
   ; @TODO cambiare per gestire più tavoli
@@ -44,20 +44,22 @@
 	(exec (step ?s2&:(< ?s2 ?current)) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
 	(last-intention (step ?s1))
 	(test (> ?s2 ?s1))
-	(test (> ?s2 ?as)) ; da controllare, forse ridondante, il discorso dell & potrebbe già selezionare la più piccolare
+	(or (test (< ?s2 ?as)) (test (= ?as -1))) ; da controllare, forse ridondante, il discorso dell & potrebbe già selezionare la più piccolare
 	(msg-to-agent (request-time ?t) (step ?s2) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 =>
 	(modify ?f (step ?s2) (table-id ?sen) (fl ?fo) (dl ?do))
+  (printout t " servendo tavolo " ?sen crlf)
 )
 
 ;Trovato il tavolo, passo alla fase due della strategia.
 ;Questa regola mi serve per indicare il fatto che non vi sono ordinazioni più vecchie di quella trovata non ancora servita. Blocca la ricerca.
 (defrule strategy-found-table-to-serve
-	(last-intention (step ?s1))
-	?f <- (strategy-service-table (table-id ?id) (phase 1))
+	?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1))
+  ?f2 <- (last-intention (step ?s1))
 	(not (exec (step ?s2&:(< ?s2 ?s1)) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
 =>
-	(modify ?f (table-id ?id) (phase 2))
+	(modify ?f1 (table-id ?id) (phase 2))
+  (modify ?f2 (step ?step))
 )
 
 ;
@@ -263,6 +265,7 @@
 =>
 	(retract ?f1)
 	(modify ?f2 (phase 6))
+  (printout t " Fase 6 per tavolo " ?id crlf)
 )
 
 ;
@@ -285,4 +288,33 @@
   (test (> ?ld 0))
 =>
   (assert (exec (step ?ks) (action DeliveryDrink) (param1 ?rfo) (param2 ?cfo)))
+)
+
+;
+; FASE 7 della Strategia: il robot è arrivato al tavolo e deve scaricare.
+;
+
+(defrule strategy-return-phase6-to-2
+  ; ho scaricato tutta la roba
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 6) (dl ?dl) (fl ?fl))
+  (test (> (+ ?dl ?fl) 0))
+  ; controllo che sul tavolo ci sia tutto
+  ;(Table (table-id ?id) (l-drink ?dl) (l-food ?fl))
+  ;(msg-to-agent (step ?step) (sender ?id) (type order) (drink-order ?dl) (food-order ?fl))
+  (K-agent (l-drink 0) (l-food 0))
+=>
+  (modify ?f1 (phase 2))
+  (printout t " Devo ancora finire il tavolo " ?id ", torno a caricare" crlf)
+)
+
+(defrule strategy-go-phase-7
+  ; ho scaricato tutta la roba
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 6) (dl 0) (fl 0))
+  ; controllo che sul tavolo ci sia tutto
+  ;(Table (table-id ?id) (l-drink ?dl) (l-food ?fl))
+  ;(msg-to-agent (step ?step) (sender ?id) (type order) (drink-order ?dl) (food-order ?fl))
+  (K-agent (l-drink 0) (l-food 0))
+=>
+  (retract ?f1)
+  (printout t " Tavolo servito " ?id crlf)
 )

@@ -11,3 +11,4 @@
 (reset)
 (run 257)
 (assert (exec (step 0) (action Forward)))
+(set-break strategy-go-phase-7)
