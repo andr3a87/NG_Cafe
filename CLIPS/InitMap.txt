@@ -9,10 +9,10 @@
 (Table (table-id T5) (pos-r 4) (pos-c 9))
 (TrashBasket (TB-id TB1) (pos-r 8) (pos-c 5))
 (RecyclableBasket (RB-id RB1) (pos-r 8) (pos-c 7))
-;(FoodDispenser  (FD-id FD1) (pos-r 7) (pos-c 5))
-;(DrinkDispenser  (DD-id DD1) (pos-r 7) (pos-c 7))
-(FoodDispenser  (FD-id FD1) (pos-r 2) (pos-c 5))
-(DrinkDispenser  (DD-id DD1) (pos-r 2) (pos-c 7))
+(FoodDispenser  (FD-id FD1) (pos-r 7) (pos-c 5))
+(DrinkDispenser  (DD-id DD1) (pos-r 7) (pos-c 7))
+;(FoodDispenser  (FD-id FD1) (pos-r 2) (pos-c 5))
+;(DrinkDispenser  (DD-id DD1) (pos-r 2) (pos-c 7))
 
             (prior-cell (pos-r 1) (pos-c 1) (contains Wall))
 
@@ -44,13 +44,13 @@
 
              (prior-cell (pos-r 2) (pos-c 4) (contains Empty))
 
-             ;(prior-cell (pos-r 2) (pos-c 5) (contains Empty))
-             (prior-cell (pos-r 2) (pos-c 5) (contains FD))
+             (prior-cell (pos-r 2) (pos-c 5) (contains Empty))
+             ;(prior-cell (pos-r 2) (pos-c 5) (contains FD))
 
              (prior-cell (pos-r 2) (pos-c 6) (contains Empty))
 
-             ;(prior-cell (pos-r 2) (pos-c 7) (contains Empty))
-             (prior-cell (pos-r 2) (pos-c 7) (contains DD))
+             (prior-cell (pos-r 2) (pos-c 7) (contains Empty))
+             ;(prior-cell (pos-r 2) (pos-c 7) (contains DD))
 
              (prior-cell (pos-r 2) (pos-c 8) (contains Empty))
 
@@ -156,13 +156,13 @@
 
              (prior-cell (pos-r 7) (pos-c 4) (contains Empty))
 
-             ;(prior-cell (pos-r 7) (pos-c 5) (contains FD))
-             (prior-cell (pos-r 7) (pos-c 5) (contains Empty))
+             (prior-cell (pos-r 7) (pos-c 5) (contains FD))
+             ;(prior-cell (pos-r 7) (pos-c 5) (contains Empty))
 
              (prior-cell (pos-r 7) (pos-c 6) (contains Empty))
 
-             ;(prior-cell (pos-r 7) (pos-c 7) (contains DD))
-             (prior-cell (pos-r 7) (pos-c 7) (contains Empty))
+             (prior-cell (pos-r 7) (pos-c 7) (contains DD))
+             ;(prior-cell (pos-r 7) (pos-c 7) (contains Empty))
 
              (prior-cell (pos-r 7) (pos-c 8) (contains Empty))
 
