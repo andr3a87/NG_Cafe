@@ -31,7 +31,7 @@
       (assert (start ?id))
       (assert (exec (step ?s) (action Forward)))
     else
-      (assert (FALLIMENTO))
+      (assert (plan-failed))
   )
 )
 
@@ -49,7 +49,7 @@
       (assert (start ?id))
       (assert (exec (step ?s) (action Forward)))
     else
-      (assert (FALLIMENTO))
+      (assert (plan-failed))
   )
 )
 
@@ -67,7 +67,7 @@
       (assert (start ?id))
       (assert (exec (step ?s) (action Forward)))
     else
-      (assert (FALLIMENTO))
+      (assert (plan-failed))
   )
 )
 
@@ -85,7 +85,7 @@
       (assert (start ?id))
       (assert (exec (step ?s) (action Forward)))
     else
-      (assert (FALLIMENTO))
+      (assert (plan-failed))
   )
 )
 
