@@ -1,3 +1,4 @@
+
 (personstatus 	
 
 	(step 0)
@@ -59,6 +60,3 @@
 (move-path P2 4 C1  4 4)
 (move-path P2 5 C1  3 4)
 (move-path P2 6 C1  4 5)
-
-
-
