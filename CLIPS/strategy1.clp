@@ -13,8 +13,12 @@
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. Inform con delayed
 (defrule answer-msg-order2
 	(declare (salience 100))
+  (status (step ?current))
 	(msg-to-agent (request-time ?t) (step ?s) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 	(K-table (table-id ?sen) (clean no))
+
+  ; controlla che non abbiamo già risposto nel caso che il table diventi sporco appena l'agente consegna un coso. In questo caso senza la regola l'agente risponde al tavolo, a cui aveva già risposto
+  (test (= ?s ?current))
 =>
   (assert (exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
 )

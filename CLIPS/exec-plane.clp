@@ -83,7 +83,7 @@
 (defrule run-plane-forward-west
   (declare (salience 80))
   ?f1 <- (start ?father)
-  ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?g))
+  ?f2 <- (run-plane-astar (pos-start ?rs ?cs) (pos-end ?rg ?cg))
   (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward west ?r ?c) (cost ?g))
   (K-cell (pos-r ?r) (pos-c =(- ?c 1)) (contains ?con))
   (status (step ?s))
