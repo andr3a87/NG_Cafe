@@ -56,7 +56,7 @@
 (defrule strategy-found-table-to-serve
 	?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1))
   ?f2 <- (last-intention (step ?s1))
-	(not (exec (step ?s2&:(< ?s2 ?s1)) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
+	(not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
 =>
 	(modify ?f1 (table-id ?id) (phase 2))
   (modify ?f2 (step ?step))
