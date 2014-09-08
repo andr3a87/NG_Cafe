@@ -139,18 +139,18 @@
         ?f7 <- (K-cell (pos-r =(- ?r 1)) (pos-c =(- ?c 1)))
         ?f8 <- (K-cell (pos-r =(- ?r 1)) (pos-c ?c))
         ?f9 <- (K-cell (pos-r =(- ?r 1)) (pos-c =(+ ?c 1)))
-    =>
-        (modify ?fa (step ?s) (time ?t) (pos-r ?r) (pos-c ?c) (direction north))
-    (modify ?f1 (contains ?x1))
-        (modify ?f2 (contains ?x2))
-        (modify ?f3 (contains ?x3))
-        (modify ?f4 (contains ?x4))
-        (modify ?f5 (contains ?x5))
-        (modify ?f6 (contains ?x6))
-        (modify ?f7 (contains ?x7))
-        (modify ?f8 (contains ?x8))
-        (modify ?f9 (contains ?x9))
-        (modify ?fs (step ?s))
+=>
+  (modify ?fa (step ?s) (time ?t) (pos-r ?r) (pos-c ?c) (direction north))
+  (modify ?f1 (contains ?x1))
+  (modify ?f2 (contains ?x2))
+  (modify ?f3 (contains ?x3))
+  (modify ?f4 (contains ?x4))
+  (modify ?f5 (contains ?x5))
+  (modify ?f6 (contains ?x6))
+  (modify ?f7 (contains ?x7))
+  (modify ?f8 (contains ?x8))
+  (modify ?f9 (contains ?x9))
+  (modify ?fs (step ?s))
 
 )
 
@@ -159,10 +159,13 @@
   (perc-load (time ?t) (step ?s) (load yes))
   ?fs <- (last-perc (step ?old-s) (type load))
   (test (> ?s ?old-s) )
-  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  ; modifica l'angete
+  ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   (exec (step =(- ?s 1))(action LoadFood))
 =>
+  ; modifica l'agente
   (modify ?f1(l-food(+ ?lf 1)))
+  ; modifica last-perc
   (modify ?fs (step ?s))
 )
 
@@ -171,23 +174,32 @@
   (perc-load (time ?t) (step ?s) (load yes))
   ?fs <- (last-perc (step ?old-s) (type load))
   (test (> ?s ?old-s))
-  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   (exec (step =(- ?s 1))(action LoadDrink))
 =>
+  ; modifica l'agente
   (modify ?f1(l-drink(+ ?ld 1)))
+  ; modifica last-perc
   (modify ?fs (step ?s))
 )
+
+;
+; DELIVERIES TO TABLE
+;
 
 (defrule k-percept-delivery-food
   (declare(salience 100))
   (perc-load (time ?t) (step ?s) (load yes))
   ?fs <- (last-perc (step ?old-s) (type load))
   (test (> ?s ?old-s) )
-  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-  (exec (step =(- ?s 1))(action DeliveryFood))
+  ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  (exec (step =(- ?s 1)) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo))
+  ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-food ?klf))
 =>
   (modify ?f1(l-food(- ?lf 1)))
   (modify ?fs (step ?s))
+  ; modifica tavolo, aggiungiamo un food al tavolo
+  (modify ?f2 (step ?s) (time ?t) (l-food (+ ?klf 1)) (clean no))
 )
 
 (defrule k-percept-delivery-drink
@@ -195,22 +207,55 @@
   (perc-load (time ?t) (step ?s) (load yes))
   ?fs <- (last-perc (step ?old-s) (type load))
   (test (> ?s ?old-s))
-  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-  (exec (step =(- ?s 1))(action DeliveryDrink))
+  ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  (exec (step =(- ?s 1))(action DeliveryDrink) (param1 ?rfo) (param2 ?cfo))
+  ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-drink ?kld))
 =>
   (modify ?f1(l-drink(- ?ld 1)))
   (modify ?fs (step ?s))
+  ; modifica tavolo, aggiungiamo un drink al tavolo
+  (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
 )
 
-(defrule k-percept-delivery-final
+; permette di
+(defrule k-percept-delivery-final-food
+  (declare(salience 100))
+  ; perception
+  (perc-load (time ?t) (step ?s) (load no))
+  ?fs <- (last-perc (step ?old-s) (type load))
+  (test (> ?s ?old-s))
+  ; k-agent
+  ?f1<-(K-agent (l-food ?lf) (l_d_waste no) (l_f_waste no))
+  (test (= ?lf 1))
+
+  (exec (step =(- ?s 1))(action DeliveryFood) (param1 ?rfo) (param2 ?cfo))
+  ; k-table
+  ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-food ?klf))
+  =>
+  ; modifica l'agente
+  (modify ?f1 (l-food 0))
+  (modify ?fs (step ?s))
+  ; modifica tavolo, aggiungiamo il food
+  (modify ?f2 (step ?s) (time ?t) (l-food (+ ?klf 1)) (clean no))
+)
+
+(defrule k-percept-delivery-final-drink
   (declare(salience 100))
   (perc-load (time ?t) (step ?s) (load no))
-   ?fs <- (last-perc (step ?old-s) (type load))
-  ?f1<-(K-agent (step ?)(l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-  (test (= (+ ?ld ?lf) 1))
+  ?fs <- (last-perc (step ?old-s) (type load))
   (test (> ?s ?old-s))
-  (exec (step =(- ?s 1))(action DeliveryDrink|DeliveryFood))
+
+  ; controllo che l'agente abbia esattamente un drink
+  ?f1<-(K-agent (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+  (test (= ?ld 1))
+
+  (exec (step =(- ?s 1))(action DeliveryDrink) (param1 ?rfo) (param2 ?cfo))
+  ; k-table
+  ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-drink ?kld))
   =>
-    (modify ?f1(l-drink 0)(l-food 0))
-    (modify ?fs (step ?s))
+  ; modifica l'agente
+  (modify ?f1 (l-drink 0))
+  (modify ?fs (step ?s))
+  ; modifica tavolo, aggiungiamo il drink
+  (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
 )

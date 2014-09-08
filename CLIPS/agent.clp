@@ -46,7 +46,16 @@
 (deftemplate agent-truckload-counter (slot table)(slot type)(slot qty))
 
 ; fl = food to load, dl = drink to load
-(deftemplate strategy-service-table (slot step) (slot table-id) (slot phase) (multislot pos-best-dispenser) (slot fl) (slot dl))
+; k-order-status
+(deftemplate strategy-service-table
+  (slot step)
+  (slot table-id)
+  (slot phase)
+  (multislot pos-best-dispenser)
+  (slot fl)
+  (slot dl)
+)
+
 (deftemplate last-intention (slot step))
 
 (deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink)))
@@ -112,75 +121,6 @@
     (assert (goal-astar ?r ?c))
     (focus ASTAR)
 )
-
-
-;(defrule start-astar-delivery_f
-;    (declare (salience 5))
-;    (msg-to-agent (sender ?t))
-;    (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
-;    (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-;
-;     =>
-;	(assert (start-astar (type del_food) (pos-r ?rfo) (pos-c ?cfo)))
-;	(assert (agent-truckload-counter (type deliveryFood)(qty ?lf)))
-;)
-
-;(defrule do-DeliveryFood
-;    (declare (salience 5))
-;   	 (msg-to-agent (step ?s) (sender ?t))
-;   	 (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-;   	 ?f2<-(agent-truckload-counter (type deliveryFood)(qty ?q))
-;   	 (test (> ?q 0))
-;	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
-;	 (test (> ?lf 0))
-;	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
-;	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
-;	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
-;	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
-;	 )
-;	 ;(not (exec (step =(- ?ks 1))(action DeliveryFood)(param1 ?rfo)(param2 ?cfo)))
-;=>
-;	 (modify ?f2 (qty (- ?q 1)))
-;	 (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
-;)
-
-;(defrule start-astar-delivery_d
-;    (declare (salience 5))
-;    (msg-to-agent (sender ?t))
-;    (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
-;    (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-;
-;     =>
-;	(assert (start-astar (type del_drink) (pos-r ?rfo) (pos-c ?cfo)))
-;	(assert (agent-truckload-counter (type deliveryDrink)(qty ?ld)))
-;)
-
-;(defrule do-DeliveryDrink
-;    (declare (salience 5))
-;   	 (msg-to-agent (step ?s) (sender ?t))
-;   	 (Table (table-id ?t) (pos-r ?rfo) (pos-c ?cfo))
-;   	 ?f2<-(agent-truckload-counter (type deliveryDrink)(qty ?q))
-;   	 (test (> ?q 0))
-;	 (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
-;	 (test (> ?ld 0))
-;	 (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
-;	     (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
-;	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
-;	     (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
-;	 )
-;=>
-;	 (modify ?f2 (qty (- ?q 1)))
-;	 (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
-;)
-
-; rimuove il counter degli oggetti da caricare / scaricare nel caso l'agente abbia finito il suo lavoro (ossia il counter è a 0, gli oggetti sono stati spostati tutti)
-;(defrule clean-truckload-counter
-;  (declare (salience 10))
-;  ?f1 <- (agent-truckload-counter (type ?t)(qty ?do))
-;  (test (= ?do 0))
-;  =>
-;  (retract ?f1)
-;)
 
 
 

@@ -134,15 +134,6 @@
   (retract ?f1)
 )
 
-;(defrule initialize-phase3
-;	(declare (salience 75))
-;	(strategy-service-table (table-id ?id) (phase 3))
-;	(msg-to-agent (step ?s) (sender ?id) (food-order ?fo) (drink-order ?do))
-;=>
-;	(assert (agent-truckload-counter (table ?id) (type FD) (qty ?fo)))
-;	(assert (agent-truckload-counter (table ?id) (type DD) (qty ?do)))
-;)
-
 ;regole per avviare astar
 (defrule start-astar-to-dispenser
     (declare (salience 70))
