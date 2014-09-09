@@ -49,6 +49,9 @@
 (load "percept.clp")
 (load "strategy1.clp")
 (set-break strategy-do-CleanTable)
+(set-break strategy-do-EmptyFood)
+(set-break strategy-do-Release)
+
 (load "exec-plane.clp")
 ;(load "manage-order.clp")
 (load "a_star.clp")

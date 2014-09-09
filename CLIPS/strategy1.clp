@@ -259,11 +259,11 @@
 
 ; regola per caricare il drink
 ; ===========================
-; medesime situazioni del food
+; medesime situazioni del drink, RecyclaBasket
 (defrule strategy-do-Release
   (declare (salience 70))
   ?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl))
-  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type TB))
+  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type RB))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l_d_waste yes))
 =>
   (assert (exec (step ?ks) (action Release) (param1 ?rd) (param2 ?cd)))
@@ -282,13 +282,26 @@
 ;
 ; FASE 4.5 della Strategia: Controllo se ritornare alla fase 2 per caricare altra roba o andarea alla fase 5.
 ;
-(defrule strategy-return-phase2
-	?f1 <- (strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl))
+(defrule strategy-return-phase2_order
+	?f1 <- (strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl) (action accepted))
 	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
 	(test (< (+ ?lf ?ld) 4))
 	(test (or (> ?dl 0) (> ?fl 0)))
 =>
 	(modify ?f1 (phase 2))
+)
+
+(defrule strategy-return-phase2_clean
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 4.5) (action delayed))
+  (msg-to-agent (request-time ?t) (step ?step) (sender ?id) (type order) (drink-order ?do) (food-order ?fo))
+  (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
+=>
+  (if (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))
+  then
+  (modify ?f1 (phase 2))
+  else
+  (modify ?f1 (phase 2) (dl ?do) (fl ?fo) (action accepted))
+  )
 )
 
 (defrule strategy-go-phase5
