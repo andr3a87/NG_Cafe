@@ -259,3 +259,45 @@
   ; modifica tavolo, aggiungiamo il drink
   (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
 )
+
+(defrule k-percept-clean-table_1
+  (declare(salience 100))
+  (perc-vision (time ?t) (step ?s) (pos-r ?r) (pos-c ?c))
+  (exec (step =(- ?s 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
+
+  ?f1 <- (K-agent (l-drink ?a-ld) (l-food ?a-lf))
+  (test (= (+ ?a-ld ?a-lf) 0))
+
+  ?f2 <- (K-table (l-drink ?t-ld&:(> ?t-ld 0) (l-food 0) (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (clean no))
+=>
+  (modify ?f2 (l-drink 0) (clean yes))
+  (modify ?f1 (l_d_waste yes))
+)
+
+(defrule k-percept-clean-table_2
+  (declare(salience 100))
+  (perc-vision (time ?t) (step ?s) (pos-r ?r) (pos-c ?c))
+  (exec (step =(- ?s 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
+
+  ?f1 <- (K-agent (l-drink ?a-ld) (l-food ?a-lf))
+  (test (= (+ ?a-ld ?a-lf) 0))
+
+  ?f2 <- (K-table (l-food ?t-lf&:(> ?t-lf 0) (l-drink 0) (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (clean no))
+=>
+  (modify ?f2 (l-food 0) (clean yes))
+  (modify ?f1 (l_f_waste yes))
+)
+
+(defrule k-percept-clean-table_3
+  (declare(salience 100))
+  (perc-vision (time ?t) (step ?s) (pos-r ?r) (pos-c ?c))
+  (exec (step =(- ?s 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
+
+  ?f1 <- (K-agent (l-drink ?a-ld) (l-food ?a-lf))
+  (test (= (+ ?a-ld ?a-lf) 0))
+
+  ?f2 <- (K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (clean no))
+=>
+  (modify ?f2 (clean yes) (l-food 0) (l-drink 0))
+  (modify ?f1 (l_d_waste yes) (l_f_waste yes))
+)

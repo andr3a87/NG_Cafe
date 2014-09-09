@@ -42,9 +42,6 @@
 (deftemplate start-astar (slot pos-r) (slot pos-c))
 (deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
 
-; memorizza la quantità di roba che l'agente deve caricare o scaricare
-(deftemplate agent-truckload-counter (slot table)(slot type)(slot qty))
-
 ; fl = food to load, dl = drink to load
 ; k-order-status
 (deftemplate strategy-service-table
@@ -54,13 +51,13 @@
   (multislot pos-best-dispenser)
   (slot fl)
   (slot dl)
-
+  (slot action)
 )
 
 (deftemplate last-intention (slot step))
 
-(deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink)))
-(deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD)))
+(deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink trash-food trash-drink)))
+(deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
 (deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
 
 ; copia le prior cell sulla struttura K-cell

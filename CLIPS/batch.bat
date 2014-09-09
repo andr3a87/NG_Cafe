@@ -48,6 +48,7 @@
 
 (load "percept.clp")
 (load "strategy1.clp")
+(set-break strategy-do-CleanTable)
 (load "exec-plane.clp")
 ;(load "manage-order.clp")
 (load "a_star.clp")
