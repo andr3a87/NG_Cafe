@@ -35,7 +35,7 @@
 
 (defrule S0-goal-empty
 	(goal-astar ?r ?c)
-	(K-cell (pos-r ?r) (pos-c ?c) (contains Empty))
+  (K-cell (pos-r ?r) (pos-c ?c) (contains Empty))
 =>
   (assert (end-astar ?r ?c))
 )
@@ -53,38 +53,44 @@
   (focus PRINT)
 )
 
-(defrule forward-apply-north
-	(declare (salience 50))
-    (current ?curr)
-    (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction north) (open yes))
-    (K-cell (pos-r =(+ ?r 1)) (pos-c ?c) (contains Empty))
-=>
-    (assert (apply ?curr forward ?r ?c north (+ ?r 1) ?c))
-)
-(defrule forward-apply-south
-	(declare (salience 50))
-    (current ?curr)
-    (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction south) (open yes))
-    (K-cell (pos-r =(- ?r 1)) (pos-c ?c) (contains Empty))
-=>
-    (assert (apply ?curr forward ?r ?c south (- ?r 1) ?c))
-)
-(defrule forward-apply-east
-	(declare (salience 50))
-    (current ?curr)
-    (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction east) (open yes))
-    (K-cell (pos-r ?r) (pos-c =(+ ?c 1)) (contains Empty))
+;
+; FORWARD
+;
 
+(defrule forward-apply-north
+  (declare (salience 50))
+  (current ?curr)
+  (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction north) (open yes))
+  (K-cell (pos-r =(+ ?r 1)) (pos-c ?c) (contains Empty))
 =>
-    (assert (apply ?curr forward ?r ?c east ?r (+ ?c 1)))
+  (assert (apply ?curr forward ?r ?c north (+ ?r 1) ?c))
 )
-(defrule forward-apply-west
-	(declare (salience 50))
-    (current ?curr)
-    (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction west) (open yes))
-    (K-cell (pos-r ?r) (pos-c =(- ?c 1)) (contains Empty))
+
+(defrule forward-apply-south
+  (declare (salience 50))
+  (current ?curr)
+  (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction south) (open yes))
+  (K-cell (pos-r =(- ?r 1)) (pos-c ?c) (contains Empty))
 =>
-    (assert (apply ?curr forward ?r ?c west ?r (- ?c 1)))
+  (assert (apply ?curr forward ?r ?c south (- ?r 1) ?c))
+)
+
+(defrule forward-apply-east
+  (declare (salience 50))
+  (current ?curr)
+  (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction east) (open yes))
+  (K-cell (pos-r ?r) (pos-c =(+ ?c 1)) (contains Empty))
+=>
+  (assert (apply ?curr forward ?r ?c east ?r (+ ?c 1)))
+)
+
+(defrule forward-apply-west
+  (declare (salience 50))
+  (current ?curr)
+  (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction west) (open yes))
+  (K-cell (pos-r ?r) (pos-c =(- ?c 1)) (contains Empty))
+=>
+  (assert (apply ?curr forward ?r ?c west ?r (- ?c 1)))
 )
 
 ;Controllare costo distanza di manhattan
@@ -96,24 +102,25 @@
  ?f1<-  (apply ?curr forward ?r ?c ?d ?r1 ?c1)
         (node (ident ?curr) (gcost ?g))
         (goal-astar ?x ?y)
-
-   => (assert (exec-astar ?curr (+ ?n 1) Forward ?d ?r ?c)
-              (newnode (ident (+ ?n 1)) (pos-r ?r1) (pos-c ?c1) (direction ?d)
-                       (gcost (+ ?g 2)) (fcost (+ (abs (- ?x ?r1)) (abs (- ?y ?c1)) ?g 1))
-
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+=>
+  (assert (exec-astar ?curr (+ ?n 1) Forward ?d ?r ?c)
+  (newnode (ident (+ ?n 1)) (pos-r ?r1) (pos-c ?c1) (direction ?d)
+  (gcost (+ ?g 2)) (fcost (+ (abs (- ?x ?r1)) (abs (- ?y ?c1)) ?g 1))
+  (father ?curr)))
+  (retract ?f1)
+  (focus NEW)
 )
 
+;
+; TURNLEFT
+;
 
 (defrule turnleft-apply-south
-	(declare (salience 50))
-        (current ?curr)
-        (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction south) (open yes))
-
-
-   	=> (assert (apply ?curr turnleft-south ?r ?c south))
+  (declare (salience 50))
+  (current ?curr)
+  (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction south) (open yes))
+=>
+  (assert (apply ?curr turnleft-south ?r ?c south))
 )
 
 (defrule turnleft-exec-astar-south
@@ -210,6 +217,10 @@
       	(retract ?f1)
       	(focus NEW)
 )
+
+;
+; TURNRIGHT
+;
 
 (defrule turnright-apply-south
 	(declare (salience 50))
@@ -344,8 +355,8 @@
 
 (defrule check-closed
 (declare (salience 50))
- ?f1 <-    (newnode (ident ?id) (pos-r ?r) (pos-c ?c))
-           (node (ident ?old) (pos-r ?r) (pos-c ?c) (open no))
+ ?f1 <-    (newnode (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?d))
+           (node (ident ?old) (pos-r ?r) (pos-c ?c) (open no) (direction ?d))
  ?f2 <-    (alreadyclosed ?a)
     =>
            (assert (alreadyclosed (+ ?a 1)))
@@ -473,7 +484,7 @@
   (retract ?fs)
 )
 ; da rimuovere quando in clips risolvono bug
-(defrule clean-init 
+(defrule clean-init
 (declare(salience 1))
   ?f1<-(current ?)
   ?f2<-(lastnode ?)
