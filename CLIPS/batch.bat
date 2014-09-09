@@ -45,7 +45,6 @@
 (set-break delivery_WRONG_5)
 
 (load "agent.clp")
-(set-break go-astar)
 
 (load "percept.clp")
 (load "strategy1.clp")
