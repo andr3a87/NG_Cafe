@@ -135,7 +135,8 @@
 
              (prior-cell (pos-r 6) (pos-c 5) (contains Empty))
 
-             (prior-cell (pos-r 6) (pos-c 6) (contains Empty))
+             ;(prior-cell (pos-r 6) (pos-c 6) (contains Empty))
+             (prior-cell (pos-r 6) (pos-c 6) (contains Person))
 
              (prior-cell (pos-r 6) (pos-c 7) (contains Empty))
 

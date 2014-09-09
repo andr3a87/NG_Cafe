@@ -44,11 +44,12 @@
 (event (step 9) (type finish) (source T4))
 (event (step 12) (type request) (source T4) (food 0) (drink 2))
 
-(personmove (step 2) (ident C1) (path-id P1))
+(personmove (step 1) (ident C1) (path-id P1))
+
+(personmove (step 2) (ident C3) (path-id P3))
 
 (personmove (step 9) (ident C1) (path-id P2))
 
-(personmove (step 2) (ident C3) (path-id P3))
 
 (move-path P1 1 C1  7 2)
 (move-path P1 2 C1  6 2)
