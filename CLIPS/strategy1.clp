@@ -88,7 +88,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F1:s"?current":"?id"] Tavolo da servire trovato: " ?sen crlf)
+  (printout t " [DEBUG] [F1:s"?current":"?id"-SERVE] Tavolo da servire trovato: " ?sen crlf)
   )
 )
 
@@ -107,7 +107,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F1:s"?current":"?id"] Table to clean found: " ?sen crlf)
+  (printout t " [DEBUG] [F1:s"?current":"?id"-CLEAN] Table to clean found: " ?sen crlf)
   )
 )
 
@@ -123,14 +123,14 @@
   (status (step ?current))
   (debug ?level)
 
-	(strategy-service-table (table-id ?id) (phase 2))
+	(strategy-service-table (table-id ?id) (phase 2) (action ?a))
 =>
 	(assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
 
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F2:s"?current":"?id"] Init Phase 2 - Searching Best Dispenser..." crlf)
+  (printout t " [DEBUG] [F2:s"?current":"?id"] Init Phase 2 - Searching Best Dispenser... (action: " ?a ")" crlf)
   )
 )
 
@@ -193,7 +193,7 @@
 	?f1<-(best-dispenser (distance ?wd) (pos-best-dispenser ?rd ?cd))
 	(not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
   (strategy-distance-dispenser (type ?type))
-	?f2<-(strategy-service-table (table-id ?id) (phase 2))
+	?f2<-(strategy-service-table (table-id ?id) (phase 2) (action ?a))
 	(K-cell (pos-r ?rd) (pos-c ?cd) (contains ?c))
 =>
 	(modify ?f2 (phase 3))
@@ -203,7 +203,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser Found: " ?type " in ("?rd", "?cd")" crlf)
+  (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?type " in ("?rd", "?cd") (action: " ?a ")"  crlf)
   )
 )
 
@@ -226,7 +226,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F1:s"?current":"?id"] Init Phase 3 - A-star towards best dispenser: "?c" in ("?rd","?cd")" crlf)
+  (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3 - A-star towards best dispenser: "?c" in ("?rd","?cd")" crlf)
   )
 )
 
@@ -452,7 +452,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F4.5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fl", drink: "?dl") action "?a crlf)
+  (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fl", drink: "?dl") action "?a crlf)
   )
 )
 
