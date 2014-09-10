@@ -41,9 +41,9 @@
 (deftemplate start-astar (slot pos-r) (slot pos-c))
 (deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
 
-(deftemplate exec-finish
+(deftemplate exec-order
   (slot step)   ;// l'environment incrementa il passo
-  (slot action  (allowed-values Finish))
+  (slot action  (allowed-values Finish Inform))
   (slot param1)
   (slot param2)
   (slot param3)

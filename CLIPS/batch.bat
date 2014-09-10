@@ -48,10 +48,13 @@
 
 (load "percept.clp")
 (load "strategy1.clp")
+;(set-break strategy-search-table-to-serve)
 (set-break strategy-do-CleanTable)
-(set-break strategy-do-EmptyFood)
-(set-break strategy-do-Release)
+;(set-break strategy-do-EmptyFood)
+;(set-break strategy-do-Release)
 
+(set-break strategy-go-phase1-finish)
+(set-break strategy-return-phase2_finish)
 (load "exec-plane.clp")
 ;(load "manage-order.clp")
 (load "a_star.clp")

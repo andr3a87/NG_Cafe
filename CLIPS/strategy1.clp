@@ -19,6 +19,7 @@
 	(K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
 =>
 	(assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
+  (assert (exec-order (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
 )
 
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. Inform con strategy-return-phase6-to-2_delayed
@@ -29,6 +30,7 @@
 	(K-table (table-id ?sen) (clean no))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
+  (assert (exec-order (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
 )
 
 (defrule answer-msg-order3
@@ -36,7 +38,7 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
   =>
-  (assert (exec-finish (step ?current) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish)))
+  (assert (exec-order (step ?current) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish)))
   
 )
 
@@ -48,124 +50,47 @@
 (defrule strategy-go-phase1
   (declare (salience 70))
   (status (step ?current))
-
-  ; cerca una exec di tipo inform
-	(exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 ?status))
-
-  ; @TODO cambiare per gestire più tavoli
-	(not (strategy-service-table (table-id ?id) (phase ?ph)))
-	(last-intention (step ?s1))
-	(test (> ?s ?s1))
   (debug ?level)
-=>
-	(assert (strategy-service-table (step -1) (table-id -1) (phase 1) (action ?status) (fl 0) (dl 0)))
-
-  ;debug
-  (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 per action " ?status" , tavolo probabile: " ?sen crlf)
-  )
-)
-
-(defrule strategy-go-phase1-finish
-  (declare (salience 60))
-  (status (step ?current))
-
+  ?f1 <- (last-intention (step ?last))
   ; cerca una exec di tipo inform
-  (exec-finish (step ?s) (action Finish) (param1 ?sen) (param2 ?t) (param3 ?status))
-
+  (exec-order (step ?next&:(and (> ?next ?last) (< ?next ?current))) (action ?) (param1 ?sen) (param2 ?t) (param3 ?status))
+  (not (exec-order (step ?lol&:(< ?lol ?next)) (action ?) (param1 ?sen) (param2 ?t) (param3 ?status)))
+  
   ; @TODO cambiare per gestire più tavoli
   (not (strategy-service-table (table-id ?id) (phase ?ph)))
-  (last-intention (step ?s1))
-  (test (> ?s ?s1))
-  (debug ?level)
 =>
-  (assert (strategy-service-table (step -1) (table-id -1) (phase 1) (action ?status) (fl 0) (dl 0)))
+  (assert (strategy-service-table (step ?next) (table-id ?sen) (phase 1) (action ?status) (fl 0) (dl 0)))
+  (modify ?f1 (step ?next))
 
   ;debug
   (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 per action " ?status " , tavolo probabile: " ?sen crlf)
-  )
-)
-
-
-;Individua il tavolo da servire secondo la strategia FIFO
-;Effettua una ricerca all'indietro all'interno dei fatti exec per trovare il tavolo, in ordine di tempo più vecchio, che ha effettuato un'ordinazione non ancora servita.
-(defrule strategy-search-table-to-serve
-  (declare (salience 15))
-	(status (step ?current))
-	?f <- (strategy-service-table (step ?as) (table-id ?) (phase 1) (action accepted))
-	(exec (step ?s2&:(< ?s2 ?current)) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
-	(last-intention (step ?s1))
-	(test (> ?s2 ?s1))
-	(or (test (< ?s2 ?as)) (test (= ?as -1))) ; da controllare, forse ridondante, il discorso dell & potrebbe già selezionare la più piccolare
-	(msg-to-agent (request-time ?t) (step ?s2) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
-=>
-	(modify ?f (step ?s2) (table-id ?sen) (fl ?fo) (dl ?do))
-)
-
-;Trovato il tavolo, passo alla fase due della strategia.
-;Questa regola mi serve per indicare il fatto che non vi sono ordinazioni più vecchie di quella trovata non ancora servita. Blocca la ricerca.
-(defrule strategy-found-table-to-serve
-  (declare (salience 15))
-  (status (step ?current))
-  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action accepted))
-  ?f2 <- (last-intention (step ?s1))
-  (not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (exec (step ?s2) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
-  (debug ?level)
-=>
-	(modify ?f1 (table-id ?id) (phase 2))
-  (modify ?f2 (step ?s2))
-
-  ;debug
-  (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F1:s"?current":"?id"-SERVE] Tavolo da servire trovato: " ?sen crlf)
-  )
-)
-
-(defrule strategy-found-table-to-clean
-  (declare (salience 10))
-  (status (step ?current))
-  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action delayed))
-  ?f2 <- (last-intention (step ?s1))
-  (not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (exec (step ?s2) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed))
-  (K-table (clean ?clean))
-  (debug ?level)
-=>
-  (if(= (str-compare ?clean "no")0)
-  then
-    (modify ?f1 (step ?s2) (table-id ?sen) (phase 5))
-    (modify ?f2 (step ?s2))
-    ;debug
-    (if (> ?level 0)
     then
-      (printout t " [DEBUG] [F1:s"?current":"?id"] Table to clean found: " ?sen crlf)
-    )
-  else
-    (modify ?f1 (action accepted) (phase 2))
-    ;debug
-    (if (> ?level 0)
-    then
-      (printout t " [DEBUG] [F1:s"?current":"?id"-CLEAN] Table to serve found: " ?sen crlf)
-    )
+      (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1, tavolo probabile: " ?sen crlf)
   )
 )
 
-(defrule strategy-found-table-to-finish
-  (declare (salience 10))
-  (status (step ?current))
-  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action finish))
-  ?f2 <- (last-intention (step ?s1))
-  (not (exec-finish (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish)))
-  (exec-finish (step ?s2) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish))
-  (K-table (clean ?clean))
-  (debug ?level)
+(defrule strategy-complete-phase1
+  (declare (salience 70))
+  ?f1 <- (strategy-service-table (table-id ?id) (phase 1) (action ?status))
+  (msg-to-agent (request-time ?t) (step ?s2) (sender ?sen) (type ?) (drink-order ?do) (food-order ?fo))
+  (K-table (table-id ?id) (clean ?clean))
 =>
-  (assert (pulisci tavolo))
+  (if (= (str-compare ?status "accepted") 0)
+  then
+    (modify ?f1 (table-id ?id) (phase 2) (fl ?fo) (dl ?do))
+  )
+  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0)) 
+  then
+    (modify ?f1 (table-id ?id) (phase 5) (fl ?fo) (dl ?do))
+  )
+  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0)) 
+  then
+    (modify ?f1 (action accepted))
+  )
+  (if (= (str-compare ?status "finish") 0)
+  then
+    (modify ?f1 (table-id ?id) (phase 5) (fl 0) (dl 0))
+  )
 )
 
 ;
@@ -215,7 +140,7 @@
 
 (defrule distance-manhattan-tb
   (declare (salience 70))
-  (strategy-service-table (table-id ?id) (phase 2) (action delayed))
+  (strategy-service-table (table-id ?id) (phase 2) (action delayed|finish))
   (K-agent (pos-r ?ra) (pos-c ?ca) (l_f_waste yes))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains TB))
   =>
@@ -224,7 +149,7 @@
 
 (defrule distance-manhattan-rb
   (declare (salience 70))
-  (strategy-service-table (table-id ?id) (phase 2) (action delayed))
+  (strategy-service-table (table-id ?id) (phase 2) (action delayed|finish))
   (K-agent (pos-r ?ra) (pos-c ?ca) (l_d_waste yes))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains RB))
   =>
@@ -475,14 +400,36 @@
   (debug ?level)
 
   ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 4.5) (action delayed))
-  (msg-to-agent (request-time ?t) (step ?step) (sender ?id) (type order) (drink-order ?do) (food-order ?fo))
+  (msg-to-agent (request-time ?t) (step ?step) (sender ?id) (type ?o) (drink-order ?do) (food-order ?fo))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
   (if (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))
   then
-  (modify ?f1 (phase 2))
+    (modify ?f1 (phase 2))
   else
-  (modify ?f1 (phase 2) (dl ?do) (fl ?fo) (action accepted))
+    (modify ?f1 (phase 2) (dl ?do) (fl ?fo) (action accepted))
+  )
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
+  )
+)
+
+(defrule strategy-return-phase2_finish
+  (status (step ?current))
+  (debug ?level)
+
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 4.5) (action finish))
+  (msg-to-agent (request-time ?t) (step ?step) (sender ?id) (type ?o) )
+  (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
+=>
+  (if (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))
+  then
+    (modify ?f1 (phase 2))
+  else
+    (modify ?f1 (phase 6))
   )
 
   ;debug
@@ -596,7 +543,7 @@
   (status (step ?current))
   (debug ?level)
 
-  (strategy-service-table (table-id ?id) (phase 6) (action delayed))
+  (strategy-service-table (table-id ?id) (phase 6) (action delayed|finish))
   ?f1 <- (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   ?f2 <- (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
   ;controllo che l'agente posso operare sul tavolo.
@@ -647,7 +594,7 @@
   (debug ?level)
 
   ; ho scaricato tutta la roba
-  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 6) (action delayed))
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 6) (action delayed|finish))
   ; controllo che sul tavolo ci sia tutto
   ;(Table (table-id ?id) (l-drink ?dl) (l-food ?fl))
   ;(msg-to-agent (step ?step) (sender ?id) (type order) (drink-order ?dl) (food-order ?fl))
