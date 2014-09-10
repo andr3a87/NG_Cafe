@@ -98,16 +98,25 @@
   ?f2 <- (last-intention (step ?s1))
   (not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
   (exec (step ?s2) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed))
-
+  (K-table (clean ?clean))
   (debug ?level)
 =>
-  (modify ?f1 (step ?s2) (table-id ?sen) (phase 5))
-  (modify ?f2 (step ?s2))
-
-  ;debug
-  (if (> ?level 0)
+  (if(= (str-compare ?clean "no")0)
   then
-  (printout t " [DEBUG] [F1:s"?current":"?id"-CLEAN] Table to clean found: " ?sen crlf)
+    (modify ?f1 (step ?s2) (table-id ?sen) (phase 5))
+    (modify ?f2 (step ?s2))
+    ;debug
+    (if (> ?level 0)
+    then
+      (printout t " [DEBUG] [F1:s"?current":"?id"] Table to clean found: " ?sen crlf)
+    )
+  else
+    (modify ?f1 (action accepted) (phase 2))
+    ;debug
+    (if (> ?level 0)
+    then
+      (printout t " [DEBUG] [F1:s"?current":"?id"-CLEAN] Table to serve found: " ?sen crlf)
+    )
   )
 )
 
