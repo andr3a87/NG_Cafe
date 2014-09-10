@@ -48,9 +48,9 @@
 
 (load "percept.clp")
 (load "strategy1.clp")
-(set-break strategy-do-CleanTable)
-(set-break strategy-do-EmptyFood)
-(set-break strategy-do-Release)
+;(set-break strategy-do-CleanTable)
+;(set-break strategy-do-EmptyFood)
+;(set-break strategy-do-Release)
 
 (load "exec-plane.clp")
 ;(load "manage-order.clp")
@@ -58,5 +58,4 @@
 
 (reset)
 (run 257)
-(assert (exec (step 0) (action Forward)))
 (assert (debug 2))

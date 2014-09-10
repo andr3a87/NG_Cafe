@@ -39,17 +39,18 @@
 (defrule strategy-go-phase1
   (declare (salience 70))
   (status (step ?current))
+  (debug ?level)
 
+  ?f1 <- (last-intention (step ?last))
   ; cerca una exec di tipo inform
-	(exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 ?status))
-
+  (exec (step ?next&:(and (> ?next ?last) (< ?next ?current))) (action Inform) (param1 ?sen) (param2 ?t) (param3 ?status))
+  (not (exec (step ?lol&:(< ?lol ?next)) (action Inform) (param1 ?sen) (param2 ?t) (param3 ?status)))
   ; @TODO cambiare per gestire più tavoli
 	(not (strategy-service-table (table-id ?id) (phase ?ph)))
-	(last-intention (step ?s1))
-	(test (> ?s ?s1))
-  (debug ?level)
+
 =>
-	(assert (strategy-service-table (step -1) (table-id -1) (phase 1) (action ?status) (fl 0) (dl 0)))
+	(assert (strategy-service-table (step ?next) (table-id ?sen) (phase 1) (action ?status) (fl 0) (dl 0)))
+  (modify ?f1 (step ?next)))
 
   ;debug
   (if (> ?level 0)
@@ -58,65 +59,16 @@
   )
 )
 
-;Individua il tavolo da servire secondo la strategia FIFO
-;Effettua una ricerca all'indietro all'interno dei fatti exec per trovare il tavolo, in ordine di tempo più vecchio, che ha effettuato un'ordinazione non ancora servita.
-(defrule strategy-search-table-to-serve
-	(status (step ?current))
-	?f <- (strategy-service-table (step ?as) (table-id ?) (phase 1) (action accepted))
-	(exec (step ?s2&:(< ?s2 ?current)) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
-	(last-intention (step ?s1))
-	(test (> ?s2 ?s1))
-	(or (test (< ?s2 ?as)) (test (= ?as -1))) ; da controllare, forse ridondante, il discorso dell & potrebbe già selezionare la più piccolare
-	(msg-to-agent (request-time ?t) (step ?s2) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
+(defrule strategy-complete-phase1
+  (declare (salience 70))
+  ?f1 <- (strategy-service-table (table-id ?id) (phase 1) (action ?status))
+  (msg-to-agent (request-time ?t) (step ?s2) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 =>
-	(modify ?f (step ?s2) (table-id ?sen) (fl ?fo) (dl ?do))
-)
-
-;Trovato il tavolo, passo alla fase due della strategia.
-;Questa regola mi serve per indicare il fatto che non vi sono ordinazioni più vecchie di quella trovata non ancora servita. Blocca la ricerca.
-(defrule strategy-found-table-to-serve
-  (status (step ?current))
-  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action accepted))
-  ?f2 <- (last-intention (step ?s1))
-  (not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (exec (step ?s2) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
-  (debug ?level)
-=>
-	(modify ?f1 (table-id ?id) (phase 2))
-  (modify ?f2 (step ?s2))
-
-  ;debug
-  (if (> ?level 0)
+  (if (= (str-compare ?status "accepted") 0)
   then
-  (printout t " [DEBUG] [F1:s"?current":"?id"-SERVE] Tavolo da servire trovato: " ?sen crlf)
-  )
-)
-
-(defrule strategy-found-table-to-clean
-  (status (step ?current))
-  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action delayed))
-  ?f2 <- (last-intention (step ?s1))
-  (not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (exec (step ?s2) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed))
-  (K-table (clean ?clean))
-  (debug ?level)
-=>
-  (if(= (str-compare ?clean "no")0)
-  then
-    (modify ?f1 (step ?s2) (table-id ?sen) (phase 5))
-    (modify ?f2 (step ?s2))
-    ;debug
-    (if (> ?level 0)
-    then
-      (printout t " [DEBUG] [F1:s"?current":"?id"] Table to clean found: " ?sen crlf)
-    )
+    (modify ?f1 (table-id ?id) (phase 2) (fl ?fo) (dl ?do))
   else
-    (modify ?f1 (action accepted) (phase 2))
-    ;debug
-    (if (> ?level 0)
-    then
-      (printout t " [DEBUG] [F1:s"?current":"?id"-CLEAN] Table to serve found: " ?sen crlf)
-    )
+    (modify ?f1 (table-id ?id) (phase 5) (fl ?fo) (dl ?do))
   )
 )
 
