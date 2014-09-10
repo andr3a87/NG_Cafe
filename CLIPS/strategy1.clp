@@ -250,11 +250,17 @@
 ; medesime situazioni del food
 (defrule strategy-do-EmptyFood
   (declare (salience 70))
-  ?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl))
-  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type TB))
+  ?f1 <- (strategy-service-table (table-id ?id) (phase 4) (fl ?fl))
+  (strategy-best-dispenser (pos-dispenser ?rfo ?cfo) (type TB))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l_f_waste yes))
+  ;controllo che l'agente possa operare sul disp
+  (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
+      (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
+      (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+      (and (test(= ?ra (- ?rfo 1))) (test(= ?ca ?cfo)))
+  )
 =>
-  (assert (exec (step ?ks) (action EmptyFood) (param1 ?rd) (param2 ?cd)))
+  (assert (exec (step ?ks) (action EmptyFood) (param1 ?rfo) (param2 ?cfo)))
 )
 
 ; regola per caricare il drink
@@ -263,10 +269,16 @@
 (defrule strategy-do-Release
   (declare (salience 70))
   ?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl))
-  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type RB))
+  (strategy-best-dispenser (pos-dispenser ?rfo ?cfo) (type RB))
+  ;controllo che l'agente possa operare sul disp.
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l_d_waste yes))
+  (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
+      (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
+      (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
+      (and (test(= ?ra (- ?rfo 1))) (test(= ?ca ?cfo)))
+  )
 =>
-  (assert (exec (step ?ks) (action Release) (param1 ?rd) (param2 ?cd)))
+  (assert (exec (step ?ks) (action Release) (param1 ?rfo) (param2 ?cfo)))
 )
 
 (defrule strategy-clean-best-dispenser
@@ -371,11 +383,17 @@
 (defrule strategy-do-CleanTable
   (strategy-service-table (table-id ?id) (phase 6) (action delayed))
   ?f1 <- (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
-  ?f2 <- (K-table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo) (clean no))
+  ?f2 <- (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
+  ;controllo che l'agente posso operare sul tavolo.
+  (or (and (test(= ?ra ?rt)) (test(= ?ca (+ ?ct 1))))
+      (and (test(= ?ra ?rt)) (test(= ?ca (- ?ct 1))))
+      (and (test(= ?ra (+ ?rt 1))) (test(= ?ca ?ct)))
+      (and (test(= ?ra (- ?rt 1))) (test(= ?ca ?ct)))
+  )
   ; controlla che l'agente sia scarico
   (test (= (+ ?ld ?lf) 0))
 =>
-  (assert (exec (step ?ks) (action CleanTable) (param1 ?rfo) (param2 ?cfo)))
+  (assert (exec (step ?ks) (action CleanTable) (param1 ?rt) (param2 ?ct)))
 )
 
 ;
