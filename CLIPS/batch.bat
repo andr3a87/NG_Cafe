@@ -48,7 +48,8 @@
 
 (load "percept.clp")
 (load "strategy1.clp")
-;(set-break strategy-do-CleanTable)
+(set-break strategy-go-phase1-finish)
+(set-break strategy-do-CleanTable)
 ;(set-break strategy-do-EmptyFood)
 ;(set-break strategy-do-Release)
 
