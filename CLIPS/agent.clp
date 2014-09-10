@@ -41,6 +41,14 @@
 (deftemplate start-astar (slot pos-r) (slot pos-c))
 (deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
 
+(deftemplate exec-finish
+  (slot step)   ;// l'environment incrementa il passo
+  (slot action  (allowed-values Finish))
+  (slot param1)
+  (slot param2)
+  (slot param3)
+)
+
 ; fl = food to load, dl = drink to load
 ; k-order-status
 (deftemplate strategy-service-table

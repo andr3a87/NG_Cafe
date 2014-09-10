@@ -31,6 +31,15 @@
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
 )
 
+(defrule answer-msg-order3
+  (declare (salience 100))
+  (status (step ?current))
+  (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
+  =>
+  (assert (exec-finish (step ?current) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish)))
+  
+)
+
 ;
 ; FASE 1 della Strategia: Ricerca di un tavolo da servire.
 ;
@@ -54,9 +63,32 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1, tavolo probabile: " ?sen crlf)
+  (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 per action " ?status" , tavolo probabile: " ?sen crlf)
   )
 )
+
+(defrule strategy-go-phase1-finish
+  (declare (salience 60))
+  (status (step ?current))
+
+  ; cerca una exec di tipo inform
+  (exec-finish (step ?s) (action Finish) (param1 ?sen) (param2 ?t) (param3 ?status))
+
+  ; @TODO cambiare per gestire più tavoli
+  (not (strategy-service-table (table-id ?id) (phase ?ph)))
+  (last-intention (step ?s1))
+  (test (> ?s ?s1))
+  (debug ?level)
+=>
+  (assert (strategy-service-table (step -1) (table-id -1) (phase 1) (action ?status) (fl 0) (dl 0)))
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 per action " ?status " , tavolo probabile: " ?sen crlf)
+  )
+)
+
 
 ;Individua il tavolo da servire secondo la strategia FIFO
 ;Effettua una ricerca all'indietro all'interno dei fatti exec per trovare il tavolo, in ordine di tempo più vecchio, che ha effettuato un'ordinazione non ancora servita.
@@ -123,11 +155,19 @@
   )
 )
 
-(defrule strategy-found-finish
-  (declare (salience 5))
-
-
+(defrule strategy-found-table-to-finish
+  (declare (salience 10))
+  (status (step ?current))
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action finish))
+  ?f2 <- (last-intention (step ?s1))
+  (not (exec-finish (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish)))
+  (exec-finish (step ?s2) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish))
+  (K-table (clean ?clean))
+  (debug ?level)
+=>
+  (assert (pulisci tavolo))
 )
+
 ;
 ; FASE 2 della Strategia: Individuare il dispenser più vicino
 ;
