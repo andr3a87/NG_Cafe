@@ -152,7 +152,7 @@
 
 (defrule distance-manhattan-tb
   (declare (salience 70))
-  (strategy-service-table (table-id ?id) (phase 2) (action delayed))
+  (strategy-service-table (table-id ?id) (phase 2) (action delayed | finish))
   (K-agent (pos-r ?ra) (pos-c ?ca) (l_f_waste yes))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains TB))
   =>
@@ -161,7 +161,7 @@
 
 (defrule distance-manhattan-rb
   (declare (salience 70))
-  (strategy-service-table (table-id ?id) (phase 2) (action delayed))
+  (strategy-service-table (table-id ?id) (phase 2) (action delayed | finish))
   (K-agent (pos-r ?ra) (pos-c ?ca) (l_d_waste yes))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains RB))
   =>
@@ -429,6 +429,28 @@
   )
 )
 
+(defrule strategy-return-phase2_clean_finish
+  (status (step ?current))
+  (debug ?level)
+
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 4.5) (action finish))
+  (msg-to-agent (request-time ?t) (step ?step) (sender ?id) (type finish) (drink-order ?do) (food-order ?fo))
+  (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
+=>
+  (if (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))
+  then
+  (modify ?f1 (phase 2))
+  else
+  (modify ?f1 (phase 6))
+  )
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
+  )
+)
+
 ; L'agente ha caricato tutti i food o drink per quell'ordine, possiamo andare alla fase 5, cioè cercare il piano per arrivare al tavolo
 (defrule strategy-go-phase5
   (status (step ?current))
@@ -584,7 +606,7 @@
   (debug ?level)
 
   ; ho scaricato tutta la roba
-  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 6) (action delayed))
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 6) (action delayed | finish))
   ; controllo che sul tavolo ci sia tutto
   ;(Table (table-id ?id) (l-drink ?dl) (l-food ?fl))
   ;(msg-to-agent (step ?step) (sender ?id) (type order) (drink-order ?dl) (food-order ?fl))
