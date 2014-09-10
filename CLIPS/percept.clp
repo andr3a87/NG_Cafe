@@ -265,12 +265,9 @@
 (defrule k-percept-clean-table_1
   (declare(salience 100))
   (status (step ?current))
-  (perc-vision (time ?t) (step ?current) (pos-r ?r) (pos-c ?c))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
-
   ?f1 <- (K-agent (l-drink ?a-ld) (l-food ?a-lf))
   (test (= (+ ?a-ld ?a-lf) 0))
-
   ?f2 <- (K-table (l-drink ?t-ld&:(> ?t-ld 0)) (l-food 0) (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (clean no))
 =>
   (modify ?f2 (l-drink 0) (clean yes))
@@ -280,7 +277,6 @@
 (defrule k-percept-clean-table_2
   (declare(salience 100))
   (status (step ?current))
-  (perc-vision (time ?t) (step ?current) (pos-r ?r) (pos-c ?c))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
 
   ?f1 <- (K-agent (l-drink ?a-ld) (l-food ?a-lf))
@@ -295,7 +291,6 @@
 (defrule k-percept-clean-table_3
   (declare(salience 100))
   (status (step ?current))
-  (perc-vision (time ?t) (step ?current) (pos-r ?r) (pos-c ?c))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
 
   ?f1 <- (K-agent (l-drink ?a-ld) (l-food ?a-lf))
@@ -310,7 +305,6 @@
 (defrule k-percept-release
   (declare(salience 100))
   (status (step ?current))
-  (perc-vision (time ?t) (step ?current) (pos-r ?r) (pos-c ?c))
   (exec (step =(- ?current 1))(action Release) (param1 ?rfo) (param2 ?cfo))
 
   ?f1 <- (K-agent (l_d_waste yes))
@@ -321,7 +315,6 @@
 (defrule k-percept-empty-food
   (declare(salience 100))
   (status (step ?current))
-  (perc-vision (time ?t) (step ?current) (pos-r ?r) (pos-c ?c))
   (exec (step =(- ?current 1))(action EmptyFood) (param1 ?rfo) (param2 ?cfo))
 
   ?f1 <- (K-agent (l_f_waste yes))
