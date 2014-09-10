@@ -61,6 +61,7 @@
 ;Individua il tavolo da servire secondo la strategia FIFO
 ;Effettua una ricerca all'indietro all'interno dei fatti exec per trovare il tavolo, in ordine di tempo più vecchio, che ha effettuato un'ordinazione non ancora servita.
 (defrule strategy-search-table-to-serve
+  (declare (salience 15))
 	(status (step ?current))
 	?f <- (strategy-service-table (step ?as) (table-id ?) (phase 1) (action accepted))
 	(exec (step ?s2&:(< ?s2 ?current)) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
@@ -75,6 +76,7 @@
 ;Trovato il tavolo, passo alla fase due della strategia.
 ;Questa regola mi serve per indicare il fatto che non vi sono ordinazioni più vecchie di quella trovata non ancora servita. Blocca la ricerca.
 (defrule strategy-found-table-to-serve
+  (declare (salience 15))
   (status (step ?current))
   ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action accepted))
   ?f2 <- (last-intention (step ?s1))
@@ -93,6 +95,7 @@
 )
 
 (defrule strategy-found-table-to-clean
+  (declare (salience 10))
   (status (step ?current))
   ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action delayed))
   ?f2 <- (last-intention (step ?s1))
@@ -120,6 +123,11 @@
   )
 )
 
+(defrule strategy-found-finish
+  (declare (salience 5))
+
+
+)
 ;
 ; FASE 2 della Strategia: Individuare il dispenser più vicino
 ;
