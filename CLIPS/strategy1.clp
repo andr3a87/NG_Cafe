@@ -38,14 +38,24 @@
 ;Se ho inviato delle Inform con accepted, e non sto servendo nessun tavolo, allora devo prendermi l'impegno di servire un tavolo. Quale? Strategia FIFO
 (defrule strategy-go-phase1
   (declare (salience 70))
+  (status (step ?current))
+
+  ; cerca una exec di tipo inform
 	(exec (step ?s) (action Inform) (param1 ?sen) (param2 ?t) (param3 ?status))
 
   ; @TODO cambiare per gestire più tavoli
 	(not (strategy-service-table (table-id ?id) (phase ?ph)))
 	(last-intention (step ?s1))
 	(test (> ?s ?s1))
+  (debug ?level)
 =>
 	(assert (strategy-service-table (step -1) (table-id -1) (phase 1) (action ?status) (fl 0) (dl 0)))
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [FASE0 - step-"?current "] Inizializza Fase 1, tavolo probabile: " ?sen crlf)
+  )
 )
 
 ;Individua il tavolo da servire secondo la strategia FIFO
@@ -60,29 +70,45 @@
 	(msg-to-agent (request-time ?t) (step ?s2) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 =>
 	(modify ?f (step ?s2) (table-id ?sen) (fl ?fo) (dl ?do))
-  (printout t " servendo tavolo " ?sen crlf)
 )
 
 ;Trovato il tavolo, passo alla fase due della strategia.
 ;Questa regola mi serve per indicare il fatto che non vi sono ordinazioni più vecchie di quella trovata non ancora servita. Blocca la ricerca.
 (defrule strategy-found-table-to-serve
-	?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action accepted))
+  (status (step ?current))
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action accepted))
   ?f2 <- (last-intention (step ?s1))
-	(not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
+  (not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
   (exec (step ?s2) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted))
+  (debug ?level)
 =>
 	(modify ?f1 (table-id ?id) (phase 2))
   (modify ?f2 (step ?s2))
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [FASE1 - step-"?current "] Tavolo da servire trovato: " ?sen crlf)
+  )
 )
 
 (defrule strategy-found-table-to-clean
+  (status (step ?current))
   ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 1) (action delayed))
   ?f2 <- (last-intention (step ?s1))
   (not (exec (step ?s2&:(and (> ?s2 ?s1) (< ?s2 ?step))) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
   (exec (step ?s2) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed))
+
+  (debug ?level)
 =>
   (modify ?f1 (step ?s2) (table-id ?sen) (phase 5))
   (modify ?f2 (step ?s2))
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [FASE1 - step-"?current "] Table to clean found: " ?sen crlf)
+  )
 )
 
 ;
@@ -94,9 +120,18 @@
 ; Appena viene avviata la fase 2 viene inserito un fatto best-dispenser
 (defrule strategy-initialize-phase2
 	(declare (salience 75))
+  (status (step ?current))
+  (debug ?level)
+
 	(strategy-service-table (table-id ?id) (phase 2))
 =>
 	(assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [FASE2 - step-"?current "] Init Phase 2 - Searching Best Dispenser..." crlf)
+  )
 )
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispenser
@@ -152,14 +187,24 @@
 ;Questa regola mi serve per indicare il fatto che non vi sono dispenser più vicini di quello trovato. Blocca la ricerca.
 (defrule found-best-dispenser
 	(declare (salience 60))
+  (status (step ?current))
+  (debug ?level)
+
 	?f1<-(best-dispenser (distance ?wd) (pos-best-dispenser ?rd ?cd))
-	(not(strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
+	(not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
+  (strategy-distance-dispenser (type ?type))
 	?f2<-(strategy-service-table (table-id ?id) (phase 2))
 	(K-cell (pos-r ?rd) (pos-c ?cd) (contains ?c))
 =>
 	(modify ?f2 (phase 3))
 	(assert (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c)))
 	(retract ?f1)
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [FASE2 - step-"?current "] Dispenser Found: " ?type " in ("?rd", "?cd")" crlf)
+  )
 )
 
 ;
@@ -178,10 +223,10 @@
 
 ;regole per avviare astar
 (defrule start-astar-to-dispenser
-    (declare (salience 70))
-    (strategy-service-table (table-id ?id) (phase 3) (step ?s) )
-    (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
-    (msg-to-agent (step ?s) (sender ?id) (food-order ?fo))
+  (declare (salience 70))
+  (strategy-service-table (table-id ?id) (phase 3) (step ?s) )
+  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+  (msg-to-agent (step ?s) (sender ?id) (food-order ?fo))
 =>
 	(assert (start-astar (pos-r ?rd) (pos-c ?cd)))
 )

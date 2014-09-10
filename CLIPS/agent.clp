@@ -9,35 +9,34 @@
 ; per lui il mondo è così come l'ha percepito all'ultimo istante perc
 
 (deftemplate K-cell  (slot pos-r) (slot pos-c)
-                     (slot contains (allowed-values Wall Person  Empty Parking Table Seat TB RB DD FD)))
+                     (slot contains (allowed-values Wall Person Empty Parking Table Seat TB RB DD FD)))
 
 (deftemplate K-agent
   (slot step)
   (slot time)
   (slot pos-r)
-	(slot pos-c)
-	(slot direction)
-	(slot l-drink)
+  (slot pos-c)
+  (slot direction)
+  (slot l-drink)
   (slot l-food)
   (slot l_d_waste)
   (slot l_f_waste)
 )
 
 (deftemplate K-table
-	(slot step)
+  (slot step)
   (slot time)
   (slot pos-r)
   (slot pos-c)
-	(slot table-id)
-	(slot clean (allowed-values yes no))
-	(slot l-drink)
+  (slot table-id)
+  (slot clean (allowed-values yes no))
+  (slot l-drink)
   (slot l-food)
 )
 
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc (slot step) (slot type (allowed-values movement load)))
 ;(deftemplate last-perc-load (slot step))
-
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 (deftemplate start-astar (slot pos-r) (slot pos-c))
 (deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
@@ -62,41 +61,44 @@
 
 ; copia le prior cell sulla struttura K-cell
 (defrule  beginagent1
-    (declare (salience 11))
-    (status (step 0))
-    (not (exec (step 0)))
-    (prior-cell (pos-r ?r) (pos-c ?c) (contains ?x))
+  (declare (salience 11))
+  (status (step 0))
+  (not (exec (step 0)))
+  (prior-cell (pos-r ?r) (pos-c ?c) (contains ?x))
 =>
-    (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x)))
+  (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x)))
 )
 
-(defrule  beginagent2
-    (declare (salience 11))
-    (status (step 0))
-    (not (exec (step 0)))
-    (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
+(defrule beginagent2
+  (declare (salience 11))
+  (status (step 0))
+  (not (exec (step 0)))
+  (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
 =>
-    (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)
-    (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
-    ;All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
-    (assert (last-perc (step -1) (type movement)))
-    (assert (last-perc (step -1) (type load)))
-    (assert (last-intention (step -1)))
-    (assert (worst-dispenser 1000))
+  (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)
+  (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
+  ;All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
+  (assert (last-perc (step -1) (type movement)))
+  (assert (last-perc (step -1) (type load)))
+  (assert (last-intention (step -1)))
+  (assert (worst-dispenser 1000))
 )
 
-(defrule  beginagent3
-    (declare (salience 11))
-    (status (step 0))
-    (not (exec (step 0)))
-    (Table (table-id ?tid) (pos-r ?r) (pos-c ?c) )
+;
+; Copia la strutture Table su K-table
+;
+(defrule beginagent3
+  (declare (salience 11))
+  (status (step 0))
+  (not (exec (step 0)))
+  (Table (table-id ?tid) (pos-r ?r) (pos-c ?c) )
 =>
-    (assert (K-table (step 0) (time 0) (pos-r ?r) (pos-c ?c) (table-id ?tid) (clean yes) (l-drink 0) (l-food 0) ))
+  (assert (K-table (step 0) (time 0) (pos-r ?r) (pos-c ?c) (table-id ?tid) (clean yes) (l-drink 0) (l-food 0) ))
 )
 
 (defrule ask_act
   ?f <-   (status (step ?i))
-  =>
+=>
   (printout t crlf crlf)
   (printout t "action to be executed at step:" ?i)
   (printout t crlf crlf)
@@ -104,10 +106,11 @@
 )
 
 (defrule exec_act
-    (declare (salience 100))
-    (status (step ?i))
-    (exec (step ?i))
- => (focus MAIN))
+  (declare (salience 100))
+  (status (step ?i))
+  (exec (step ?i))
+=>
+  (focus MAIN))
 
 ; Regola per avviare la ricerca con ASTAR se non è stato calcolato un piano per arrivare in una determinata posizione.
 (defrule go-astar

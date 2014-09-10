@@ -59,3 +59,4 @@
 (reset)
 (run 257)
 (assert (exec (step 0) (action Forward)))
+(assert (debug 2))
