@@ -441,14 +441,13 @@
   (if (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))
   then
     (modify ?f1 (phase 2))
+    ;debug
+    (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F4.5:s"?current":"?id"] (FINISH) Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
+    )
   else
     (modify ?f1 (phase 6))
-  )
-
-  ;debug
-  (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
   )
 )
 

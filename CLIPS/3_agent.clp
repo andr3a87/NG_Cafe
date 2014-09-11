@@ -3,15 +3,17 @@
 (defmodule AGENT (import MAIN ?ALL) (export ?ALL))
 
 ; è l'ultimo passaggio, la fotografia, perchè è atemporale.
+; è l'ultimo passaggio, la fotografia, perchè è atemporale.
 ; qui dentro ci serve per capire quando e dove si muovono gli agenti umani: il resto resta sempre cosi
 ; il tempo non ha senso se non facciamo roba sofisticata tipo previsione di spostamenti.
 ; per lui il mondo è così come l'ha percepito all'ultimo istante perc
+
 (deftemplate K-cell  (slot pos-r) (slot pos-c)
                      (slot contains (allowed-values Wall Person Empty Parking Table Seat TB RB DD FD)))
 
 (deftemplate K-agent
-  (slot step)         ; step in cui il K-agent è stato modificato
-  (slot time)         ; time in cui il K-agent è stato modificato
+  (slot step)
+  (slot time)
   (slot pos-r)
   (slot pos-c)
   (slot direction)
@@ -22,8 +24,8 @@
 )
 
 (deftemplate K-table
-  (slot step)       ; step in cui il K-table è stato modificato
-  (slot time)       ; time in cui il K-table è stato modificato
+  (slot step)
+  (slot time)
   (slot pos-r)
   (slot pos-c)
   (slot table-id)
@@ -31,16 +33,6 @@
   (slot l-drink)
   (slot l-food)
 )
-
-(deffacts initial-fact-agent
-  (last-perc (step -1) (type movement))
-  (last-perc (step -1) (type load))
-  (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
-  (worst-dispenser 1000)
-)
-
-; Ci dice se l'inizializzazione dell'agente è conclusa
-(deftemplate init-agent (slot done (allowed-values yes no)))
 
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc (slot step) (slot type (allowed-values movement load)))
@@ -75,6 +67,9 @@
 (deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
 (deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
 
+; Ci dice se l'inizializzazione dell'agente è conclusa
+(deftemplate init-agent (slot done (allowed-values yes no)))
+
 (deffacts initial-fact-agent
   (last-perc (step -1) (type movement))
   (last-perc (step -1) (type load))
@@ -84,10 +79,9 @@
 
 ; copia le prior cell sulla struttura K-cell
 (defrule  beginagent_kcell
-  (declare (salience 12))
+  (declare (salience 11))
   (status (step 0))
   (not (init-agent (done yes)))
-
   (prior-cell (pos-r ?r) (pos-c ?c) (contains ?x))
 =>
   (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x)))
@@ -97,25 +91,23 @@
 ; Copia la strutture Table su K-table
 ;
 (defrule beginagent_ktable
-  (declare (salience 12))
+  (declare (salience 11))
   (status (step 0))
   (not (init-agent (done yes)))
-
   (Table (table-id ?tid) (pos-r ?r) (pos-c ?c) )
 =>
   (assert (K-table (step 0) (time 0) (pos-r ?r) (pos-c ?c) (table-id ?tid) (clean yes) (l-drink 0) (l-food 0) ))
 )
 
-; inizializza l'agente, con posizione e direction
-(defrule beginagent
-  (declare (salience 11))
+(defrule beginagent_final
+  (declare (salience 10))
   (status (step 0))
   (not (init-agent (done yes)))
-
   (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
 =>
-  (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d) (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
+  (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)  (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
   (assert (init-agent (done yes)))      ; che regola il funzionamento dello Start e indica quando l'ambiente CLIPS è inizializzato (cioè sono state eseguite le regole che inizializzano lo stato dell'agente).
+
 )
 
 (defrule wait
@@ -141,15 +133,17 @@
 =>
   (focus MAIN))
 
+
+
 ; Regola per avviare la ricerca con ASTAR se non è stato calcolato un piano per arrivare in una determinata posizione.
 (defrule go-astar
-  (declare (salience 15))
-  (start-astar (pos-r ?r) (pos-c ?c))
-  (K-agent (pos-r ?r1) (pos-c ?c1))
-  (not (plane (pos-start ?r1 ?c1 ?d) (pos-end ?r ?c)))
+    (declare (salience 15))
+    (start-astar (pos-r ?r) (pos-c ?c))
+    (K-agent (pos-r ?r1) (pos-c ?c1))
+    (not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 =>
-  (assert (goal-astar ?r ?c))
-  (focus ASTAR)
+    (assert (goal-astar ?r ?c))
+    (focus ASTAR)
 )
 
 
