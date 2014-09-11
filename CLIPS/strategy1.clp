@@ -235,6 +235,7 @@
   (assert (run-plane-astar (pos-start ?r1 ?c1 ?d) (pos-end ?rd ?cd) (phase 1)))
 )
 
+
 ;Eseguito il piano, il robot si trova vicino ad dispenser piu vicino.
 (defrule strategy-go-phase4
   (status (step ?current))
@@ -254,6 +255,17 @@
   )
 )
 
+;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-dispancer.
+(defrule strategy-re-execute-phase3
+  (status (step ?current))
+  (debug ?level)
+  ?f1<-(plan-failed)
+  ?f2<-(strategy-service-table (table-id ?id) (phase 3))
+  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+=>
+  (retract ?f1)
+  (modify ?f2 (phase 3)) 
+)
 ;
 ;  FASE 4 della Strategia: Il robot arrivato al dispenser carica
 ;
@@ -499,6 +511,15 @@
   )
 )
 
+(defrule strategy-re-execute-phase5
+  (status (step ?current))
+  (debug ?level)
+  ?f1<-(plan-failed)
+  ?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a))
+=>
+  (retract ?f1)
+  (modify ?f2 (phase 5)) 
+)
 ;
 ; FASE 6 della Strategia: il robot è arrivato al tavolo e deve scaricare.
 ;
