@@ -433,7 +433,7 @@
   ;(cost-solution 0)
   (not(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) ))
 =>
-	(assert(plane (pos-start ?rs ?cs nil) (pos-end ?rg ?cg) (cost 0)))
+	(assert(plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (cost 0)))
 )
 
 (defrule stampa-fine
