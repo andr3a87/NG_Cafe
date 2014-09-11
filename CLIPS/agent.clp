@@ -3,16 +3,14 @@
 (defmodule AGENT (import MAIN ?ALL) (export ?ALL))
 
 ; è l'ultimo passaggio, la fotografia, perchè è atemporale.
-; è l'ultimo passaggio, la fotografia, perchè è atemporale.
 ; qui dentro ci serve per capire quando e dove si muovono gli agenti umani: il resto resta sempre cosi
 ; il tempo non ha senso se non facciamo roba sofisticata tipo previsione di spostamenti.
 ; per lui il mondo è così come l'ha percepito all'ultimo istante perc
-
 (deftemplate K-cell  (slot pos-r) (slot pos-c)
                      (slot contains (allowed-values Wall Person Empty Parking Table Seat TB RB DD FD)))
 
 (deftemplate K-agent
-  (slot step)
+  (slot step)         ; step in cui il K-agent è stato modificato
   (slot time)
   (slot pos-r)
   (slot pos-c)
