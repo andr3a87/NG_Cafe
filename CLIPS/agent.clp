@@ -106,6 +106,13 @@
   (assert (K-table (step 0) (time 0) (pos-r ?r) (pos-c ?c) (table-id ?tid) (clean yes) (l-drink 0) (l-food 0) ))
 )
 
+(defrule wait
+  ?f <- (status (step ?i))
+=>
+  (assert (exec (step ?i) (action Wait)))
+  (printout t " [DEBUG] WAIT" crlf)
+)
+
 (defrule ask_act
   ?f <-   (status (step ?i))
 =>
