@@ -52,7 +52,7 @@
 ;(set-break strategy-do-CleanTable)
 ;(set-break strategy-do-EmptyFood)
 ;(set-break strategy-do-Release)
-
+;(set-break go-astar)
 ;(set-break strategy-go-phase1-finish)
 ;(set-break strategy-return-phase2_finish)
 (load "exec-plane.clp")
@@ -63,4 +63,5 @@
 (run 257)
 (assert (exec (step 0) (action Forward)))
 (assert (debug 2))
-(run 3980)
+(run 3930)
+;(set-break go-astar)

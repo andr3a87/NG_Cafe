@@ -419,7 +419,7 @@
     (cost-solution ?g)
 =>
 	(printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
-    (assert (plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g)))
+    (assert (plane (pos-start ?rs ?cs ?d) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g)))
 	(retract ?f)
 
 )
@@ -433,7 +433,7 @@
     	;(cost-solution 0)
     	(not(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) ))
 =>
-	(assert(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg)(cost 0)))
+	(assert(plane (pos-start ?rs ?cs nil) (pos-end ?rg ?cg) (cost 0)))
 )
 
 (defrule stampa-fine

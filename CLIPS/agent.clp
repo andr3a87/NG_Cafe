@@ -39,7 +39,7 @@
 ;(deftemplate last-perc-load (slot step))
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 (deftemplate start-astar (slot pos-r) (slot pos-c))
-(deftemplate run-plane-astar (multislot pos-start) (multislot pos-end))
+(deftemplate run-plane-astar (multislot pos-start) (multislot pos-end) (slot phase))
 
 (deftemplate exec-order
   (slot step)   ;// l'environment incrementa il passo

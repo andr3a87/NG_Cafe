@@ -229,10 +229,10 @@
   (strategy-service-table (table-id ?id) (phase 3))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   ?f1<-(start-astar (pos-r ?rd) (pos-c ?cd))
-  (plane (pos-start ?r1 ?c1) (pos-end ?rd ?cd))
+  (plane (pos-start ?r1 ?c1 ?d) (pos-end ?rd ?cd))
 =>
   (retract ?f1)
-  (assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?rd ?cd)))
+  (assert (run-plane-astar (pos-start ?r1 ?c1 ?d) (pos-end ?rd ?cd) (phase 1)))
 )
 
 ;Eseguito il piano, il robot si trova vicino ad dispenser piu vicino.
@@ -473,12 +473,12 @@
 
 ;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
 (defrule clean-start-astar-to-table
-    (strategy-service-table (table-id ?id) (phase 5))
-    ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
-	(plane (pos-start ?r1 ?c1) (pos-end ?r ?c))
+  (strategy-service-table (table-id ?id) (phase 5))
+  ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
+	(plane (pos-start ?r1 ?c1 ?d) (pos-end ?r ?c))
 =>
-    (retract ?f1)
-	(assert (run-plane-astar (pos-start ?r1 ?c1) (pos-end ?r ?c)))
+  (retract ?f1)
+	(assert (run-plane-astar (pos-start ?r1 ?c1 ?d) (pos-end ?r ?c) (phase 1)))
 )
 
 ;Eseguito il piano, il robot si trova vicino al tavolo.
