@@ -32,6 +32,13 @@
   (slot l-food)
 )
 
+(deffacts initial-fact-agent
+  (last-perc (step -1) (type movement))
+  (last-perc (step -1) (type load))
+  (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
+  (worst-dispenser 1000)
+)
+
 ; Ci dice se l'inizializzazione dell'agente è conclusa
 (deftemplate init-agent (slot done (allowed-values yes no)))
 

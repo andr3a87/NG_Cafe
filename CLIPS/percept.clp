@@ -4,7 +4,7 @@
 
 ; Le percezioni modificano le K-cell (agente orientato west)
 (defrule k-percept-west
-  (declare (salience 2))
+  (declare (salience 100))
     (status (step ?s))
     ?ka <- (K-agent) ; recupera il K-agent
     ?fs <- (last-perc (step ?old-s))
@@ -40,7 +40,7 @@
 
 ; Le percezioni modificano le K-cell (agente orientato east)
 (defrule k-percept-east
-  (declare (salience 2))
+  (declare (salience 100))
     (status (step ?s))
     ?ka <- (K-agent)
     ?fs <- (last-perc (step ?old-s))
@@ -76,7 +76,7 @@
 
 ; PERCEZIONI PER IL SOUTH TRASFORMATE SULLE K-CELL
 (defrule k-percept-south
-  (declare (salience 2))
+  (declare (salience 100))
     (status (step ?s))
     ;//per evitare di mandare sempre in esecuzione questa regola.Una volta eseguita non deve essere più attivabile.
     ?fs <- (last-perc (step ?old-s)(type movement))
@@ -115,7 +115,7 @@
 
 ; PERCEZIONI PER IL NORTH TRASFORMATE SULLE K-CELL
 (defrule k-percept-north
-  (declare (salience 2))
+  (declare (salience 100))
     (status (step ?s))
     ;//per evitare di mandare sempre in esecuzione questa regola.Una volta eseguita non deve essere più attivabile.
     ?fs <- (last-perc (step ?old-s) (type movement))
