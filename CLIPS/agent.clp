@@ -125,7 +125,7 @@
     (declare (salience 15))
     (start-astar (pos-r ?r) (pos-c ?c))
     (K-agent (pos-r ?r1) (pos-c ?c1))
-    (not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
+    (not (plane (pos-start ?r1 ?c1 ?d) (pos-end ?r ?c)))
 =>
     (assert (goal-astar ?r ?c))
     (focus ASTAR)

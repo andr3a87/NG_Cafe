@@ -53,8 +53,8 @@
   (debug ?level)
   ?f1 <- (last-intention (step ?last))
   ; cerca una exec di tipo inform
-  (exec-order (step ?next&:(and (> ?next ?last) (< ?next ?current))) (action ?) (param1 ?sen) (param2 ?t) (param3 ?status))
-  (not (exec-order (step ?lol&:(< ?lol ?next)) (action ?) (param1 ?sen) (param2 ?t) (param3 ?status)))
+  (exec-order (step ?next&:(and (> ?next ?last) (< ?next ?current))) (action Inform|Finish) (param1 ?sen) (param2 ?t) (param3 ?status))
+  (not (exec-order (step ?lol&:(and (< ?lol ?next) (neq ?lol ?next) (and (> ?lol ?last) (< ?lol ?current)))) (action Inform|Finish)))
   
   ; @TODO cambiare per gestire più tavoli
   (not (strategy-service-table (table-id ?id) (phase ?ph)))
@@ -71,7 +71,7 @@
 
 (defrule strategy-complete-phase1
   (declare (salience 70))
-  ?f1 <- (strategy-service-table (table-id ?id) (phase 1) (action ?status))
+  ?f1 <- (strategy-service-table (step ?s2) (table-id ?id) (phase 1) (action ?status))
   (msg-to-agent (request-time ?t) (step ?s2) (sender ?sen) (type ?) (drink-order ?do) (food-order ?fo))
   (K-table (table-id ?id) (clean ?clean))
 =>
@@ -85,7 +85,7 @@
   )
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0)) 
   then
-    (modify ?f1 (action accepted))
+    (modify ?f1 (action accepted) (fl ?fo) (dl ?do))
   )
   (if (= (str-compare ?status "finish") 0)
   then

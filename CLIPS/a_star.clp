@@ -11,7 +11,7 @@
   (K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
 =>
 	(assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
-	(assert (start ?r ?c))
+	(assert (start ?r ?c ?d))
 	(assert (current 0))
 	(assert (lastnode 0))
 	(assert (open-worse 0))
@@ -409,31 +409,31 @@
 )
 
 
-(defrule stampaSol
+(defrule stampaSol1
 	(declare (salience 3))
-    ?f<-(stampa ?id)
+  ?f<-(stampa ?id)
 	(node (ident ?id) (father ?anc&~NA))
 	(exec-astar ?anc ?id ?oper ?d ?r ?c)
-    (start ?rs ?cs)
-    (goal-astar ?rg ?cg)
-    (cost-solution ?g)
+  (start ?rs ?cs ?d1)
+  (goal-astar ?rg ?cg)
+  (cost-solution ?g)
 =>
 	(printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
-    (assert (plane (pos-start ?rs ?cs ?d) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g)))
+  (assert (plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g)))
 	(retract ?f)
-
 )
+
 
 ;regola per generare un fatto di tipo plane, quando deve essere eseguito un piano a costo 0
 (defrule stampaSolZeroCost
 	(declare (salience 2))
 	?f<-(stampa ?id)
-	(start ?rs ?cs)
+	(start ?rs ?cs ?d1)
 	(goal-astar ?rg ?cg)
-    	;(cost-solution 0)
-    	(not(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) ))
+  ;(cost-solution 0)
+  (not(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) ))
 =>
-	(assert(plane (pos-start ?rs ?cs nil) (pos-end ?rg ?cg) (cost 0)))
+	(assert(plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (cost 0)))
 )
 
 (defrule stampa-fine

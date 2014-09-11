@@ -63,5 +63,5 @@
 (run 257)
 (assert (exec (step 0) (action Forward)))
 (assert (debug 2))
-(run 3930)
+;(run 3930)
 ;(set-break go-astar)
