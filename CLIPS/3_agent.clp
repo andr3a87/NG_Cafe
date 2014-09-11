@@ -68,6 +68,13 @@
 (deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
 (deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
 
+(deffacts initial-fact-agent
+  (last-perc (step -1) (type movement))
+  (last-perc (step -1) (type load))
+  (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
+  (worst-dispenser 1000)
+)
+
 ; copia le prior cell sulla struttura K-cell
 (defrule  beginagent_kcell
   (declare (salience 12))
@@ -92,21 +99,23 @@
   (assert (K-table (step 0) (time 0) (pos-r ?r) (pos-c ?c) (table-id ?tid) (clean yes) (l-drink 0) (l-food 0) ))
 )
 
-; inizializza l'agente, con posizione e last-perception
-(defrule beginagent2
+; inizializza l'agente, con posizione e direction
+(defrule beginagent
   (declare (salience 11))
   (status (step 0))
   (not (init-agent (done yes)))
 
   (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
 =>
-  (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)
-  (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
-
-  (assert (last-perc (step -1)))         ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
+  (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d) (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
   (assert (init-agent (done yes)))      ; che regola il funzionamento dello Start e indica quando l'ambiente CLIPS è inizializzato (cioè sono state eseguite le regole che inizializzano lo stato dell'agente).
-  (assert (last-intention (step -1)))
-  (assert (worst-dispenser 1000))
+)
+
+(defrule wait
+  ?f <- (status (step ?i))
+=>
+  (assert (exec (step ?i) (action Wait)))
+  (printout t " [DEBUG] WAIT" crlf)
 )
 
 (defrule ask_act
@@ -127,13 +136,13 @@
 
 ; Regola per avviare la ricerca con ASTAR se non è stato calcolato un piano per arrivare in una determinata posizione.
 (defrule go-astar
-    (declare (salience 15))
-    (start-astar (pos-r ?r) (pos-c ?c))
-    (K-agent (pos-r ?r1) (pos-c ?c1))
-    (not (plane (pos-start ?r1 ?c1 ?d) (pos-end ?r ?c)))
+  (declare (salience 15))
+  (start-astar (pos-r ?r) (pos-c ?c))
+  (K-agent (pos-r ?r1) (pos-c ?c1))
+  (not (plane (pos-start ?r1 ?c1 ?d) (pos-end ?r ?c)))
 =>
-    (assert (goal-astar ?r ?c))
-    (focus ASTAR)
+  (assert (goal-astar ?r ?c))
+  (focus ASTAR)
 )
 
 
