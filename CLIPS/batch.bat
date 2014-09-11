@@ -1,7 +1,7 @@
 (clear)
-(load "main.clp")
+(load "1_main.clp")
 
-(load "env.clp")
+(load "2_env.clp")
 (set-break forward-north-bump)
 (set-break forward-south-bump)
 (set-break forward-east-bump)
@@ -44,7 +44,7 @@
 (set-break delivery_WRONG_4)
 (set-break delivery_WRONG_5)
 
-(load "agent.clp")
+(load "3_agent.clp")
 
 (load "percept.clp")
 (load "strategy1.clp")
@@ -63,5 +63,3 @@
 (run 257)
 (assert (exec (step 0) (action Forward)))
 (assert (debug 2))
-;(run 3930)
-;(set-break go-astar)

@@ -104,39 +104,31 @@
 
 (deftemplate prior-cell  (slot pos-r) (slot pos-c)
                          (slot contains (allowed-values Zero Wall Person Empty Parking Table Seat TB RB DD FD)))
-
 (deffacts init
 	(create)
 )
 
-
-
-
-
 ;; regola per inizializzazione
 ;; legge anche initial map (prior cell), initial agent status e durata simulazione (in numero di passi)
-
 (defrule createworld
-    ?f<-   (create) =>
-           (load-facts "InitMap.txt")
-           (assert (create-map)
-           (create-initial-setting)
-           (create-history))
-           (retract ?f)
-           (focus ENV)
+  ?f <- (create)
+=>
+  (load-facts "InitMap.txt")
+  (assert (create-map)
+  (create-initial-setting)
+  (create-history))
+  (retract ?f)
+  (focus ENV)
 )
 
-
-
 ;// SI PASSA AL MODULO AGENT SE NON  E' ESAURITO IL TEMPO (indicato da maxduration)
-
 (defrule go-on-agent
-	(declare (salience 20))
-	(maxduration ?d)
-	(status (step ?t&:(< ?t ?d)))	;// controllo sul tempo
- =>
-;	(printout t crlf)
-	(focus AGENT)	;// passa il focus all'agente, che dopo un'azione lo ripassa al main.
+  (declare (salience 20))
+  (maxduration ?d)
+  (status (step ?t&:(< ?t ?d)))	;// controllo sul tempo
+=>
+  ;	(printout t crlf)
+  (focus AGENT)	;// passa il focus all'agente, che dopo un'azione lo ripassa al main.
 )
 
 
@@ -166,3 +158,16 @@
 	(halt)
 )
 
+; Per le stampe (interpretabili da CLIPSJNI)
+(deftemplate printGUI
+  (slot time (default ?NONE))
+  (slot step (default ?NONE))
+  (slot source (type STRING) (default ?NONE))
+  (slot verbosity (type INTEGER) (allowed-integers 0 1 2) (default 0))  ;Tre livelli di verbosità
+  (slot text (type STRING))
+  (slot param1 (default ""))
+  (slot param2 (default ""))
+  (slot param3 (default ""))
+  (slot param4 (default ""))
+  (slot param5 (default ""))
+)

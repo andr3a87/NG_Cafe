@@ -11,7 +11,7 @@
 
 (deftemplate K-agent
   (slot step)         ; step in cui il K-agent è stato modificato
-  (slot time)
+  (slot time)         ; time in cui il K-agent è stato modificato
   (slot pos-r)
   (slot pos-c)
   (slot direction)
@@ -22,8 +22,8 @@
 )
 
 (deftemplate K-table
-  (slot step)
-  (slot time)
+  (slot step)       ; step in cui il K-table è stato modificato
+  (slot time)       ; time in cui il K-table è stato modificato
   (slot pos-r)
   (slot pos-c)
   (slot table-id)
@@ -31,6 +31,9 @@
   (slot l-drink)
   (slot l-food)
 )
+
+; Ci dice se l'inizializzazione dell'agente è conclusa
+(deftemplate init-agent (slot done (allowed-values yes no)))
 
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc (slot step) (slot type (allowed-values movement load)))
@@ -66,40 +69,44 @@
 (deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
 
 ; copia le prior cell sulla struttura K-cell
-(defrule  beginagent1
-  (declare (salience 11))
+(defrule  beginagent_kcell
+  (declare (salience 12))
   (status (step 0))
-  (not (exec (step 0)))
+  (not (init-agent (done yes)))
+
   (prior-cell (pos-r ?r) (pos-c ?c) (contains ?x))
 =>
   (assert (K-cell (pos-r ?r) (pos-c ?c) (contains ?x)))
 )
 
+;
+; Copia la strutture Table su K-table
+;
+(defrule beginagent_ktable
+  (declare (salience 12))
+  (status (step 0))
+  (not (init-agent (done yes)))
+
+  (Table (table-id ?tid) (pos-r ?r) (pos-c ?c) )
+=>
+  (assert (K-table (step 0) (time 0) (pos-r ?r) (pos-c ?c) (table-id ?tid) (clean yes) (l-drink 0) (l-food 0) ))
+)
+
+; inizializza l'agente, con posizione e last-perception
 (defrule beginagent2
   (declare (salience 11))
   (status (step 0))
-  (not (exec (step 0)))
+  (not (init-agent (done yes)))
+
   (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
 =>
   (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)
   (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
-  ;All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
-  (assert (last-perc (step -1) (type movement)))
-  (assert (last-perc (step -1) (type load)))
+
+  (assert (last-perc (step -1)))         ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
+  (assert (init-agent (done yes)))      ; che regola il funzionamento dello Start e indica quando l'ambiente CLIPS è inizializzato (cioè sono state eseguite le regole che inizializzano lo stato dell'agente).
   (assert (last-intention (step -1)))
   (assert (worst-dispenser 1000))
-)
-
-;
-; Copia la strutture Table su K-table
-;
-(defrule beginagent3
-  (declare (salience 11))
-  (status (step 0))
-  (not (exec (step 0)))
-  (Table (table-id ?tid) (pos-r ?r) (pos-c ?c) )
-=>
-  (assert (K-table (step 0) (time 0) (pos-r ?r) (pos-c ?c) (table-id ?tid) (clean yes) (l-drink 0) (l-food 0) ))
 )
 
 (defrule ask_act
