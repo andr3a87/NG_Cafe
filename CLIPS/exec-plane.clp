@@ -10,7 +10,7 @@
   (K-agent (pos-r ?rs) (pos-c ?cs) (direction ?d))
   ?f1<-(run-plane-astar (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (phase 1))
   =>
-  (if (= (str-compare ?d ?d1)0)
+  (if (or(= (str-compare ?d ?d1)0)(= (str-compare ?d1 "nil")0))
   then 
      (modify ?f1 (phase 2))
   else
