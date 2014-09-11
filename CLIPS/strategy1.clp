@@ -39,7 +39,7 @@
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
   =>
   (assert (exec-order (step ?current) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish)))
-  
+
 )
 
 ;
@@ -55,7 +55,7 @@
   ; cerca una exec di tipo inform
   (exec-order (step ?next&:(and (> ?next ?last) (< ?next ?current))) (action Inform|Finish) (param1 ?sen) (param2 ?t) (param3 ?status))
   (not (exec-order (step ?lol&:(and (< ?lol ?next) (neq ?lol ?next) (and (> ?lol ?last) (< ?lol ?current)))) (action Inform|Finish)))
-  
+
   ; @TODO cambiare per gestire più tavoli
   (not (strategy-service-table (table-id ?id) (phase ?ph)))
 =>
@@ -65,7 +65,7 @@
   ;debug
   (if (> ?level 0)
     then
-      (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1, tavolo probabile: " ?sen crlf)
+      (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
   )
 )
 
@@ -79,11 +79,11 @@
   then
     (modify ?f1 (table-id ?id) (phase 2) (fl ?fo) (dl ?do))
   )
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0)) 
+  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 5) (fl ?fo) (dl ?do))
   )
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0)) 
+  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
   then
     (modify ?f1 (action accepted) (fl ?fo) (dl ?do))
   )
@@ -186,6 +186,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?type " in ("?rd", "?cd") (action: " ?a ")"  crlf)
+  (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?type " in ("?rd", "?cd")"  crlf)
   )
 )
 
@@ -194,22 +195,15 @@
 ;
 
 ; pulisce le distanze ai dispensers
-(defrule strategy-initialize-phase3
+(defrule clean-distance-dispenser
   (declare (salience 80))
   (status (step ?current))
-  (debug ?level)
 
   (strategy-service-table (table-id ?id) (phase 3))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   ?f1 <- (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d))
 =>
   (retract ?f1)
-
-  ;debug
-  (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3 - A-star towards best dispenser: "?c" in ("?rd","?cd")" crlf)
-  )
 )
 
 ;regole per avviare astar
@@ -264,7 +258,7 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
 =>
   (retract ?f1)
-  (modify ?f2 (phase 3)) 
+  (modify ?f2 (phase 3))
 )
 ;
 ;  FASE 4 della Strategia: Il robot arrivato al dispenser carica
@@ -418,15 +412,22 @@
   (if (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))
   then
     (modify ?f1 (phase 2))
+
+    ;debug
+    (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
+    )
   else
     (modify ?f1 (phase 2) (dl ?do) (fl ?fo) (action accepted))
+
+    ;debug
+    (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has finished trashing, starting serving table" ?id crlf)
+    )
   )
 
-  ;debug
-  (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
-  )
 )
 
 (defrule strategy-return-phase2_finish
@@ -518,7 +519,7 @@
   ?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a))
 =>
   (retract ?f1)
-  (modify ?f2 (phase 5)) 
+  (modify ?f2 (phase 5))
 )
 ;
 ; FASE 6 della Strategia: il robot è arrivato al tavolo e deve scaricare.
