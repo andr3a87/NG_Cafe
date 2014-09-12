@@ -61,7 +61,7 @@
   (declare (salience 50))
   (current ?curr)
   (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction north) (open yes))
-  (K-cell (pos-r =(+ ?r 1)) (pos-c ?c) (contains Empty))
+  (K-cell (pos-r =(+ ?r 1)) (pos-c ?c) (contains Empty|Person))
 =>
   (assert (apply ?curr forward ?r ?c north (+ ?r 1) ?c))
 )
@@ -70,7 +70,7 @@
   (declare (salience 50))
   (current ?curr)
   (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction south) (open yes))
-  (K-cell (pos-r =(- ?r 1)) (pos-c ?c) (contains Empty))
+  (K-cell (pos-r =(- ?r 1)) (pos-c ?c) (contains Empty|Person))
 =>
   (assert (apply ?curr forward ?r ?c south (- ?r 1) ?c))
 )
@@ -79,7 +79,7 @@
   (declare (salience 50))
   (current ?curr)
   (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction east) (open yes))
-  (K-cell (pos-r ?r) (pos-c =(+ ?c 1)) (contains Empty))
+  (K-cell (pos-r ?r) (pos-c =(+ ?c 1)) (contains Empty|Person))
 =>
   (assert (apply ?curr forward ?r ?c east ?r (+ ?c 1)))
 )
@@ -88,7 +88,7 @@
   (declare (salience 50))
   (current ?curr)
   (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction west) (open yes))
-  (K-cell (pos-r ?r) (pos-c =(- ?c 1)) (contains Empty))
+  (K-cell (pos-r ?r) (pos-c =(- ?c 1)) (contains Empty|Person ))
 =>
   (assert (apply ?curr forward ?r ?c west ?r (- ?c 1)))
 )
@@ -486,13 +486,25 @@
 ; da rimuovere quando in clips risolvono bug
 (defrule clean-init
 (declare(salience 1))
-  ?f1<-(current ?)
   ?f2<-(lastnode ?)
   ?f3<-(open-worse ?)
   ?f4<-(open-better ?)
   ?f5<-(alreadyclosed ?)
   ?f6<-(numberofnodes ?)
-  ?f7<-(cost-solution ?)
 =>
-  (retract ?f1 ?f2 ?f3 ?f4 ?f5 ?f6 ?f7)
+  (retract ?f2 ?f3 ?f4 ?f5 ?f6)
+)
+
+(defrule clean-cost-solution
+  (declare(salience 1))
+  ?f1<-(cost-solution ?)
+=>
+  (retract ?f1)
+)
+
+(defrule clean-current
+  (declare(salience 1))
+  ?f1<-(current ?)
+=>
+  (retract ?f1)
 )

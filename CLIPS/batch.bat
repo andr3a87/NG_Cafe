@@ -55,7 +55,7 @@
 ;(set-break go-astar)
 ;(set-break strategy-go-phase1-finish)
 ;(set-break strategy-return-phase2_finish)
-(set-break strategy-re-execute-phase5)
+(set-break wait)
 (load "exec-plane.clp")
 ;(load "manage-order.clp")
 (load "a_star.clp")
