@@ -40,7 +40,7 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
 =>
-  (assert (exec-order (step ?current) (action Finish) (param1 ?sen) (param2 ?t) (param3 finish) (drink-order 0) (food-order 0)))
+  (assert (exec-order (step ?current)(action Finish) (param1 ?sen) (param2 ?t) (param3 finish) (drink-order 0) (food-order 0)))
 )
 
 ;
@@ -75,7 +75,7 @@
   (declare (salience 70))
   (status (step ?s1))
   ?f1 <- (strategy-service-table (step ?s2) (table-id ?id) (phase 1) (action ?status))
-  ?f2 <- (exec-order (step ?s2) (table-id ?id) (drink-order ?do) (food-order ?fo))
+  ?f2 <- (exec-order (step ?s2) (param1 ?id) (drink-order ?do) (food-order ?fo))
   (K-table (table-id ?id) (clean ?clean))
   (K-agent (l-drink ?ld) (l-food ?lf))
 =>
@@ -269,6 +269,18 @@
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
 )
 
+(defrule strategy-change-order-in-phase3
+  (declare(salience 10))
+  (status (step ?current))
+  ?f1<-(exec-order (step ?s2) (param1 ?id))
+  ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 3) (fail ?f))
+  (max-fail ?fmax)
+  (test (> ?f ?fmax ))
+=>
+  (modify ?f1 (step ?current))
+  (retract ?f2)
+
+)
 ;
 ;  FASE 4 della Strategia: Il robot arrivato al dispenser/cestino carica/scarica.
 ;
@@ -536,6 +548,19 @@
   (retract ?f1)
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
 )
+
+(defrule strategy-change-order-in-phase5
+  (declare(salience 10))
+  (status (step ?current))
+  ?f1<-(exec-order (step ?s2) (param1 ?id))
+  ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 5) (fail ?f))
+  (max-fail ?fmax)
+  (test (> ?f ?fmax ))
+=>
+  (modify ?f1 (step ?current))
+  (retract ?f2)
+
+)
 ;
 ; FASE 6 della Strategia: il robot è arrivato al tavolo e deve scaricare.
 ;
@@ -604,7 +629,7 @@
   (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CleanTable" crlf)
   )
 )
-;Se non ho da ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
+;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
 (defrule go-phase7
   (declare(salience 5))
   ?f3 <- (strategy-service-table (table-id ?id) (phase 6))

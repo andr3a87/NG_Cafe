@@ -29,3 +29,4 @@ Serviamo le richieste in ordine di arrivo. (Strategy1)
 * Problema tavolo non accessibile a causa di una persona (domanda torasso)
 * Caso in cui il tavolo o il dispenser non sia accessibile da nessun percorso. Cosa succede?
 * Gestire ordini in contemporanea.
+* Non genera nuovi piani se ne esiste già uno. Ma cosa succede se quel piano fallisce?
