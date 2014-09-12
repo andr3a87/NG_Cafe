@@ -75,6 +75,7 @@
   (last-perc (step -1) (type load))
   (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
+  (debug 2)
 )
 
 ; copia le prior cell sulla struttura K-cell

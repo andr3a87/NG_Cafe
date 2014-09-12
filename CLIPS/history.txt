@@ -32,9 +32,9 @@
 
         (ident C3)
 
-        (pos-r 4)
+        (pos-r 7)
 
-        (pos-c 8)
+        (pos-c 9)
 
         (activity seated))
 
@@ -49,7 +49,7 @@
 
 (personmove (step 2) (ident C1) (path-id P1))
 (personmove (step 9) (ident C2) (path-id P2))
-(personmove (step 88) (ident C3) (path-id P3))
+(personmove (step 18) (ident C3) (path-id P3))
 
 (move-path P1 1 C1  7 2)
 (move-path P1 2 C1  6 2)
@@ -65,5 +65,6 @@
 (move-path P2 6 C1  4 5)
 
 
-(move-path P3 1 C3  5 8)
-(move-path P3 2 C3  6 8)
+(move-path P3 1 C3 7 8)
+(move-path P3 1 C3 8 8)
+
