@@ -70,12 +70,14 @@
   )
 )
 
-;Trovato l'ordine eseguo la fase di comptenza
+;Trovato l'ordine eseguo la fase di competenza
 (defrule strategy-complete-phase1
   (declare (salience 70))
+  (status (step ?s1))
   ?f1 <- (strategy-service-table (step ?s2) (table-id ?id) (phase 1) (action ?status))
-  (exec-order (step ?s2) (table-id ?id) (drink-order ?do) (food-order ?fo))
+  ?f2 <- (exec-order (step ?s2) (table-id ?id) (drink-order ?do) (food-order ?fo))
   (K-table (table-id ?id) (clean ?clean))
+  (K-agent (l-drink ?ld) (l-food ?lf))
 =>
   (if (= (str-compare ?status "accepted") 0)
   then
@@ -89,10 +91,17 @@
   then
     (modify ?f1 (action accepted) (fl ?fo) (dl ?do))
   )
-  (if (= (str-compare ?status "finish") 0)
+
+  (if (and(= (str-compare ?status "finish") 0) (or (= ?lf 0) (= ?ld 0)) )
   then
     (modify ?f1 (table-id ?id) (phase 5) (fl 0) (dl 0))
   )
+
+  (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)) )
+  then
+    (retract ?f1)
+    (modify ?f2 (step ?s1))
+  ) 
 )
 
 ;

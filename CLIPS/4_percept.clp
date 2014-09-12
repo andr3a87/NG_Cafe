@@ -213,14 +213,15 @@
   ?fs <- (last-perc (step ?))
   (test (> ?s ?old-s) )
   ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-  (exec (step =(- ?s 1)) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo))
   ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-food ?klf))
+  ?f3<-(exec-order (step =(- ?s 1)) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo) (food-order ?fo))
 =>
   (modify ?f1(l-food(- ?lf 1)))
   (modify ?fs (step ?s))
   (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo un food al tavolo
   (modify ?f2 (step ?s) (time ?t) (l-food (+ ?klf 1)) (clean no))
+  (modify ?f3 (- ?fo 1))
 )
 
 (defrule k-percept-delivery-drink
@@ -230,14 +231,15 @@
   ?fs <- (last-perc (step ?))
   (test (> ?s ?old-s))
   ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-  (exec (step =(- ?s 1))(action DeliveryDrink) (param1 ?rfo) (param2 ?cfo))
   ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-drink ?kld))
+  ?f3<-(exec-order (step =(- ?s 1)) (action DeliveryDrink) (param1 ?rfo) (param2 ?cfo) (drink-order ?do))
 =>
   (modify ?f1(l-drink(- ?ld 1)))
   (modify ?fs (step ?s))
   (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo un drink al tavolo
   (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
+  (modify ?f3 (- ?do 1))
 )
 
 ; permette di
@@ -252,7 +254,7 @@
   ?f1<-(K-agent (l-food ?lf) (l_d_waste no) (l_f_waste no))
   (test (= ?lf 1))
 
-  (exec (step =(- ?s 1))(action DeliveryFood) (param1 ?rfo) (param2 ?cfo))
+  ?f3<-(exec-order (step =(- ?s 1)) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo) (food-order ?fo))
   ; k-table
   ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-food ?klf))
   =>
@@ -262,6 +264,7 @@
   (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo il food
   (modify ?f2 (step ?s) (time ?t) (l-food (+ ?klf 1)) (clean no))
+  (modify ?f3 (- ?fo 1))
 )
 
 (defrule k-percept-delivery-final-drink
@@ -274,10 +277,8 @@
   ; controllo che l'agente abbia esattamente un drink
   ?f1<-(K-agent (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   (test (= ?ld 1))
-
-  (exec (step =(- ?s 1))(action DeliveryDrink) (param1 ?rfo) (param2 ?cfo))
-  ; k-table
   ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-drink ?kld))
+  ?f3<-(exec-order (step =(- ?s 1)) (action DeliveryDrink) (param1 ?rfo) (param2 ?cfo) (drink-order ?do))
   =>
   ; modifica l'agente
   (modify ?f1 (l-drink 0))
@@ -286,6 +287,7 @@
   (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo il drink
   (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
+  (modify ?f3 (- ?do 1))
 )
 
 ; TODO controllare step precedente di exec rispetto a perc-vision
