@@ -181,6 +181,7 @@
   (modify ?f1(l-food(+ ?lf 1)))
   ; modifica last-perc
   (modify ?fs (step ?s))
+  (modify ?last-l (step ?s))
 )
 
 (defrule k-percept-load-drink
@@ -198,6 +199,7 @@
   (modify ?f1(l-drink(+ ?ld 1)))
   ; modifica last-perc
   (modify ?fs (step ?s))
+  (modify ?last-l (step ?s))
 )
 
 ;
@@ -216,6 +218,7 @@
 =>
   (modify ?f1(l-food(- ?lf 1)))
   (modify ?fs (step ?s))
+  (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo un food al tavolo
   (modify ?f2 (step ?s) (time ?t) (l-food (+ ?klf 1)) (clean no))
 )
@@ -232,6 +235,7 @@
 =>
   (modify ?f1(l-drink(- ?ld 1)))
   (modify ?fs (step ?s))
+  (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo un drink al tavolo
   (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
 )
@@ -255,6 +259,7 @@
   ; modifica l'agente
   (modify ?f1 (l-food 0))
   (modify ?fs (step ?s))
+  (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo il food
   (modify ?f2 (step ?s) (time ?t) (l-food (+ ?klf 1)) (clean no))
 )
@@ -278,6 +283,7 @@
   (modify ?f1 (l-drink 0))
   ; modifica lo step
   (modify ?fs (step ?s))
+  (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo il drink
   (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
 )

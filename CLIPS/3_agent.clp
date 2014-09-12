@@ -34,9 +34,9 @@
 )
 
 ; step dell'ultima percezione esaminata
-(deftemplate last-perc-vision (slot step)))
-(deftemplate last-perc-load (slot step)))
-(deftemplate last-perc (slot step)))
+(deftemplate last-perc-vision (slot step))
+(deftemplate last-perc-load (slot step))
+(deftemplate last-perc (slot step))
 
 ;(deftemplate last-perc-load (slot step))
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
@@ -49,7 +49,7 @@
   (slot param1)
   (slot param2)
   (slot param3)
-  (slot drink-order) 
+  (slot drink-order)
   (slot food-order)
 )
 

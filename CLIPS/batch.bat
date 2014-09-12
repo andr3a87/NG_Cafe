@@ -18,8 +18,8 @@
 (set-break CheckFinish_useless-4)
 (set-break CheckFinish_KO_1)
 (set-break CheckFinish_KO_2)
-(set-break CleanTable_KO_1)
-(set-break CleanTable_KO_2)
+(set-break CleanTable_K0_1)
+(set-break CleanTable_K0_2)
 (set-break CleanTable_KO_3)
 (set-break CleanTable_KO_4)
 (set-break CleanTable_KO_5)
@@ -47,7 +47,7 @@
 (load "3_agent.clp")
 
 (load "4_percept.clp")
-(load "5_strategy1.clp")
+(load "5_strategy_FIFO.clp")
 ;(set-break strategy-search-table-to-serve)
 ;(set-break strategy-do-CleanTable)
 ;(set-break strategy-do-EmptyFood)
@@ -58,7 +58,7 @@
 (set-break wait)
 
 (load "6_exec-plane.clp")
-(load "a_star.clp")
+(load "7_a_star.clp")
 
 (reset)
 (run 257)
