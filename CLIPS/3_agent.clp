@@ -3,7 +3,6 @@
 (defmodule AGENT (import MAIN ?ALL) (export ?ALL))
 
 ; è l'ultimo passaggio, la fotografia, perchè è atemporale.
-; è l'ultimo passaggio, la fotografia, perchè è atemporale.
 ; qui dentro ci serve per capire quando e dove si muovono gli agenti umani: il resto resta sempre cosi
 ; il tempo non ha senso se non facciamo roba sofisticata tipo previsione di spostamenti.
 ; per lui il mondo è così come l'ha percepito all'ultimo istante perc
@@ -74,8 +73,9 @@
 (deftemplate init-agent (slot done (allowed-values yes no)))
 
 (deffacts initial-fact-agent
-  (last-perc (step -1) (type movement))
-  (last-perc (step -1) (type load))
+  (last-perc (step -1))
+  (last-perc-vision (step -1))
+  (last-perc-load (step -1))
   (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
   (debug 2)
