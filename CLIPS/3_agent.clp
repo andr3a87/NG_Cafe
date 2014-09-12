@@ -35,7 +35,10 @@
 )
 
 ; step dell'ultima percezione esaminata
-(deftemplate last-perc (slot step) (slot type (allowed-values movement load)))
+(deftemplate last-perc-vision (slot step)))
+(deftemplate last-perc-load (slot step)))
+(deftemplate last-perc (slot step)))
+
 ;(deftemplate last-perc-load (slot step))
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
 (deftemplate start-astar (slot pos-r) (slot pos-c))
@@ -75,6 +78,7 @@
   (last-perc (step -1) (type load))
   (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
+  (assert (debug 2))
 )
 
 ; copia le prior cell sulla struttura K-cell
