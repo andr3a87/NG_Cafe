@@ -97,6 +97,7 @@ public abstract class ClipsModel extends Observable implements Runnable {
                             while(prec.equals(actual)) {
                                 run_feedback = core.runOne();
                                 current = core.findFact("AGENT", "last-perc", "TRUE", arrayPercept);
+                                System.out.println(current[0]);
                                 if(current[0] == null) actual = -1;
                                 else actual = new Integer(current[0]);
                             }
