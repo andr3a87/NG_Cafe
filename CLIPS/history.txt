@@ -66,5 +66,4 @@
 
 
 (move-path P3 1 C3 7 8)
-(move-path P3 1 C3 8 8)
-
+(move-path P3 2 C3 8 8)

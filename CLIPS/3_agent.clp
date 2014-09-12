@@ -49,6 +49,8 @@
   (slot param1)
   (slot param2)
   (slot param3)
+  (slot drink-order) 
+  (slot food-order)
 )
 
 ; fl = food to load, dl = drink to load
@@ -61,6 +63,7 @@
   (slot fl)
   (slot dl)
   (slot action)
+  (slot fail)
 )
 
 (deftemplate last-intention (slot step))
@@ -78,6 +81,7 @@
   (last-perc-load (step -1))
   (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
+  (max-fail 5)
   (debug 2)
 )
 
