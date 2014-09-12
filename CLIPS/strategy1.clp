@@ -66,7 +66,7 @@
   ;debug
   (if (> ?level 0)
     then
-      (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
+      (printout t " [DEBUG] [F0:s"?current":"?sen"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
   )
 )
 
@@ -77,18 +77,25 @@
   (msg-to-agent (request-time ?t) (step ?s2) (sender ?sen) (type ?) (drink-order ?do) (food-order ?fo))
   (K-table (table-id ?id) (clean ?clean))
 =>
+  ; vado alla fase 2 se l'ordine è accettato, ovvero posso cercare già il dispenser più vicino
   (if (= (str-compare ?status "accepted") 0)
   then
     (modify ?f1 (table-id ?id) (phase 2) (fl ?fo) (dl ?do))
   )
+
+  ; se l'ordine è delayed e il tavolo è sporco (ossia non l'ho ancora pulito), vado alla fase 5, cerco il tavolo da pulire e ci vado
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 5) (fl ?fo) (dl ?do))
   )
+
+  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito), modifico in accepted, così da gestirlo come un ordine normale.
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
   then
     (modify ?f1 (action accepted) (fl ?fo) (dl ?do))
   )
+
+  ; se ho ricevuto una finish vado a pulire il tavolo
   (if (= (str-compare ?status "finish") 0)
   then
     (modify ?f1 (table-id ?id) (phase 5) (fl 0) (dl 0))
