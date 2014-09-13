@@ -3,7 +3,6 @@
 (defmodule AGENT (import MAIN ?ALL) (export ?ALL))
 
 ; è l'ultimo passaggio, la fotografia, perchè è atemporale.
-; è l'ultimo passaggio, la fotografia, perchè è atemporale.
 ; qui dentro ci serve per capire quando e dove si muovono gli agenti umani: il resto resta sempre cosi
 ; il tempo non ha senso se non facciamo roba sofisticata tipo previsione di spostamenti.
 ; per lui il mondo è così come l'ha percepito all'ultimo istante perc
@@ -35,9 +34,9 @@
 )
 
 ; step dell'ultima percezione esaminata
-(deftemplate last-perc-vision (slot step)))
-(deftemplate last-perc-load (slot step)))
-(deftemplate last-perc (slot step)))
+(deftemplate last-perc-vision (slot step))
+(deftemplate last-perc-load (slot step))
+(deftemplate last-perc (slot step))
 
 ;(deftemplate last-perc-load (slot step))
 (deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
@@ -50,6 +49,8 @@
   (slot param1)
   (slot param2)
   (slot param3)
+  (slot drink-order)
+  (slot food-order)
 )
 
 ; fl = food to load, dl = drink to load
@@ -62,6 +63,7 @@
   (slot fl)
   (slot dl)
   (slot action)
+  (slot fail)
 )
 
 (deftemplate last-intention (slot step))
@@ -74,11 +76,13 @@
 (deftemplate init-agent (slot done (allowed-values yes no)))
 
 (deffacts initial-fact-agent
-  (last-perc (step -1) (type movement))
-  (last-perc (step -1) (type load))
+  (last-perc (step -1))
+  (last-perc-vision (step -1))
+  (last-perc-load (step -1))
   (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
-  (assert (debug 2))
+  (max-fail 5)
+  (debug 2)
 )
 
 ; copia le prior cell sulla struttura K-cell
