@@ -94,8 +94,8 @@
   then
     (modify ?f1 (action accepted) (fl ?fo) (dl ?do) )
   )
-  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e non ho sporco a bordo modifico in accepted, così da gestirlo come un ordine normale.
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0)) )
+  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e ho sporco a bordo modifico vado alla fase 2 per andare al cestino.
+  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)) )
   then
     (modify ?f1 (phase 2) (fl ?fo) (dl ?do) )
   )
@@ -233,7 +233,7 @@
   (declare (salience 70))
   (strategy-service-table (table-id ?id) (phase 3) (step ?s) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
-  (msg-to-agent (step ?s) (sender ?id) (food-order ?fo))
+  (exec-order (step ?s) (param1 ?id))
 =>
 	(assert (start-astar (pos-r ?rd) (pos-c ?cd)))
 )
@@ -447,7 +447,7 @@
   (debug ?level)
 
   ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 4.5) (action delayed))
-  (msg-to-agent (request-time ?t) (step ?step) (sender ?id) (type ?o) (drink-order ?do) (food-order ?fo))
+  (exec-order  (step ?step) (param1 ?id) (drink-order ?do) (food-order ?fo))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
   (if (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))
@@ -476,7 +476,7 @@
   (debug ?level)
 
   ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 4.5) (action finish))
-  (msg-to-agent (request-time ?t) (step ?step) (sender ?id) (type ?o) )
+  (exec-order  (step ?step) (param1 ?id) (drink-order ?do) (food-order ?fo))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
   (if (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))
@@ -697,12 +697,13 @@
   (debug ?level)
   ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 7) (dl 0) (fl 0))
   (K-agent (l-drink 0) (l-food 0))
+   (exec-order  (step ?step) (param1 ?id))
 =>
   (retract ?f1)
 
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7" crlf)
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order step: " ?step " of table: " ?id " is completed" crlf)
   )
 )
