@@ -34,6 +34,7 @@
 
 (defrule run-plane-forward-north
   (declare (salience 80))
+  (status (step ?current))
   ?f1 <- (start ?father)
   ?f2 <- (run-plane-astar (pos-start ?rs ?cs ?) (pos-end ?rg ?cg) (phase 2))
   (plane (pos-start ?rs ?cs ?) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward north ?r ?c) (cost ?g))
@@ -49,12 +50,13 @@
       (retract ?f1)
       (retract ?f2)
       (assert (start 0))
-      (assert (plan-failed))
+      (assert (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail)))
   )
 )
 
 (defrule run-plane-forward-south
   (declare (salience 80))
+  (status (step ?current))
   ?f1 <- (start ?father)
   ?f2 <- (run-plane-astar (pos-start ?rs ?cs ?) (pos-end ?rg ?cg) (phase 2))
   (plane (pos-start ?rs ?cs ?) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward south ?r ?c) (cost ?g))
@@ -70,12 +72,13 @@
       (retract ?f1)
       (retract ?f2)
       (assert (start 0))
-      (assert (plan-failed))
+      (assert (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail)))
   )
 )
 
 (defrule run-plane-forward-east
   (declare (salience 80))
+  (status (step ?current))
   ?f1 <- (start ?father)
   ?f2 <- (run-plane-astar (pos-start ?rs ?cs ?) (pos-end ?rg ?cg) (phase 2))
   (plane (pos-start ?rs ?cs ?) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward east ?r ?c) (cost ?g))
@@ -91,12 +94,13 @@
       (retract ?f1)
       (retract ?f2)
       (assert (start 0))
-      (assert (plan-failed))
+      (assert (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail)))
   )
 )
 
 (defrule run-plane-forward-west
   (declare (salience 80))
+  (status (step ?current))
   ?f1 <- (start ?father)
   ?f2 <- (run-plane-astar (pos-start ?rs ?cs ?) (pos-end ?rg ?cg) (phase 2))
   (plane (pos-start ?rs ?cs ?) (pos-end ?rg ?cg) (exec-astar-sol ?father ?id Forward west ?r ?c) (cost ?g))
@@ -112,18 +116,19 @@
       (retract ?f1)
       (retract ?f2)
       (assert (start 0))
-      (assert (plan-failed))
+      (assert (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail)))
   )
 )
 
 (defrule clean-start
   (declare (salience 78))
+  (status (step ?current))
   ?f1 <- (start ?father)
   ?f2 <- (run-plane-astar (pos-start ?rs ?cs ?) (pos-end ?rg ?cg))
 =>
   (retract ?f1)
   (retract ?f2)
   (assert (start 0))
-  (assert (plan-executed))
+  (assert (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok)))
 )
 

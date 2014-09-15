@@ -13,7 +13,7 @@
 ;Regole per rispondere alla richiesta ordini da parte dei tavoli.
 ;Attiva quando ricevo un ordine da un tavolo Inform con accepted
 (defrule answer-msg-order1
-	(declare (salience 100))
+	(declare (salience 150))
   (status (step ?current))
 	(msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 	(K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
@@ -25,7 +25,7 @@
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
 ;Inform con strategy-return-phase6-to-2_delayed
 (defrule answer-msg-order2
-	(declare (salience 100))
+	(declare (salience 150))
   (status (step ?current))
 	(msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
 	(K-table (table-id ?sen) (clean no))
@@ -36,7 +36,7 @@
 
 ;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
 (defrule answer-msg-order3
-  (declare (salience 100))
+  (declare (salience 150))
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
 =>
@@ -50,18 +50,18 @@
 ;Ricerca dell'ordine da servire. La ricerca avviene sia sulle Inform che sulle Finish. Si ricerca l'ordine più vecchio non ancora servito.
 (defrule strategy-go-phase1
   (declare (salience 70))
-  (status (step ?current))
+  (status (step ?current) )
   (debug ?level)
-  ?f1 <- (last-intention (step ?last))
+  ?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
-  (exec-order (step ?next&:(and (>= ?next ?last) (< ?next ?current))) (action Inform|Finish) (param1 ?sen) (param2 ?t) (param3 ?status))
-  (not (exec-order (step ?lol&:(and (< ?lol ?next) (neq ?lol ?next) (and (> ?lol ?last) (< ?lol ?current)))) (param1 ?sen1&:(neq ?sen ?sen1)) (action Inform|Finish)))
+  (exec-order (step ?next&:(and (> ?next ?last) (<= ?next ?current))) (action Inform|Finish) (param1 ?sen) (param2 ?t) (param3 ?status))
+  (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish)))
 
   ; @TODO cambiare per gestire più tavoli
   (not (strategy-service-table (table-id ?id) (phase ?ph)))
 =>
   (assert (strategy-service-table (step ?next) (table-id ?sen) (phase 1) (action ?status) (fl 0) (dl 0) (fail 0)))
-  (modify ?f1 (step ?next))
+  (modify ?f1 (step ?next) (time ?t))
 
   ;debug
   (if (> ?level 0)
@@ -239,13 +239,16 @@
 )
 
 ;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
+;Il piano non deve esser stato eseguito anche precedentemente (caso di failed), altrimenti non ripianifica e non trova altre strade.
 (defrule clean-start-astar
-  (declare (salience 70))
+  (declare (salience 75))
+  (status (step ?current))
   (strategy-service-table (table-id ?id) (phase 3))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   ?f1<-(start-astar (pos-r ?rd) (pos-c ?cd))
   (plane (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd))
+  (not(plan-executed (step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail)))
 =>
   (retract ?f1)
   (assert (run-plane-astar (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd) (phase 1)))
@@ -255,11 +258,10 @@
 (defrule strategy-go-phase4
   (status (step ?current))
   (debug ?level)
-  ?f1<-(plan-executed)
+  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
 	?f2<-(strategy-service-table (table-id ?id) (phase 3))
 	(strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
 =>
-	(retract ?f1)
 	(modify ?f2 (phase 4) (fail 0))
 
   ;debug
@@ -273,11 +275,10 @@
 (defrule strategy-re-execute-phase3
   (status (step ?current))
   (debug ?level)
-  ?f1<-(plan-failed)
+  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   ?f2<-(strategy-service-table (table-id ?id) (phase 3) (fail ?f))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
 =>
-  (retract ?f1)
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
 )
 
@@ -288,8 +289,9 @@
   ?f1<-(exec-order (step ?s2) (param1 ?id))
   ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 3) (fail ?f))
   ?f3<-(strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   (max-fail ?fmax)
-  (test (> ?f ?fmax ))
+  (test (>= ?f ?fmax ))
 =>
   (modify ?f1 (step ?current))
   (retract ?f2 ?f3)
@@ -526,10 +528,12 @@
 
 ;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
 (defrule clean-start-astar-to-table
+  (status (step ?current))
   (strategy-service-table (table-id ?id) (phase 5))
   ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
 	(plane (pos-start ?ra ?ca ?d) (pos-end ?r ?c))
+  (not(plan-executed (step ?current) (pos-start ?ra ?ca) (pos-end ?r ?c) (result fail)))
 =>
   (retract ?f1)
 	(assert (run-plane-astar (pos-start ?ra ?ca ?d) (pos-end ?r ?c) (phase 1)))
@@ -540,12 +544,10 @@
   (status (step ?current))
   (debug ?level)
 
-	?f1<-(plan-executed)
+	(plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
 	?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a))
 =>
-	(retract ?f1)
 	(modify ?f2 (phase 6) (fail 0))
-
   ;debug
   (if (> ?level 0)
   then
@@ -557,7 +559,7 @@
 (defrule strategy-re-execute-phase5
   (status (step ?current))
   (debug ?level)
-  ?f1<-(plan-failed)
+  ?f1<- (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   ?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a) (fail ?f))
 =>
   (retract ?f1)
@@ -569,8 +571,9 @@
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (param1 ?id))
   ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 5) (fail ?f))
+  ?f3<- (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   (max-fail ?fmax)
-  (test (> ?f ?fmax ))
+  (test (>= ?f ?fmax ))
 =>
   (modify ?f1 (step ?current))
   (retract ?f2)

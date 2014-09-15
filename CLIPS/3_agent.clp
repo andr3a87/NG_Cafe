@@ -66,11 +66,12 @@
   (slot fail)
 )
 
-(deftemplate last-intention (slot step))
+(deftemplate last-intention (slot step) (slot time))
 
 (deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink trash-food trash-drink)))
 (deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
 (deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
+(deftemplate plan-executed (slot step) (multislot pos-start) (multislot pos-end ) (slot result (allowed-values ok fail)  ))
 
 ; Ci dice se l'inizializzazione dell'agente è conclusa
 (deftemplate init-agent (slot done (allowed-values yes no)))
@@ -79,7 +80,7 @@
   (last-perc (step -1))
   (last-perc-vision (step -1))
   (last-perc-load (step -1))
-  (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
+  (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
   (max-fail 3)
   (debug 2)
@@ -141,6 +142,14 @@
 =>
   (focus MAIN))
 
+(defrule stop
+  (declare (salience 200))
+  (status (step ?i))
+  (stop-at-step ?i)
+  
+=>
+  (halt)
+)
 
 
 ; Regola per avviare la ricerca con ASTAR se non è stato calcolato un piano per arrivare in una determinata posizione.
@@ -148,7 +157,7 @@
     (declare (salience 15))
     (start-astar (pos-r ?r) (pos-c ?c))
     (K-agent (pos-r ?r1) (pos-c ?c1))
-    (not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
+    ;(not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
 =>
     (assert (goal-astar ?r ?c))
     (focus ASTAR)
