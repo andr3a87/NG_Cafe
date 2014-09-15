@@ -428,6 +428,7 @@
 
   (printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
 
+  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders %p2 food e %p3 drinks.") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
 
 
@@ -462,7 +463,7 @@
   (printout t crlf " ENVIRONMENT:" crlf)
 
   (printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
-
+  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders %p2 food e %p3 drinks.") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
 
 
@@ -494,6 +495,7 @@
   (printout t crlf " ENVIRONMENT:" crlf)
 
   (printout t " - " ?tb " declares finish " crlf)
+  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 declares finish.") (param1 ?tb)))
 
 )
 
