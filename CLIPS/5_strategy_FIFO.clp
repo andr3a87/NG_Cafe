@@ -80,7 +80,7 @@
   (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
   ; vado alla fase 2 se l'ordine è accettato, ovvero posso cercare già il dispenser più vicino
-  (if (= (str-compare ?status "accepted") 0)
+  (if (=(str-compare ?status "accepted") 0) 
   then
     (modify ?f1 (table-id ?id) (phase 2) (fl ?fo) (dl ?do))
   )
@@ -89,10 +89,15 @@
   then
     (modify ?f1 (table-id ?id) (phase 5) (fl ?fo) (dl ?do))
   )
-  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito), modifico in accepted, così da gestirlo come un ordine normale.
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
+  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e non ho sporco a bordo modifico in accepted, così da gestirlo come un ordine normale.
+  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0) )
   then
-    (modify ?f1 (action accepted) (fl ?fo) (dl ?do))
+    (modify ?f1 (action accepted) (fl ?fo) (dl ?do) )
+  )
+  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e non ho sporco a bordo modifico in accepted, così da gestirlo come un ordine normale.
+  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0)) )
+  then
+    (modify ?f1 (phase 2) (fl ?fo) (dl ?do) )
   )
   ; se ho ricevuto una finish e non ho cibo caricato vado a pulire il tavolo
   (if (and(= (str-compare ?status "finish") 0) (or (= ?lf 0) (= ?ld 0)) )
