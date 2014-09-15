@@ -44,7 +44,7 @@
 (event (step 5) (type request) (source T3) (food 3) (drink 2))
 (event (step 9) (type finish) (source T4))
 (event (step 12) (type request) (source T4) (food 0) (drink 2))
-(event (step 65) (type finish) (source T3))
+(event (step 60) (type finish) (source T3))
 
 
 (personmove (step 2) (ident C1) (path-id P1))

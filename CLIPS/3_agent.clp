@@ -81,7 +81,7 @@
   (last-perc-load (step -1))
   (last-intention (step -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
-  (max-fail 5)
+  (max-fail 3)
   (debug 2)
 )
 

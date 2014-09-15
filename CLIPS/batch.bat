@@ -48,17 +48,11 @@
 
 (load "4_percept.clp")
 (load "5_strategy_FIFO.clp")
-;(set-break strategy-search-table-to-serve)
-;(set-break strategy-do-CleanTable)
-;(set-break strategy-do-EmptyFood)
-;(set-break strategy-do-Release)
-;(set-break go-astar)
-;(set-break strategy-go-phase1-finish)
-;(set-break strategy-return-phase2_finish)
 (set-break strategy-change-order-in-phase3)
 (set-break strategy-change-order-in-phase5)
 (load "6_exec-plane.clp")
 (load "7_a_star.clp")
+;(set-break clean)
 
 (reset)
 (run 257)

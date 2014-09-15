@@ -77,26 +77,31 @@
   ?f1 <- (strategy-service-table (step ?s2) (table-id ?id) (phase 1) (action ?status))
   ?f2 <- (exec-order (step ?s2) (param1 ?id) (drink-order ?do) (food-order ?fo))
   (K-table (table-id ?id) (clean ?clean))
-  (K-agent (l-drink ?ld) (l-food ?lf))
+  (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
+  ; vado alla fase 2 se l'ordine è accettato, ovvero posso cercare già il dispenser più vicino
   (if (= (str-compare ?status "accepted") 0)
   then
     (modify ?f1 (table-id ?id) (phase 2) (fl ?fo) (dl ?do))
   )
+  ; se l'ordine è delayed e il tavolo è sporco (ossia non l'ho ancora pulito), vado alla fase 5
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 5) (fl ?fo) (dl ?do))
   )
+  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito), modifico in accepted, così da gestirlo come un ordine normale.
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
   then
     (modify ?f1 (action accepted) (fl ?fo) (dl ?do))
   )
-
+  ; se ho ricevuto una finish e non ho cibo caricato vado a pulire il tavolo
   (if (and(= (str-compare ?status "finish") 0) (or (= ?lf 0) (= ?ld 0)) )
   then
     (modify ?f1 (table-id ?id) (phase 5) (fl 0) (dl 0))
   )
-
+  ; se ho ricevuto una finish ma ho del cibo caricato inserisco questo ordine al fondo.
+  ; Questo caso accade se dovevo portare del cibo al tavolo, ma non ho trovato una piano per arrivarci e quell'ordine è stato spostato in fondo.
+  ; A questo punto il prox ordine da evadere è una finish, ma siccome non posso trasportate cibo e sporcizio sposto al fondo anche questo.
   (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)) )
   then
     (retract ?f1)
@@ -230,13 +235,15 @@
 
 ;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
 (defrule clean-start-astar
+  (declare (salience 70))
   (strategy-service-table (table-id ?id) (phase 3))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+  (K-agent (pos-r ?ra) (pos-c ?ca))
   ?f1<-(start-astar (pos-r ?rd) (pos-c ?cd))
-  (plane (pos-start ?r1 ?c1 ?d) (pos-end ?rd ?cd))
+  (plane (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd))
 =>
   (retract ?f1)
-  (assert (run-plane-astar (pos-start ?r1 ?c1 ?d) (pos-end ?rd ?cd) (phase 1)))
+  (assert (run-plane-astar (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd) (phase 1)))
 )
 
 ;Eseguito il piano, il robot si trova vicino al dispenser/cestino piu vicino.
@@ -269,16 +276,18 @@
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
 )
 
+;Se il piano per arrivare in una determinata posizione fallisce per max-fail consecutive allora questo ordine viene inserito in coda e torno a cercare un altro ordine da servire
 (defrule strategy-change-order-in-phase3
   (declare(salience 10))
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (param1 ?id))
   ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 3) (fail ?f))
+  ?f3<-(strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (max-fail ?fmax)
   (test (> ?f ?fmax ))
 =>
   (modify ?f1 (step ?current))
-  (retract ?f2)
+  (retract ?f2 ?f3)
 
 )
 ;
@@ -514,10 +523,11 @@
 (defrule clean-start-astar-to-table
   (strategy-service-table (table-id ?id) (phase 5))
   ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
-	(plane (pos-start ?r1 ?c1 ?d) (pos-end ?r ?c))
+  (K-agent (pos-r ?ra) (pos-c ?ca))
+	(plane (pos-start ?ra ?ca ?d) (pos-end ?r ?c))
 =>
   (retract ?f1)
-	(assert (run-plane-astar (pos-start ?r1 ?c1 ?d) (pos-end ?r ?c) (phase 1)))
+	(assert (run-plane-astar (pos-start ?ra ?ca ?d) (pos-end ?r ?c) (phase 1)))
 )
 
 ;Eseguito il piano, il robot si trova vicino al tavolo.
