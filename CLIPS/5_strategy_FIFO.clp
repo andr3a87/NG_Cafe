@@ -54,8 +54,8 @@
   (debug ?level)
   ?f1 <- (last-intention (step ?last))
   ; cerca una exec di tipo inform
-  (exec-order (step ?next&:(and (> ?next ?last) (< ?next ?current))) (action Inform|Finish) (param1 ?sen) (param2 ?t) (param3 ?status))
-  (not (exec-order (step ?lol&:(and (< ?lol ?next) (neq ?lol ?next) (and (> ?lol ?last) (< ?lol ?current)))) (action Inform|Finish)))
+  (exec-order (step ?next&:(and (>= ?next ?last) (< ?next ?current))) (action Inform|Finish) (param1 ?sen) (param2 ?t) (param3 ?status))
+  (not (exec-order (step ?lol&:(and (< ?lol ?next) (neq ?lol ?next) (and (> ?lol ?last) (< ?lol ?current)))) (param1 ?sen1&:(neq ?sen ?sen1)) (action Inform|Finish)))
 
   ; @TODO cambiare per gestire più tavoli
   (not (strategy-service-table (table-id ?id) (phase ?ph)))

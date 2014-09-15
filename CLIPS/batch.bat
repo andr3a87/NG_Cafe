@@ -48,6 +48,8 @@
 
 (load "4_percept.clp")
 (load "5_strategy_FIFO.clp")
+;(set-break strategy-re-execute-phase3)
+;(set-break strategy-re-execute-phase5)
 (set-break strategy-change-order-in-phase3)
 (set-break strategy-change-order-in-phase5)
 (load "6_exec-plane.clp")

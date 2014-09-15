@@ -65,7 +65,7 @@
 (move-path P2 6 C2  4 5)
 
 
-;(move-path P3 1 C3 7 8)
-;(move-path P3 2 C3 8 8)
-;(move-path P3 3 C3 9 8)
+(move-path P3 1 C3 7 8)
+(move-path P3 2 C3 8 8)
+(move-path P3 3 C3 9 8)
 ;(move-path P3 4 C3 9 9)
