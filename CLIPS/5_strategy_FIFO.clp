@@ -282,20 +282,17 @@
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
 )
 
-;Se il piano per arrivare in una determinata posizione fallisce per max-fail consecutive allora questo ordine viene inserito in coda e torno a cercare un altro ordine da servire
+;Se non esiste un percorso per arrivare alla destinazione, l'ordine viene inserito al fondo.
 (defrule strategy-change-order-in-phase3
   (declare(salience 10))
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (param1 ?id))
   ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 3) (fail ?f))
   ?f3<-(strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
-  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
-  (max-fail ?fmax)
-  (test (>= ?f ?fmax ))
+  ?f4<-(astar-solution (value no))
 =>
   (modify ?f1 (step ?current))
-  (retract ?f2 ?f3)
-
+  (retract ?f2 ?f3 ?f4)
 )
 ;
 ;  FASE 4 della Strategia: Il robot arrivato al dispenser/cestino carica/scarica.
@@ -571,12 +568,10 @@
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (param1 ?id))
   ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 5) (fail ?f))
-  ?f3<- (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
-  (max-fail ?fmax)
-  (test (>= ?f ?fmax ))
+  ?f3<-(astar-solution (value no))
 =>
   (modify ?f1 (step ?current))
-  (retract ?f2)
+  (retract ?f2 ?f3)
 
 )
 ;

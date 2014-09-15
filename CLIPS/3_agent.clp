@@ -72,6 +72,7 @@
 (deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
 (deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
 (deftemplate plan-executed (slot step) (multislot pos-start) (multislot pos-end ) (slot result (allowed-values ok fail)  ))
+(deftemplate astar-solution (slot value (allowed-values no)))
 
 ; Ci dice se l'inizializzazione dell'agente è conclusa
 (deftemplate init-agent (slot done (allowed-values yes no)))
@@ -80,7 +81,7 @@
   (last-perc (step -1))
   (last-perc-vision (step -1))
   (last-perc-load (step -1))
-  (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
+  (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.  
   (worst-dispenser 1000)
   (max-fail 3)
   (debug 2)

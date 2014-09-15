@@ -346,6 +346,7 @@
      =>
          (retract ?f1)
          (modify ?f2 (open no))
+         (assert (astar-solution (value no)))
          (printout t " fail (last  node expanded " ?curr ")" crlf)
          (focus CLEAN)
          ;(halt)

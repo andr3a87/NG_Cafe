@@ -32,7 +32,7 @@
 
         (ident C3)
 
-        (pos-r 7)
+        (pos-r 9)
 
         (pos-c 9)
 
@@ -51,7 +51,7 @@
 
 (personmove (step 2) (ident C1) (path-id P1))
 (personmove (step 9) (ident C2) (path-id P2))
-(personmove (step 18) (ident C3) (path-id P3))
+(personmove (step 50) (ident C3) (path-id P3))
 
 (move-path P1 1 C1  7 2)
 (move-path P1 2 C1  6 2)
@@ -67,7 +67,7 @@
 (move-path P2 6 C2  4 5)
 
 
-(move-path P3 1 C3 7 8)
+(move-path P3 1 C3 9 8)
 (move-path P3 2 C3 8 8)
-(move-path P3 3 C3 9 8)
-;(move-path P3 4 C3 9 9)
+(move-path P3 43 C3 9 8)
+

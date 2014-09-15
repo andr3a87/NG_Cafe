@@ -2,6 +2,10 @@
 
 1.  Ottimizzazioni
 
+#PROBLEMI
+* Se ho più piani creati da astar per arrivare a una determinata posizione, quale eseguo? (Caso in cui un piano è appena fallito non devo rieseguirlo).
+* Se calcolo ASTAR su un percorso dove in precendeza ho avuto una percezione che vi era una persona? Devo fare delle assunzioni sul fatto che quella persona si sia spostata? Trovo una altra strada se esiste?
+
 # Strategie
 
 Serviamo le richieste in ordine di arrivo. (Strategy1)
