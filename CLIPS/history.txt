@@ -7,7 +7,7 @@
 
         (pos-r 7)
 
-        (pos-c 3)
+        (pos-c 9)
 
         (activity seated))
 
@@ -18,9 +18,9 @@
 
         (ident C2)
 
-        (pos-r 8)
+        (pos-r 4)
 
-        (pos-c 10)
+        (pos-c 6)
 
         (activity seated))
 
@@ -41,33 +41,30 @@
 
 
 (event (step 1) (type request) (source T4) (food 1) (drink 1))
-(event (step 5) (type request) (source T3) (food 3) (drink 2))
+(event (step 5) (type request) (source T2) (food 2) (drink 2))
 (event (step 9) (type finish) (source T4))
-(event (step 12) (type request) (source T4) (food 0) (drink 2))
-(event (step 60) (type finish) (source T3))
+(event (step 12) (type request) (source T1) (food 3) (drink 2))
+(event (step 25) (type request) (source T5) (food 0) (drink 2))
+
+
 
 
 
 
 (personmove (step 2) (ident C1) (path-id P1))
 (personmove (step 9) (ident C2) (path-id P2))
-(personmove (step 50) (ident C3) (path-id P3))
+(personmove (step 10) (ident C3) (path-id P3))
 
-(move-path P1 1 C1  7 2)
-(move-path P1 2 C1  6 2)
-(move-path P1 3 C1  5 2)
-(move-path P1 4 C1  4 2)
+(move-path P1 1 C1  7 8)
+(move-path P1 2 C1  8 8)
 
 
-(move-path P2 1 C2  5 2)
-(move-path P2 2 C2  5 3)
-(move-path P2 3 C2  5 4)
-(move-path P2 4 C2  4 4)
-(move-path P2 5 C2  3 4)
-(move-path P2 6 C2  4 5)
 
+(move-path P2 1 C2  4 7)
+(move-path P2 2 C2  5 7)
+(move-path P2 3 C2  6 7)
+(move-path P2 4 C2  6 6)
+(move-path P2 5 C2  7 6)
+(move-path P2 6 C2  8 6)
 
-(move-path P3 1 C3 9 8)
-(move-path P3 2 C3 8 8)
-;(move-path P3 43 C3 9 8)
 
