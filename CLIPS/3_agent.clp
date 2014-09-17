@@ -46,11 +46,13 @@
 (deftemplate exec-order
   (slot step)   ;// l'environment incrementa il passo
   (slot action  (allowed-values Finish Inform))
-  (slot param1)
-  (slot param2)
-  (slot param3)
+  (slot table-id)
+  (slot time-order)
+  (slot status)
   (slot drink-order)
   (slot food-order)
+  (slot phase)
+  (slot fail)
 )
 
 ; fl = food to load, dl = drink to load
