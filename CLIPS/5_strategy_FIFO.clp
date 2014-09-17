@@ -125,10 +125,29 @@
 	(declare (salience 75))
   (status (step ?current))
   (debug ?level)
-	(strategy-service-table (table-id ?id) (phase 2) (action ?a))
+	?f1<-(strategy-service-table (table-id ?id) (phase 2) (action ?a) (fl ?fl) (dl ?dl))
+  (K-agent (pos-r ?ra)(pos-c ?ca) (l-drink ?ld) (l-food ?lf))
+  (not (best-dispenser))
 =>
-	(assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
-
+	
+  (if (>= ?lf ?fl)
+    then
+    (modify ?f1 (fl 0))
+  )
+  (if (>= ?ld ?dl)
+    then
+    (modify ?f1 (dl 0))
+  )
+  (if (< ?lf ?fl )
+    then
+    (modify ?f1 (fl =(- ?fl ?lf)))
+    (halt)
+  )
+  (if (< ?ld ?dl)
+    then
+    (modify ?f1 (dl =(- ?dl ?ld)))
+  )
+  (assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
   ;debug
   (if (> ?level 0)
   then
@@ -140,8 +159,9 @@
 (defrule distance-manhattan-fo
 	(declare (salience 70))
 	(strategy-service-table (table-id ?id) (phase 2) (fl ?fl) (action accepted))
+  (K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
 	(test (> ?fl 0))
-	(K-agent (pos-r ?ra) (pos-c ?ca))
+  (test (< (+ ?lf ?ld) 4))
 	(K-cell (pos-r ?rfo) (pos-c ?cfo) (contains FD))
 	=>
 	(assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
@@ -151,8 +171,9 @@
 (defrule distance-manhattan-do
 	(declare (salience 70))
 	(strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (action accepted))
+  (K-agent (pos-r ?ra)(pos-c ?ca) (l-food ?lf) (l-drink ?ld))
 	(test (> ?dl 0))
-	(K-agent (pos-r ?ra)(pos-c ?ca))
+  (test (< (+ ?lf ?ld) 4))
 	(K-cell (pos-r ?rdo) (pos-c ?cdo) (contains DD))
 	=>
 	(assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance (+ (abs(- ?ra ?rdo)) (abs(- ?ca ?cdo)))) (type drink)))
@@ -211,6 +232,15 @@
   (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?type " in ("?rd", "?cd")"  crlf)
   )
 )
+
+(defrule strategy-all-loaded-go-phase5
+  (declare (salience 70))
+  ?f1<-(strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (fl ?fl) (action accepted))
+  (not (strategy-distance-dispenser (type ?type)))
+=>
+  (modify ?f1 (phase 5))
+)
+
 
 ;
 ; FASE 3 della Strategia: Pianificare con astar un piano per raggiungere il dispenser/cestino più vicino. Eseguire il piano.

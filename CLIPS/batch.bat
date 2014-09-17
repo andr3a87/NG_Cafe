@@ -59,4 +59,4 @@
 
 (reset)
 (run 257)
-(assert(stop-at-step 78))
+(assert(stop-at-step 9))
