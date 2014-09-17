@@ -448,7 +448,7 @@
 ; Una volta caricato o scaricato rimuovo il fatto best-dispenser. 
 ; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule strategy-clean-best-dispenser
-        (declare (salience 70))
+        (declare (salience 60))
         ;?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl) (fl ?fl))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
         ?f2 <- (strategy-best-dispenser)
