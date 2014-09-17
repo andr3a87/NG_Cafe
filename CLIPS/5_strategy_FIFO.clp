@@ -126,27 +126,26 @@
   (status (step ?current))
   (debug ?level)
         ?f1<-(strategy-service-table (table-id ?id) (phase 2) (action ?a) (fl ?fl) (dl ?dl))
-  (K-agent (pos-r ?ra)(pos-c ?ca) (l-drink ?ld) (l-food ?lf))
-  (not (best-dispenser))
+
 =>
-        
-  (if (>= ?lf ?fl)
-    then
-    (modify ?f1 (fl 0))
-  )
-  (if (>= ?ld ?dl)
-    then
-    (modify ?f1 (dl 0))
-  )
-  (if (< ?lf ?fl )
-    then
-    (modify ?f1 (fl =(- ?fl ?lf)))
-  )
-  (if (< ?ld ?dl)
-    then
-    (modify ?f1 (dl =(- ?dl ?ld)))
-  )
-  (assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
+        (assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
+  ;(if (>= ?lf ?fl)
+  ;  then
+  ;  (modify ?f1 (fl 0))
+  ;)
+;  (if (>= ?ld ?dl)
+;    then
+;    (modify ?f1 (dl 0))
+;  )
+;  (if (< ?lf ?fl )
+;    then
+;    (modify ?f1 (fl =(- ?fl ?lf)))
+;  )
+;  (if (< ?ld ?dl)
+;    then
+;    (modify ?f1 (dl =(- ?dl ?ld)))
+;  )
+;  
   ;debug
   (if (> ?level 0)
   then
@@ -158,9 +157,11 @@
 (defrule distance-manhattan-fo
         (declare (salience 70))
         (strategy-service-table (table-id ?id) (phase 2) (fl ?fl) (action accepted))
-  (K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
+        (K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
         (test (> ?fl 0))
-  (test (< (+ ?lf ?ld) 4))
+        (test (< ?lf ?fl))
+        (test (< (+ ?lf ?ld) 4))
+
         (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains FD))
         =>
         (assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
@@ -170,9 +171,11 @@
 (defrule distance-manhattan-do
         (declare (salience 70))
         (strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (action accepted))
-  (K-agent (pos-r ?ra)(pos-c ?ca) (l-food ?lf) (l-drink ?ld))
+        (K-agent (pos-r ?ra)(pos-c ?ca) (l-food ?lf) (l-drink ?ld))
         (test (> ?dl 0))
-  (test (< (+ ?lf ?ld) 4))
+        (test (< ?ld ?dl))
+        (test (< (+ ?lf ?ld) 4))
+
         (K-cell (pos-r ?rdo) (pos-c ?cdo) (contains DD))
         =>
         (assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance (+ (abs(- ?ra ?rdo)) (abs(- ?ca ?cdo)))) (type drink)))
@@ -307,8 +310,10 @@
   (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   ?f2<-(strategy-service-table (table-id ?id) (phase 3) (fail ?f))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+  ?f3<-(K-agent)
 =>
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
+  (modify ?f3)
 )
 
 ;Se non esiste un percorso per arrivare alla destinazione, l'ordine viene inserito al fondo.
@@ -319,9 +324,12 @@
   ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 3) (fail ?f))
   ?f3<-(strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   ?f4<-(astar-solution (value no))
+  ?f5<-(K-agent)
+  ?f6<-(start-astar)
 =>
   (modify ?f1 (step ?current))
-  (retract ?f2 ?f3 ?f4)
+  (modify ?f5)
+  (retract ?f2 ?f3 ?f4 ?f6)
 )
 ;
 ;  FASE 4 della Strategia: Il robot arrivato al dispenser/cestino carica/scarica.
@@ -344,10 +352,12 @@
         (test (> ?fl 0))                                                   ; food to load > 0
         (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
         (test (< (+ ?lf ?ld) 4))
+        (test (<= ?lf ?fl))
 =>
-        (modify ?f1 (fl (- ?fl 1)))
-        (assert (exec (step ?ks) (action LoadFood) (param1 ?rd) (param2 ?cd)))
-
+        
+                (modify ?f1 (fl (- ?fl 1)))
+                (assert (exec (step ?ks) (action LoadFood) (param1 ?rd) (param2 ?cd)))
+        
   ;debug
   (if (> ?level 0)
   then
@@ -368,9 +378,12 @@
         (test (> ?dl 0)) ; ci sono ancora drink da caricare
         (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
         (test (< (+ ?lf ?ld) 4))
+        (test (<= ?ld ?dl))
 =>
-        (modify ?f1 (dl (- ?dl 1)))
-        (assert (exec (step ?ks) (action LoadDrink) (param1 ?rd) (param2 ?cd)))
+        
+                (modify ?f1 (dl (- ?dl 1)))
+                (assert (exec (step ?ks) (action LoadDrink) (param1 ?rd) (param2 ?cd)))
+        
 
   ;debug
   (if (> ?level 0)
@@ -587,9 +600,11 @@
   (debug ?level)
   ?f1<- (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   ?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a) (fail ?f))
+  ?f3<-(K-agent)
 =>
   (retract ?f1)
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
+  (modify ?f3)
 )
 
 (defrule strategy-change-order-in-phase5
@@ -598,10 +613,12 @@
   ?f1<-(exec-order (step ?s2) (param1 ?id))
   ?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 5) (fail ?f))
   ?f3<-(astar-solution (value no))
+  ?f4<-(K-agent)
+  ?f5<-(start-astar)
 =>
   (modify ?f1 (step ?current))
-  (retract ?f2 ?f3)
-
+  (retract ?f2 ?f3 ?f5)
+  (modify ?f4)
 )
 ;
 ; FASE 6 della Strategia: il robot è arrivato al tavolo e deve scaricare.
@@ -616,7 +633,8 @@
   (strategy-service-table (table-id ?id) (phase 6) (action accepted))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
   (Table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo))
-  (test (> ?lf 0))
+  (exec-order (step ?s2) (param1 ?id) (food-order ?fo))
+  (and (test(> ?fo 0)) (test(> ?lf 0)))
 =>
   (assert (exec (step ?ks) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo)))
 
@@ -636,7 +654,8 @@
   (strategy-service-table (table-id ?id) (phase 6) (action accepted))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
   (Table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo))
-  (test (> ?ld 0))
+  (exec-order (step ?s2) (param1 ?id) (drink-order ?do))
+  (and (test(> ?do 0)) (test(> ?ld 0)))
 =>
   (assert (exec (step ?ks) (action DeliveryDrink) (param1 ?rfo) (param2 ?cfo)))
 
@@ -722,10 +741,11 @@
 (defrule strategy-order-completed
   (status (step ?current))
   (debug ?level)
-  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 7) (dl 0) (fl 0))
-  (K-agent (l-drink 0) (l-food 0))
-   (exec-order  (step ?step) (param1 ?id))
-=>
+  ?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 7))
+  ;(K-agent (l-drink 0) (l-food 0))
+  (last-intention (step ?step))
+  (exec-order  (step ?step) (param1 ?id) (food-order 0) (drink-order 0))
+=> 
   (retract ?f1)
 
   ;debug

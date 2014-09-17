@@ -8,33 +8,33 @@
 )
 
 (defrule S0
-  (K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
+  (K-agent (pos-r ?r) (pos-c ?c) (direction ?d))
 =>
-	(assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
-	(assert (start ?r ?c ?d))
-	(assert (current 0))
-	(assert (lastnode 0))
-	(assert (open-worse 0))
-	(assert (open-better 0))
-	(assert (alreadyclosed 0))
-	(assert (numberofnodes 0))
+        (assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
+        (assert (start ?r ?c ?d))
+        (assert (current 0))
+        (assert (lastnode 0))
+        (assert (open-worse 0))
+        (assert (open-better 0))
+        (assert (alreadyclosed 0))
+        (assert (numberofnodes 0))
 )
 
 ;Definiamo i goal. Sono di due tipi.
 ;Se la cella di destinazione è vuota il goal è rappresentato da (goal-astar ?r ?c)
 ;Se la cella di destianzione è un tavolo,un dispenser o un cestino il goal è rappresentato dalle 4 celle adiacenti al tavolo.
 (defrule S0-goal-table
-	(goal-astar ?r ?c)
-	(K-cell (pos-r ?r) (pos-c ?c) (contains Table|DD|FD|TB|RB))
+        (goal-astar ?r ?c)
+        (K-cell (pos-r ?r) (pos-c ?c) (contains Table|DD|FD|TB|RB))
 =>
   (assert (end-astar (- ?r 1) ?c))
-	(assert (end-astar (+ ?r 1) ?c))
-	(assert (end-astar ?r (- ?c 1)))
-	(assert (end-astar ?r (+ ?c 1)))
+        (assert (end-astar (+ ?r 1) ?c))
+        (assert (end-astar ?r (- ?c 1)))
+        (assert (end-astar ?r (+ ?c 1)))
 )
 
 (defrule S0-goal-empty
-	(goal-astar ?r ?c)
+        (goal-astar ?r ?c)
   (K-cell (pos-r ?r) (pos-c ?c) (contains Empty))
 =>
   (assert (end-astar ?r ?c))
@@ -135,18 +135,18 @@
               (newnode (ident (+ ?n 2)) (pos-r ?r) (pos-c ?c) (direction east)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnleft-apply-west
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction west) (open yes))
 
 
-   	=> (assert (apply ?curr turnleft-west ?r ?c west))
+        => (assert (apply ?curr turnleft-west ?r ?c west))
 )
 
 (defrule turnleft-exec-astar-west
@@ -161,18 +161,18 @@
               (newnode (ident (+ ?n 3)) (pos-r ?r) (pos-c ?c) (direction south)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
+        (father ?curr)))
     (retract ?f1)
     (focus NEW)
 )
 
 (defrule turnleft-apply-north
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction north) (open yes))
 
 
-   	=> (assert (apply ?curr turnleft-north ?r ?c north))
+        => (assert (apply ?curr turnleft-north ?r ?c north))
 )
 
 (defrule turnleft-exec-astar-north
@@ -187,18 +187,18 @@
               (newnode (ident (+ ?n 4)) (pos-r ?r) (pos-c ?c) (direction west)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnleft-apply-east
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction east) (open yes))
 
 
-   	=> (assert (apply ?curr turnleft-east ?r ?c east))
+        => (assert (apply ?curr turnleft-east ?r ?c east))
 )
 
 (defrule turnleft-exec-astar-east
@@ -213,9 +213,9 @@
               (newnode (ident (+ ?n 5)) (pos-r ?r) (pos-c ?c) (direction north)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 ;
@@ -223,12 +223,12 @@
 ;
 
 (defrule turnright-apply-south
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction south) (open yes))
 
 
-   	=> (assert (apply ?curr turnright-south ?r ?c south))
+        => (assert (apply ?curr turnright-south ?r ?c south))
 )
 
 (defrule turnright-exec-astar-south
@@ -243,18 +243,18 @@
               (newnode (ident (+ ?n 6)) (pos-r ?r) (pos-c ?c) (direction west)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnright-apply-west
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction west) (open yes))
 
 
-   	=> (assert (apply ?curr turnright-west ?r ?c west))
+        => (assert (apply ?curr turnright-west ?r ?c west))
 )
 
 (defrule turnright-exec-astar-west
@@ -269,18 +269,18 @@
               (newnode (ident (+ ?n 7)) (pos-r ?r) (pos-c ?c) (direction north)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnright-apply-north
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction north) (open yes))
 
 
-   	=> (assert (apply ?curr turnright-north ?r ?c north))
+        => (assert (apply ?curr turnright-north ?r ?c north))
 )
 
 (defrule turnright-exec-astar-north
@@ -295,18 +295,18 @@
               (newnode (ident (+ ?n 8)) (pos-r ?r) (pos-c ?c) (direction east)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnright-apply-east
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction east) (open yes))
 
 
-   	=> (assert (apply ?curr turnright-east ?r ?c east))
+        => (assert (apply ?curr turnright-east ?r ?c east))
 )
 
 (defrule turnright-exec-astar-east
@@ -321,9 +321,9 @@
               (newnode (ident (+ ?n 9)) (pos-r ?r) (pos-c ?c) (direction south)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 
@@ -411,30 +411,30 @@
 
 
 (defrule stampaSol1
-	(declare (salience 3))
+        (declare (salience 3))
   ?f<-(stampa ?id)
-	(node (ident ?id) (father ?anc&~NA))
-	(exec-astar ?anc ?id ?oper ?d ?r ?c)
+        (node (ident ?id) (father ?anc&~NA))
+        (exec-astar ?anc ?id ?oper ?d ?r ?c)
   (start ?rs ?cs ?d1)
   (goal-astar ?rg ?cg)
   (cost-solution ?g)
 =>
-	(printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
+        (printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
   (assert (plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g)))
-	(retract ?f)
+        (retract ?f)
 )
 
 
 ;regola per generare un fatto di tipo plane, quando deve essere eseguito un piano a costo 0
 (defrule stampaSolZeroCost
-	(declare (salience 2))
-	?f<-(stampa ?id)
-	(start ?rs ?cs ?d1)
-	(goal-astar ?rg ?cg)
+        (declare (salience 2))
+        ?f<-(stampa ?id)
+        (start ?rs ?cs ?d1)
+        (goal-astar ?rg ?cg)
   ;(cost-solution 0)
   (not(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) ))
 =>
-	(assert(plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (cost 0)))
+        (assert(plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (cost 0)))
 )
 
 (defrule stampa-fine
