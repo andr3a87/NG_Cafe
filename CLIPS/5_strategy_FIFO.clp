@@ -13,22 +13,22 @@
 ;Regole per rispondere alla richiesta ordini da parte dei tavoli.
 ;Attiva quando ricevo un ordine da un tavolo Inform con accepted
 (defrule answer-msg-order1
-	(declare (salience 150))
+        (declare (salience 150))
   (status (step ?current))
-	(msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
-	(K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
+        (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
+        (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
 =>
-	(assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
+        (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
   (assert (exec-order (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted) (drink-order ?do) (food-order ?fo)))
 )
 
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
 ;Inform con strategy-return-phase6-to-2_delayed
 (defrule answer-msg-order2
-	(declare (salience 150))
+        (declare (salience 150))
   (status (step ?current))
-	(msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
-	(K-table (table-id ?sen) (clean no))
+        (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
+        (K-table (table-id ?sen) (clean no))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
   (assert (exec-order (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed) (drink-order ?do) (food-order ?fo)))
@@ -122,14 +122,14 @@
 ; =====================
 ; Appena viene avviata la fase 2 viene asserito un fatto best-dispenser
 (defrule strategy-initialize-phase2
-	(declare (salience 75))
+        (declare (salience 75))
   (status (step ?current))
   (debug ?level)
-	?f1<-(strategy-service-table (table-id ?id) (phase 2) (action ?a) (fl ?fl) (dl ?dl))
+        ?f1<-(strategy-service-table (table-id ?id) (phase 2) (action ?a) (fl ?fl) (dl ?dl))
   (K-agent (pos-r ?ra)(pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   (not (best-dispenser))
 =>
-	
+        
   (if (>= ?lf ?fl)
     then
     (modify ?f1 (fl 0))
@@ -141,7 +141,6 @@
   (if (< ?lf ?fl )
     then
     (modify ?f1 (fl =(- ?fl ?lf)))
-    (halt)
   )
   (if (< ?ld ?dl)
     then
@@ -157,26 +156,26 @@
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispenser
 (defrule distance-manhattan-fo
-	(declare (salience 70))
-	(strategy-service-table (table-id ?id) (phase 2) (fl ?fl) (action accepted))
+        (declare (salience 70))
+        (strategy-service-table (table-id ?id) (phase 2) (fl ?fl) (action accepted))
   (K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
-	(test (> ?fl 0))
+        (test (> ?fl 0))
   (test (< (+ ?lf ?ld) 4))
-	(K-cell (pos-r ?rfo) (pos-c ?cfo) (contains FD))
-	=>
-	(assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
+        (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains FD))
+        =>
+        (assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
 )
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser 
 (defrule distance-manhattan-do
-	(declare (salience 70))
-	(strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (action accepted))
+        (declare (salience 70))
+        (strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (action accepted))
   (K-agent (pos-r ?ra)(pos-c ?ca) (l-food ?lf) (l-drink ?ld))
-	(test (> ?dl 0))
+        (test (> ?dl 0))
   (test (< (+ ?lf ?ld) 4))
-	(K-cell (pos-r ?rdo) (pos-c ?cdo) (contains DD))
-	=>
-	(assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance (+ (abs(- ?ra ?rdo)) (abs(- ?ca ?cdo)))) (type drink)))
+        (K-cell (pos-r ?rdo) (pos-c ?cdo) (contains DD))
+        =>
+        (assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance (+ (abs(- ?ra ?rdo)) (abs(- ?ca ?cdo)))) (type drink)))
 )
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun trash basket (Food)
@@ -201,29 +200,29 @@
 
 ;Regola che cerca il dispenser/cestino più vicino
 (defrule search-best-dispenser
-	(declare (salience 60))
-	?f1<-(best-dispenser (distance ?wd))
-	(strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd ?cd) (distance ?d&:(< ?d ?wd)))
+        (declare (salience 60))
+        ?f1<-(best-dispenser (distance ?wd))
+        (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd ?cd) (distance ?d&:(< ?d ?wd)))
 =>
-	(modify ?f1 (distance ?d) (pos-best-dispenser ?rd ?cd))
+        (modify ?f1 (distance ?d) (pos-best-dispenser ?rd ?cd))
 )
 
 ;Trovato il dispenser/cestino più vicino passo alla fase 3
 ;Questa regola mi serve per indicare il fatto che non vi sono dispenser più vicini di quello trovato. Blocca la ricerca.
 (defrule found-best-dispenser
-	(declare (salience 60))
+        (declare (salience 60))
   (status (step ?current))
   (debug ?level)
 
-	?f1<-(best-dispenser (distance ?wd) (pos-best-dispenser ?rd ?cd))
-	(not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
+        ?f1<-(best-dispenser (distance ?wd) (pos-best-dispenser ?rd ?cd))
+        (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
   (strategy-distance-dispenser (type ?type))
-	?f2<-(strategy-service-table (table-id ?id) (phase 2) (action ?a))
-	(K-cell (pos-r ?rd) (pos-c ?cd) (contains ?c))
+        ?f2<-(strategy-service-table (table-id ?id) (phase 2) (action ?a))
+        (K-cell (pos-r ?rd) (pos-c ?cd) (contains ?c))
 =>
-	(modify ?f2 (phase 3))
-	(assert (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c)))
-	(retract ?f1)
+        (modify ?f2 (phase 3))
+        (assert (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c)))
+        (retract ?f1)
 
   ;debug
   (if (> ?level 0)
@@ -265,7 +264,7 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (exec-order (step ?s) (param1 ?id))
 =>
-	(assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+        (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
 )
 
 ;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
@@ -289,10 +288,10 @@
   (status (step ?current))
   (debug ?level)
   (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
-	?f2<-(strategy-service-table (table-id ?id) (phase 3))
-	(strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+        ?f2<-(strategy-service-table (table-id ?id) (phase 3))
+        (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
 =>
-	(modify ?f2 (phase 4) (fail 0))
+        (modify ?f2 (phase 4) (fail 0))
 
   ;debug
   (if (> ?level 0)
@@ -342,12 +341,12 @@
 
   ?f1 <- (strategy-service-table (table-id ?id) (phase 4) (fl ?fl))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type FD))        ; posizione del food dispenser
-	(test (> ?fl 0))                                                   ; food to load > 0
-	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-	(test (< (+ ?lf ?ld) 4))
+        (test (> ?fl 0))                                                   ; food to load > 0
+        (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+        (test (< (+ ?lf ?ld) 4))
 =>
-	(modify ?f1 (fl (- ?fl 1)))
-	(assert (exec (step ?ks) (action LoadFood) (param1 ?rd) (param2 ?cd)))
+        (modify ?f1 (fl (- ?fl 1)))
+        (assert (exec (step ?ks) (action LoadFood) (param1 ?rd) (param2 ?cd)))
 
   ;debug
   (if (> ?level 0)
@@ -366,12 +365,12 @@
 
   ?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type DD))
-	(test (> ?dl 0)) ; ci sono ancora drink da caricare
-	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-	(test (< (+ ?lf ?ld) 4))
+        (test (> ?dl 0)) ; ci sono ancora drink da caricare
+        (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+        (test (< (+ ?lf ?ld) 4))
 =>
-	(modify ?f1 (dl (- ?dl 1)))
-	(assert (exec (step ?ks) (action LoadDrink) (param1 ?rd) (param2 ?cd)))
+        (modify ?f1 (dl (- ?dl 1)))
+        (assert (exec (step ?ks) (action LoadDrink) (param1 ?rd) (param2 ?cd)))
 
   ;debug
   (if (> ?level 0)
@@ -438,13 +437,13 @@
 
 ; Una volta caricato o scaricato rimuovo il fatto best-dispenser. Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule strategy-clean-best-dispenser
-	(declare (salience 70))
-	?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl) (fl ?fl))
-	?f2 <- (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?type))
-	(test (or (= ?dl 0) (= ?fl 0)))
+        (declare (salience 70))
+        ?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl) (fl ?fl))
+        ?f2 <- (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?type))
+        (test (or (= ?dl 0) (= ?fl 0)))
 =>  
-	(retract ?f2)
-	(modify ?f1 (phase 4.5))
+        (retract ?f2)
+        (modify ?f1 (phase 4.5))
 )
 
 ;
@@ -456,12 +455,12 @@
   (status (step ?current))
   (debug ?level)
 
-	?f1 <- (strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl) (action accepted))
-	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-	(test (< (+ ?lf ?ld) 4))
-	(test (or (> ?dl 0) (> ?fl 0)))
+        ?f1 <- (strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl) (action accepted))
+        (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+        (test (< (+ ?lf ?ld) 4))
+        (test (or (> ?dl 0) (> ?fl 0)))
 =>
-	(modify ?f1 (phase 2))
+        (modify ?f1 (phase 2))
 
   ;debug
   (if (> ?level 0)
@@ -526,14 +525,14 @@
   (status (step ?current))
   (debug ?level)
 
-	?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl) (action ?a))
-	(K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
-	(or
+        ?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl) (action ?a))
+        (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
+        (or
     (test (= (+ ?lf ?ld) 4))
-		(test (and (= ?dl 0) (= ?fl 0)))
-	)
+                (test (and (= ?dl 0) (= ?fl 0)))
+        )
 =>
-	(modify ?f1 (phase 5))
+        (modify ?f1 (phase 5))
 
   ;debug
   (if (> ?level 0)
@@ -547,10 +546,10 @@
 ;
 
 (defrule strategy-start-astar-to-table
-	(strategy-service-table (table-id ?id) (phase 5) (step ?s) )
-	(K-table (pos-r ?r) (pos-c ?c) (table-id ?id))
+        (strategy-service-table (table-id ?id) (phase 5) (step ?s) )
+        (K-table (pos-r ?r) (pos-c ?c) (table-id ?id))
 =>
-	(assert (start-astar (pos-r ?r) (pos-c ?c)))
+        (assert (start-astar (pos-r ?r) (pos-c ?c)))
 )
 
 ;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
@@ -559,11 +558,11 @@
   (strategy-service-table (table-id ?id) (phase 5))
   ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
-	(plane (pos-start ?ra ?ca ?d) (pos-end ?r ?c))
+        (plane (pos-start ?ra ?ca ?d) (pos-end ?r ?c))
   (not(plan-executed (step ?current) (pos-start ?ra ?ca) (pos-end ?r ?c) (result fail)))
 =>
   (retract ?f1)
-	(assert (run-plane-astar (pos-start ?ra ?ca ?d) (pos-end ?r ?c) (phase 1)))
+        (assert (run-plane-astar (pos-start ?ra ?ca ?d) (pos-end ?r ?c) (phase 1)))
 )
 
 ;Eseguito il piano, il robot si trova vicino al tavolo.
@@ -571,10 +570,10 @@
   (status (step ?current))
   (debug ?level)
 
-	(plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
-	?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a))
+        (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
+        ?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a))
 =>
-	(modify ?f2 (phase 6) (fail 0))
+        (modify ?f2 (phase 6) (fail 0))
   ;debug
   (if (> ?level 0)
   then
