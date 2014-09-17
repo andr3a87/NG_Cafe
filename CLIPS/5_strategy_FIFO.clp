@@ -607,6 +607,8 @@
   (modify ?f3)
 )
 
+;la modifica di k-agent è necessaria perchè altrimenti quando astar fallisce per numero massimo di nodi espansi non riparte
+;perchè clips non ri-esegue regole con gli stessi fatti (ordine diverso, ma k-agent identico ed è l'unico fatto usato da astar)
 (defrule strategy-change-order-in-phase5
   (declare(salience 10))
   (status (step ?current))
