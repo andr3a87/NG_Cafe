@@ -42,14 +42,21 @@
 
 (defrule achieved-goal
   (declare (salience 100))
+  (debug ?level)
   (current ?id)
   (goal-astar ?gr ?gc)
   (end-astar ?r ?c)
   (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))
 =>
-  (printout t " Esiste soluzione per goal (" ?gr "," ?gc ") in (" ?r "," ?c ")  con costo "  ?g crlf)
   (assert (stampa ?id))
   (assert (cost-solution ?g))
+
+  ;debug
+  (if (> ?level 2)
+    then
+    (printout t " [DEBUG] [ASTAR] Esiste soluzione per goal (" ?gr "," ?gc ") in (" ?r "," ?c ")  con costo "  ?g crlf)
+  )
+
   (focus PRINT)
 )
 
@@ -328,28 +335,36 @@
 
 
 (defrule change-current
-         (declare (salience 49))
-?f1 <-   (current ?curr)
-?f2 <-   (node (ident ?curr))
-         (node (ident ?best&:(neq ?best ?curr)) (fcost ?bestcost) (open yes))
-         (not (node (ident ?id&:(neq ?id ?curr)) (fcost ?gg&:(< ?gg ?bestcost)) (open yes)))
-?f3 <-   (lastnode ?last)
-   =>    (assert (current ?best) (lastnode (+ ?last 10)))
-         (retract ?f1 ?f3)
-         (modify ?f2 (open no)))
+ (declare (salience 49))
+  ?f1<-(current ?curr)
+  ?f2<-(node (ident ?curr))
+  (node (ident ?best&:(neq ?best ?curr)) (fcost ?bestcost) (open yes))
+  (not (node (ident ?id&:(neq ?id ?curr)) (fcost ?gg&:(< ?gg ?bestcost)) (open yes)))
+  ?f3<-(lastnode ?last)
+=>    
+  (assert (current ?best) (lastnode (+ ?last 10)))
+  (retract ?f1 ?f3)
+  (modify ?f2 (open no))
+)
 
 (defrule close-empty
-         (declare (salience 49))
-?f1 <-   (current ?curr)
-?f2 <-   (node (ident ?curr))
-         (not (node (ident ?id&:(neq ?id ?curr))  (open yes)))
-     =>
-         (retract ?f1)
-         (modify ?f2 (open no))
-         (assert (astar-solution (value no)))
-         (printout t " fail (last  node expanded " ?curr ")" crlf)
-         (focus CLEAN)
-         ;(halt)
+  (declare (salience 49))
+  (debug ?level)
+  ?f1<-(current ?curr)
+  ?f2<-(node (ident ?curr))
+  (not (node (ident ?id&:(neq ?id ?curr))  (open yes)))
+=>
+  (retract ?f1)
+  (modify ?f2 (open no))
+  (assert (astar-solution (value no)))
+
+  ;debug
+  (if (> ?level 2)
+    then
+    (printout t " [DEBUG] [ASTAR] fail (last  node expanded " ?curr ")" crlf)
+  )
+
+  (focus CLEAN)
 )
 
 (defmodule NEW (import ASTAR ?ALL) (export ?ALL))
@@ -411,17 +426,23 @@
 
 
 (defrule stampaSol1
-        (declare (salience 3))
+  (declare (salience 3))
+  (debug ?level)
   ?f<-(stampa ?id)
-        (node (ident ?id) (father ?anc&~NA))
-        (exec-astar ?anc ?id ?oper ?d ?r ?c)
+  (node (ident ?id) (father ?anc&~NA))
+  (exec-astar ?anc ?id ?oper ?d ?r ?c)
   (start ?rs ?cs ?d1)
   (goal-astar ?rg ?cg)
   (cost-solution ?g)
 =>
-        (printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
   (assert (plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g)))
-        (retract ?f)
+  (retract ?f)
+
+  ;debug
+  (if (> ?level 2)
+    then
+    (printout t " [DEBUG] [ASTAR] Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
+  )
 )
 
 

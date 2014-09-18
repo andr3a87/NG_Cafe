@@ -58,10 +58,9 @@
   (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish)))
 
   ; @TODO cambiare per gestire più tavoli
-  ;(not (strategy-service-table (table-id ?id) (phase ?ph)))
+  ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
   (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
-  ;(assert (strategy-service-table (step ?next) (table-id ?sen) (phase 1) (action ?status) (fl 0) (dl 0) (fail 0)))
   (modify ?f1 (step ?next) (time ?t))
   (modify ?f2 (phase 1))
 
@@ -229,10 +228,17 @@
 (defrule strategy-all-loaded-go-phase5
   (declare (salience 70))
   ;?f1<-(strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (fl ?fl) (action accepted))
-  ?f1<-(exec-order (table-id ?id) (phase 2) (status accepted))
+  ?f1<-(exec-order (table-id ?id) (phase 2) (food-order ?fo) (drink-order ?do) (status accepted))
   (not (strategy-distance-dispenser (type ?type)))
 =>
   (modify ?f1 (phase 5))
+
+  ;debug
+  (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F2:s"?current":"?id"] Agent hasn't space available. Useless found dispenser."  crlf)
+    (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fo", drink: "?do")" crlf)
+  )
 )
 
 
@@ -293,8 +299,8 @@
 
   ;debug
   (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F4:s"?current":"?id"] Init Phase 4 - Agent in front of best dispenser: "?c" in ("?rd","?cd")" crlf)
+    then
+    (printout t " [DEBUG] [F4:s"?current":"?id"] Init Phase 4 - Agent in front of best dispenser: "?c" in ("?rd","?cd")" crlf)
   )
 )
 
@@ -311,6 +317,12 @@
 =>
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
   (modify ?f3)
+
+  ;debug
+  (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Plane Failed. Re-Plane Astar to dispenser: "?c" in ("?rd","?cd")" crlf)
+  )
 )
 
 ;Se non esiste un percorso per arrivare alla destinazione, l'ordine viene inserito al fondo.
@@ -328,6 +340,13 @@
   (modify ?f1 (step ?current) (phase 0))
   (modify ?f5)
   (retract ?f3 ?f4 ?f6)
+
+  ;debug
+  (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F3:s"?current":"?id"] A-Star not found solution to the dispenser: "?c" in ("?rd","?cd")" crlf)
+    (printout t " [DEBUG] [F3:s"?current":"?id"] Order moved to the bottom." crlf)
+  )
 )
 ;
 ;  FASE 4 della Strategia: Il robot arrivato al dispenser/cestino carica/scarica.
