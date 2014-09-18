@@ -19,7 +19,7 @@
         (step 0)
         (time 0)
         (ident C3)
-        (pos-r 9)
+        (pos-r 7)
         (pos-c 9)
         (activity seated))
 
