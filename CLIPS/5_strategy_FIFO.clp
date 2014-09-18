@@ -582,6 +582,7 @@
 ;
 
 (defrule strategy-start-astar-to-table
+  (declare(salience 10))
   ;(strategy-service-table (table-id ?id) (phase 5) (step ?s) )
   (exec-order (table-id ?id) (phase 5))
   (K-table (pos-r ?r) (pos-c ?c) (table-id ?id))
@@ -591,6 +592,7 @@
 
 ;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
 (defrule clean-start-astar-to-table
+  (declare(salience 15))
   (status (step ?current))
   ;(strategy-service-table (table-id ?id) (phase 5))
   (exec-order (table-id ?id) (phase 5))
