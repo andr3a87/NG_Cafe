@@ -37,7 +37,8 @@
 
 (move-path P4 1 C3 9 8)
 
-
+;penality 3399 STRATEGY_FIFO_WAIT
+;penality 3011 STRATEGY_FIFO
 
 
 
