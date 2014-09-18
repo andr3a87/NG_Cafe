@@ -227,6 +227,8 @@
 
 (defrule strategy-all-loaded-go-phase5
   (declare (salience 70))
+  (status (step ?current))
+  (debug ?level)
   ;?f1<-(strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (fl ?fl) (action accepted))
   ?f1<-(exec-order (table-id ?id) (phase 2) (food-order ?fo) (drink-order ?do) (status accepted))
   (not (strategy-distance-dispenser (type ?type)))
@@ -329,10 +331,11 @@
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
 (defrule strategy-change-order-in-phase3
   (declare(salience 10))
+  (debug ?level)
   (status (step ?current))
-  ?f1<-(exec-order (step ?s2) (phase 3))
+  ?f1<-(exec-order (table-id ?id)(step ?s2) (phase 3))
   ;?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 3) (fail ?f))
-  ?f3<-(strategy-best-dispenser)
+  ?f3<-(strategy-best-dispenser (type ?c) (pos-dispenser ?rd ?cd))
   ?f4<-(astar-solution (value no))
   ?f5<-(K-agent)
   ?f6<-(start-astar)
@@ -629,12 +632,19 @@
   (retract ?f1)
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
   (modify ?f3)
+  
+  ;debug
+  (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5: Plane Failed. Re-Plane Astar to table: "?id crlf)
+  )
 )
 
 ;la modifica di k-agent è necessaria perchè altrimenti quando astar fallisce per numero massimo di nodi espansi non riparte
 ;perchè clips non ri-esegue regole con gli stessi fatti (ordine diverso, ma k-agent identico ed è l'unico fatto usato da astar)
 (defrule strategy-change-order-in-phase5
   (declare(salience 10))
+  (debug ?level)
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5))
   ;?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 5) (fail ?f))
@@ -645,6 +655,12 @@
   (modify ?f1 (step ?current) (phase 0))
   (retract ?f3 ?f5)
   (modify ?f4)
+
+  (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F5:s"?current":"?id"] A-Star not found solution to the table: "?id crlf)
+    (printout t " [DEBUG] [F5:s"?current":"?id"] Order moved to the bottom." crlf)
+  )
 )
 ;
 ; FASE 6 della Strategia: il robot è arrivato al tavolo e deve scaricare.
@@ -717,13 +733,22 @@
   (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CleanTable" crlf)
   )
 )
+
 ;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
 (defrule go-phase7
   (declare(salience 5))
+  (debug ?level)
+  (status (step ?current))
   ;?f3 <- (strategy-service-table (table-id ?id) (phase 6))
   ?f3<-(exec-order (table-id ?id) (phase 6))
   =>
   (modify ?f3 (phase 7))
+
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F7:s"?current":"?id"] Init Phase 7" crlf)
+  )
 )
 ;
 ; FASE 7 della Strategia: Controllo se l'ordine è stato evaso.
@@ -743,7 +768,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
+  (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
   )
 )
 
@@ -761,7 +786,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CleanTable, sono pieno di trash, return to phase 2" crlf)
+  (printout t " [DEBUG] [F7:s"?current":"?id"-CLEAN] CleanTable, sono pieno di trash, return to phase 2" crlf)
   )
 )
 
