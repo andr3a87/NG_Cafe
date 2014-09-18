@@ -2,7 +2,7 @@
 
 ;// ENV
 
-;// �����������������������������������������������������������������������������������������������������������������������
+;// ???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
 
 
 
@@ -63,7 +63,7 @@
   (slot step)
         (slot time)     ;// tempo corrente
 
-  (slot arrivaltime)  ;// momento in cui � arrivata l'ordinazione
+  (slot arrivaltime)  ;// momento in cui ? arrivata l'ordinazione
 
   (slot requested-by) ;// tavolo richiedente
 
@@ -173,7 +173,7 @@
 
 =>
 
-    (load-facts "history_default.txt")
+    (load-facts "history.txt")
         (retract ?f1)
 )
 
@@ -390,7 +390,7 @@
 
 ;// REGOLE PER GESTIONE EVENTI
 
-;// ������������������������������������������������������������������������������������������
+;// ??????????????????????????????????????????????????????????????????????????????????????????
 
 ;//
 
@@ -478,9 +478,9 @@
 ?f1<- (event (step ?i) (type finish) (source ?tb))
 
   (tablestatus (step ?i) (table-id ?tb) (clean no))
-        (not (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))) ;non c'� gi� stato un finish
+        (not (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))) ;non c'? gi? stato un finish
 
-        (not (orderstatus (step ?i) (time ?t) (requested-by ?tb)))   ;l'ordine � stato completato
+        (not (orderstatus (step ?i) (time ?t) (requested-by ?tb)))   ;l'ordine ? stato completato
     =>
 
   (assert
@@ -503,12 +503,12 @@
 
 ;// GENERA EVOLUZIONE TEMPORALE
 
-;// ������������������������������������������������������������������������������������������
+;// ??????????????????????????????????????????????????????????????????????????????????????????
 
 
 
 ;// per ogni istante di tempo che intercorre fra l'informazione di finish di un tavolo  e
-;//  pulitura (clean) del tavolo,  l'agente prende 3 penalit�
+;//  pulitura (clean) del tavolo,  l'agente prende 3 penalit?
 
 
 
@@ -555,7 +555,7 @@
 )
 
 
-;// per ogni istante di tempo che intercorre fra la request e la inform, l'agente prende 50 penalit�
+;// per ogni istante di tempo che intercorre fra la request e la inform, l'agente prende 50 penalit?
 
 (defrule RequestEvolution1
 
@@ -585,7 +585,7 @@
 
 
 
-;// penalit� perch� l'ordine � stato accepted e non � ancora stato completato
+;// penalit? perch? l'ordine ? stato accepted e non ? ancora stato completato
 
 (defrule RequestEvolution2
 
@@ -612,7 +612,7 @@
 
 
 
-;// penalit� perch� l'ordine � stato delayed e non � ancora stato completato
+;// penalit? perch? l'ordine ? stato delayed e non ? ancora stato completato
 
 (defrule RequestEvolution3
 
@@ -659,7 +659,7 @@
 
 ;// GENERA MOVIMENTI PERSONE
 
-;// ������������������������������������������������������������������������������������������
+;// ??????????????????????????????????????????????????????????????????????????????????????????
 
 ;// Persona ferma non arriva comando di muoversi
 
@@ -702,9 +702,9 @@
 
 
 
-;// La cella in cui deve  andare la persona � libera. Persona si muove.
+;// La cella in cui deve  andare la persona ? libera. Persona si muove.
 
-;// La cella di partenza � un seat in cui si trovava l'operatore
+;// La cella di partenza ? un seat in cui si trovava l'operatore
 
 (defrule MovePerson3
 
@@ -732,9 +732,9 @@
 
 )
 
-;// La cella in cui deve  andare la persona � libera. Persona si muove.
+;// La cella in cui deve  andare la persona ? libera. Persona si muove.
 
-;// La cella di partenza � occupata da cliente (Person) , per cui dopo lo spostamento
+;// La cella di partenza ? occupata da cliente (Person) , per cui dopo lo spostamento
 
 ;// del cliente la cella di partenza diventa libera e quella di arrivo contiene person
 
@@ -767,7 +767,7 @@
 
 
 
-;// La cella in cui deve andare il cliente � un seat e il seat non � occupata da altra persona.
+;// La cella in cui deve andare il cliente ? un seat e il seat non ? occupata da altra persona.
 ;// La cella di partenza diventa libera, e l'attivita del cliente diventa seated
 
  (defrule MovePerson5
@@ -798,7 +798,7 @@
            (retract ?f3))
 
 
-;// La cella in cui deve  andare la persona � occupata dal robot. Persona non si muove
+;// La cella in cui deve  andare la persona ? occupata dal robot. Persona non si muove
 
 (defrule MovePerson_wait1
 
@@ -822,14 +822,14 @@
 
   (retract ?f2)
 
-; (printout t " - penalit� aumentate" ?id " attende che il robot si sposti)" crlf)
+; (printout t " - penalit? aumentate" ?id " attende che il robot si sposti)" crlf)
 
 )
 
 
 
 
-;// La cella in cui deve  andare la persona non � libera (ma non � occupata da robot). Persona non si muove
+;// La cella in cui deve  andare la persona non ? libera (ma non ? occupata da robot). Persona non si muove
 
 (defrule MovePerson_wait2
 
@@ -851,7 +851,7 @@
 
 )
 
-;// La cella in cui deve andare il cliente � un seat ma il seat � occupata da altra persona.
+;// La cella in cui deve andare il cliente ? un seat ma il seat ? occupata da altra persona.
 ;// il cliente resta fermo
 
  (defrule MovePerson_wait3
@@ -877,7 +877,7 @@
 
            )
 
-;//La serie di mosse � stata esaurita, la persona rimane ferma dove si trova
+;//La serie di mosse ? stata esaurita, la persona rimane ferma dove si trova
 
  (defrule MovePerson_end
 
@@ -909,11 +909,11 @@
 
 ;// REGOLE PER GESTIONE INFORM (in caso di request) DALL'AGENTE
 
-;// ������������������������������������������������������������������������������������������
+;// ??????????????????????????????????????????????????????????????????????????????????????????
 
 ;//
 
-;// l'agente ha inviato inform che l'ordine � accettato (e va bene)
+;// l'agente ha inviato inform che l'ordine ? accettato (e va bene)
 (defrule msg-order-accepted-OK
 
   (declare (salience 20))
@@ -937,7 +937,7 @@
   (modify ?f3 (time (+ ?t 1)) (step (+ ?i 1)))
 )
 
-;// l'agente ha inviato inform che l'ordine � accettato (e ma non sono vere le condizioni)
+;// l'agente ha inviato inform che l'ordine ? accettato (e ma non sono vere le condizioni)
 (defrule msg-order-accepted-KO1
 
   (declare (salience 20))
@@ -968,7 +968,7 @@
 
 
 
-;// l'agente ha inviato inform che l'ordine � delayed (e va bene)
+;// l'agente ha inviato inform che l'ordine ? delayed (e va bene)
 (defrule msg-order-delayed-OK
 
   (declare (salience 20))
@@ -998,7 +998,7 @@
 
 
 
-;// l'agente ha inviato inform che l'ordine � delayed (e non va bene dovrebbe essere accepted)
+;// l'agente ha inviato inform che l'ordine ? delayed (e non va bene dovrebbe essere accepted)
 (defrule msg-order-delayed-KO1
 
   (declare (salience 20))
@@ -1027,7 +1027,7 @@
 
 )
 
-;// l'agente ha inviato inform che l'ordine � rejected (e non va bene dovrebbe essere accepted)
+;// l'agente ha inviato inform che l'ordine ? rejected (e non va bene dovrebbe essere accepted)
 (defrule msg-order-rejected-KO1
 
   (declare (salience 20))
@@ -1056,7 +1056,7 @@
 
 )
 
-;// l'agente ha inviato inform che l'ordine � rejected (e non va bene dovrebbe essere delayed)
+;// l'agente ha inviato inform che l'ordine ? rejected (e non va bene dovrebbe essere delayed)
 (defrule msg-order-rejected-KO2
 
   (declare (salience 20))
@@ -1086,7 +1086,7 @@
 )
 
 
-;// l'agente invia un'inform  per un servizio che non � pi� pending
+;// l'agente invia un'inform  per un servizio che non ? pi? pending
 
 
 
@@ -1210,7 +1210,7 @@
 )
 
 
-; operazione non serve, il tavolo ha gi� richiesto cleantable
+; operazione non serve, il tavolo ha gi? richiesto cleantable
 (defrule CheckFinish_useless-1
 
   (declare (salience 20))
@@ -1241,7 +1241,7 @@
 
 )
 
-;// operazione non serve, il tavolo � gia pulito
+;// operazione non serve, il tavolo ? gia pulito
 (defrule CheckFinish_useless-2
 
   (declare (salience 20))
@@ -1270,7 +1270,7 @@
 )
 
 
-;// Operazione sbagliata perch� chiede finish prima che l'ordine sia stato completato
+;// Operazione sbagliata perch? chiede finish prima che l'ordine sia stato completato
 
 (defrule CheckFinish_Useless-3
 
@@ -1336,7 +1336,7 @@
 
 
 
-;// L'azione di CheckFinish  fallisce perch� l'agente non � accanto ad un tavolo
+;// L'azione di CheckFinish  fallisce perch? l'agente non ? accanto ad un tavolo
 
 
 
@@ -1363,7 +1363,7 @@
 
 )
 
-;// L'azione di CheckFinish fallisce perch� la posizione indicata non
+;// L'azione di CheckFinish fallisce perch? la posizione indicata non
 ;//contiene un tavolo
 
 (defrule CheckFinish_KO_2
@@ -1494,7 +1494,7 @@
 
 )
 ;// CleanTable  ha fisicamente successo ma fatta quando non
-;// c'�  richiesta di cleanTable o dopo CheckFinish positiva
+;// c'?  richiesta di cleanTable o dopo CheckFinish positiva
 
 
 
@@ -1534,7 +1534,7 @@
         (retract ?f5)
 )
 
-;// azione inutile di cleantable perch� il tavolo � gi� pulito
+;// azione inutile di cleantable perch? il tavolo ? gi? pulito
 
 (defrule CleanTable_K0_2
 
@@ -1568,7 +1568,7 @@
 
 
 
-;// il robot tenta di fare CleanTable  ma fallisce perch� sta gi� trasportando cibo
+;// il robot tenta di fare CleanTable  ma fallisce perch? sta gi? trasportando cibo
 ;// e o bevande
 
 (defrule CleanTable_KO_3
@@ -1596,7 +1596,7 @@
 
 )
 
-;// L'azione di CleanTable fallisce perch� l'agente non � accanto ad un tavolo
+;// L'azione di CleanTable fallisce perch? l'agente non ? accanto ad un tavolo
 
 
 
@@ -1623,7 +1623,7 @@
 
 )
 
-;// L'azione di CleanTable fallisce perch� la posizione indicata non
+;// L'azione di CleanTable fallisce perch? la posizione indicata non
 ;//contiene un tavolo
 
 (defrule CleanTable_KO_5
@@ -1680,7 +1680,7 @@
 
 
 
-;// Operazione inutile perch� agente non ha avanzi di cibo a bordo
+;// Operazione inutile perch? agente non ha avanzi di cibo a bordo
 
 (defrule EmptyFood_KO1
 
@@ -1709,7 +1709,7 @@
 
 
 
-;// Operazione fallisce perch� l'agente non � adiacente a un TrashBasket
+;// Operazione fallisce perch? l'agente non ? adiacente a un TrashBasket
 
 (defrule EmptyFood_KO2
 
@@ -1734,7 +1734,7 @@
 
 )
 
-;// Operazione fallisce perch� la cella indicata non � un TrashBasket
+;// Operazione fallisce perch? la cella indicata non ? un TrashBasket
 
 (defrule EmptyFood_KO3
 
@@ -1790,7 +1790,7 @@
 
 
 
-;// Operazione inutile perch� agente non ha contenitori di bevande a bordo
+;// Operazione inutile perch? agente non ha contenitori di bevande a bordo
 
 (defrule Release_KO1
 
@@ -1818,7 +1818,7 @@
 )
 
 
-;// Operazione fallisce perch� l'agente non � adiacente a un RecyclableBasket
+;// Operazione fallisce perch? l'agente non ? adiacente a un RecyclableBasket
 
 (defrule Release_KO2
 
@@ -1843,7 +1843,7 @@
 
 )
 
-;// Operazione fallisce perch� la cella indicata non � un RecyclableBasket
+;// Operazione fallisce perch? la cella indicata non ? un RecyclableBasket
 
 (defrule Release_KO3
 
@@ -1919,7 +1919,7 @@
 
 
 
-;// Operazione fallisce perch� l'agente � gi� a pieno carico
+;// Operazione fallisce perch? l'agente ? gi? a pieno carico
 
 (defrule load-food_KO1
 
@@ -1948,7 +1948,7 @@
 
 )
 
-;// Operazione fallisce perch� l'agente � gi� carico di immondizia
+;// Operazione fallisce perch? l'agente ? gi? carico di immondizia
 
 (defrule load-food_KO2
 
@@ -1978,7 +1978,7 @@
 )
 
 
-;// Operazione fallisce perch� l'agente non � adiacente a un FoodDispenser
+;// Operazione fallisce perch? l'agente non ? adiacente a un FoodDispenser
 
 (defrule load-food_KO3
 
@@ -2004,7 +2004,7 @@
 
 )
 
-;// Operazione fallisce perch� la cella indicata non � un FoodDispenser
+;// Operazione fallisce perch? la cella indicata non ? un FoodDispenser
 
 (defrule load-food_KO4
 
@@ -2064,7 +2064,7 @@
 
 
 
-;// Operazione fallisce perch� l'agente � gi� a pieno carico
+;// Operazione fallisce perch? l'agente ? gi? a pieno carico
 
 (defrule load-drink_KO1
 
@@ -2093,7 +2093,7 @@
 
 )
 
-;// Operazione fallisce perch� l'agente � gi� carico di immondizia
+;// Operazione fallisce perch? l'agente ? gi? carico di immondizia
 
 (defrule load-drink_KO2
 
@@ -2123,7 +2123,7 @@
 )
 
 
-;// Operazione fallisce perch� l'agente non � adiacente a un drinkDispenser
+;// Operazione fallisce perch? l'agente non ? adiacente a un drinkDispenser
 
 (defrule load-drink_KO3
 
@@ -2149,7 +2149,7 @@
 
 )
 
-;// Operazione fallisce perch� la cella indicata non � un drinkDispenser
+;// Operazione fallisce perch? la cella indicata non ? un drinkDispenser
 
 (defrule load-drink_KO4
 
@@ -2182,8 +2182,8 @@
 
 ;// REGOLE PER LA CONSEGNA Di Food ad un tavolo
 
-;// ��consegna Food su un tavolo che ha ordine ancora aperto
-;// le penalit� di riferiscono alla durata dell'azione (4 unit� di tempo)
+;// ??consegna Food su un tavolo che ha ordine ancora aperto
+;// le penalit? di riferiscono alla durata dell'azione (4 unit? di tempo)
 ;// per i punti (2) per i cibi e bevande non ancora consegnati
 
 
@@ -2222,8 +2222,8 @@
 )
 
 
-;// assegna una penalit� nel caso in cui si tenti di consegnare un cibo ad un tavolo
-;// quando l'ordinazione � gi� stata completata (ordestatus eleinato) o non � mai stato fatto
+;// assegna una penalit? nel caso in cui si tenti di consegnare un cibo ad un tavolo
+;// quando l'ordinazione ? gi? stata completata (ordestatus eleinato) o non ? mai stato fatto
 
 
 
@@ -2291,8 +2291,8 @@
 
 ;// REGOLE PER LA CONSEGNA Di DRINK ad un tavolo
 
-;// ��consegna drink a un tavolo che ha ordine ancora aperto
-;// le penalit� di riferiscono alla durata dell'azione (4 unit� di tempo)
+;// ??consegna drink a un tavolo che ha ordine ancora aperto
+;// le penalit? di riferiscono alla durata dell'azione (4 unit? di tempo)
 ;// per i punti (2) per i cibi e bevande non ancora consegnati
 
 
@@ -2334,8 +2334,8 @@
 
 
 
-;// assegna una penalit� nel caso in cui si tenti di consegnare un cibo ad un tavolo
-;// quando l'ordinazione � gi� stata completata o non � stato fatto ordine
+;// assegna una penalit? nel caso in cui si tenti di consegnare un cibo ad un tavolo
+;// quando l'ordinazione ? gi? stata completata o non ? stato fatto ordine
 
 
 
@@ -2402,7 +2402,7 @@
 
 )
 
-;// L'azione di delivery-food o delivery-drink fallisce perch� l'agente non � accanto ad un tavolo
+;// L'azione di delivery-food o delivery-drink fallisce perch? l'agente non ? accanto ad un tavolo
 
 
 
@@ -2429,7 +2429,7 @@
 
 )
 
-;// L'azione di delivery-food o o delivery-drink fallisce perch� la posizione indicata non
+;// L'azione di delivery-food o o delivery-drink fallisce perch? la posizione indicata non
 ;//contiene un tavolo
 
 (defrule delivery_WRONG_5
@@ -2552,7 +2552,7 @@
 
 ; (printout t " ENVIRONMENT:" crlf)
 
-; (printout t " - penalit� +10000000 (Forward-north-bump): " (+ ?p 10000000) crlf)
+; (printout t " - penalit? +10000000 (Forward-north-bump): " (+ ?p 10000000) crlf)
 
 )
 
@@ -2616,7 +2616,7 @@
 
 ; (printout t " ENVIRONMENT:" crlf)
 
-; (printout t " - penalit� +10000000 (forward-south-bump): " (+ ?p 10000000) crlf)
+; (printout t " - penalit? +10000000 (forward-south-bump): " (+ ?p 10000000) crlf)
 
 )
 
@@ -2680,7 +2680,7 @@
 
 ; (printout t " ENVIRONMENT:" crlf)
 
-; (printout t " - penalit� +10000000 (forward-west-bump): " (+ ?p 10000000) crlf)
+; (printout t " - penalit? +10000000 (forward-west-bump): " (+ ?p 10000000) crlf)
 
 )
 
@@ -2744,7 +2744,7 @@
 
 ; (printout t " ENVIRONMENT:" crlf)
 
-; (printout t " - penalit� +10000000 (forward-east-bump): " (+ ?p 10000000) crlf)
+; (printout t " - penalit? +10000000 (forward-east-bump): " (+ ?p 10000000) crlf)
 
 )
 
@@ -2978,7 +2978,7 @@
 
 ;// REGOLE PER PERCEZIONI VISIVE (N,S,E,O)
 
-;// ������������������������������������������������������������������������������������������
+;// ??????????????????????????????????????????????????????????????????????????????????????????
 
 (defrule percept-north
 

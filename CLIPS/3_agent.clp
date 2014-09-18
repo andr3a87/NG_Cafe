@@ -86,7 +86,7 @@
   (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.  
   (worst-dispenser 1000)
   (max-fail 3)
-  (debug 2)
+  (debug 3)
 )
 
 ; copia le prior cell sulla struttura K-cell
@@ -118,7 +118,7 @@
   (initial_agentposition (pos-r ?r) (pos-c ?c) (direction ?d))
 =>
   (assert (K-agent (step 0) (time 0) (pos-r ?r) (pos-c ?c) (direction ?d)  (l-drink 0) (l-food 0) (l_d_waste no) (l_f_waste no)))
-  (assert (init-agent (done yes)))      ; che regola il funzionamento dello Start e indica quando l'ambiente CLIPS è inizializzato (cioè sono state eseguite le regole che inizializzano lo stato dell'agente).
+  (assert (init-agent (done yes)))      ; che regola il funzionamento dello Start e indica quando l'ambiente CLIPS è inizializzato (cioè sono state eseguite le regole che inizializzano lo stato dell'agente).
 
 )
 
