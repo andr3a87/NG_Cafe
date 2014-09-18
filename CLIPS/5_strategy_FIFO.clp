@@ -806,6 +806,6 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order step: " ?step " of table: " ?id " is completed" crlf)
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step:" ?step " of table:" ?id " is completed" crlf)
   )
 )
