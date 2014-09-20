@@ -55,8 +55,10 @@
 (set-break strategy-change-order-in-phase5)
 (load "6_exec-plane.clp")
 (load "7_a_star.clp")
+(load "8_clean-plane.clp")
 ;(set-break clean)
 
 (reset)
 (run 257)
-(assert(stop-at-step 96))
+(assert(stop-at-step 101))
+;(run 1200000)

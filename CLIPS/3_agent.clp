@@ -39,9 +39,10 @@
 (deftemplate last-perc (slot step))
 
 ;(deftemplate last-perc-load (slot step))
-(deftemplate plane (multislot pos-start) (multislot pos-end) (multislot exec-astar-sol) (slot cost))
+(deftemplate plane (slot plane-id) (multislot pos-start) (multislot pos-end) (slot direction) (slot cost) (slot status (allowed-values ok failure)))
+(deftemplate step-plane (slot plane-id) (slot action) (slot direction) (multislot pos-start) (slot father) (slot child))
 (deftemplate start-astar (slot pos-r) (slot pos-c))
-(deftemplate run-plane-astar (multislot pos-start) (multislot pos-end) (slot phase))
+(deftemplate run-plane-astar (slot plane-id) (multislot pos-start) (multislot pos-end) (slot phase))
 
 (deftemplate exec-order
   (slot step)   ;// l'environment incrementa il passo
@@ -73,7 +74,7 @@
 (deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink trash-food trash-drink)))
 (deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
 (deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
-(deftemplate plan-executed (slot step) (multislot pos-start) (multislot pos-end ) (slot result (allowed-values ok fail)  ))
+(deftemplate plan-executed (slot plane-id)(slot step) (multislot pos-start) (multislot pos-end ) (slot result (allowed-values ok fail)  ))
 (deftemplate astar-solution (slot value (allowed-values no)))
 
 ; Ci dice se l'inizializzazione dell'agente è conclusa
@@ -86,6 +87,7 @@
   (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.  
   (worst-dispenser 1000)
   (max-fail 3)
+  (next-plane-id 1)
   (debug 3)
 )
 
@@ -155,14 +157,13 @@
 )
 
 
-; Regola per avviare la ricerca con ASTAR se non è stato calcolato un piano per arrivare in una determinata posizione.
+; Regola per avviare la ricerca con ASTAR.
 (defrule go-astar
-    (declare (salience 15))
-    (start-astar (pos-r ?r) (pos-c ?c))
-    (K-agent (pos-r ?r1) (pos-c ?c1))
-    ;(not (plane (pos-start ?r1 ?c1) (pos-end ?r ?c)))
+    (declare (salience 10))
+    ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
 =>
     (assert (goal-astar ?r ?c))
+    (retract ?f1)
     (focus ASTAR)
 )
 

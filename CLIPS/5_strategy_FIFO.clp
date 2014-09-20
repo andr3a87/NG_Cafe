@@ -261,43 +261,45 @@
   (retract ?f1)
 )
 
-;regola per avviare astar
-(defrule start-astar-to-dispenser
-  (declare (salience 70))
-  ;(strategy-service-table (table-id ?id) (phase 3) (step ?s) )
+;Controlle se esiste un piano per andare al best dispenser/trash con status OK
+(defrule strategy-existence-plane-3
+  (declare (salience 10))
+  (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
-  (exec-order (step ?s) (table-id ?id) (phase 3))
+  (K-agent (pos-r ?ra) (pos-c ?ca))
+  (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
+=>
+  (assert (plane-exist ?pid))
+)
+;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
+(defrule strategy-create-plane-3
+  (exec-order (table-id ?id) (phase 3) )
+  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+  (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
 )
 
-;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
-;Il piano non deve esser stato eseguito anche precedentemente (caso di failed), altrimenti non ripianifica e non trova altre strade.
-(defrule clean-start-astar
-  (declare (salience 75))
-  (status (step ?current))
-  ;(strategy-service-table (table-id ?id) (phase 3))
+;Se il piano esiste allo lo eseguo.
+(defrule strategy-execute-plane-3
+  (declare (salience 1))
   (exec-order (table-id ?id) (phase 3) )
-  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
-  (K-agent (pos-r ?ra) (pos-c ?ca))
-  ?f1<-(start-astar (pos-r ?rd) (pos-c ?cd))
-  (plane (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd))
-  (not(plan-executed (step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail)))
+  ?f1<-(plane-exist ?pid)
+  (plane  (plane-id ?pid) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (direction ?d) (status ok))
 =>
+  (assert (run-plane-astar (plane-id ?pid) (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd) (phase 1)))
   (retract ?f1)
-  (assert (run-plane-astar (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd) (phase 1)))
 )
 
 ;Eseguito il piano, il robot si trova vicino al dispenser/cestino piu vicino.
 (defrule strategy-go-phase4
   (status (step ?current))
   (debug ?level)
-  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
-  ;?f2<-(strategy-service-table (table-id ?id) (phase 3))
-  ?f2<-(exec-order (table-id ?id) (phase 3) )
+  (plan-executed (plane-id ?pid) (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
+  ?f1<-(exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
 =>
-  (modify ?f2 (phase 4) (fail 0))
+  (modify ?f1 (phase 4) (fail 0))
 
   ;debug
   (if (> ?level 0)
@@ -307,16 +309,18 @@
 )
 
 ;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-dispenser. 
-;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
+;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto.
 (defrule strategy-re-execute-phase3
+  (declare (salience 20))
   (status (step ?current))
   (debug ?level)
-  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
-  ;?f2<-(strategy-service-table (table-id ?id) (phase 3) (fail ?f))
-  ?f2<-(exec-order (table-id ?id) (phase 3) (fail ?f))
+  (plan-executed (plane-id ?pid) (step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
+  ?f1<-(plane (plane-id ?pid) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
+  ?f2<-(exec-order (table-id ?id) (phase 3) (fail ?f))
   ?f3<-(K-agent)
 =>
+  (modify ?f1 (status failure)) 
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
   (modify ?f3)
 
@@ -327,22 +331,20 @@
   )
 )
 
-;Se non esiste un percorso per arrivare alla destinazione, l'ordine viene inserito al fondo.
+;Se non esiste un percorso per arrivare a destinazione, l'ordine viene inserito al fondo.
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
 (defrule strategy-change-order-in-phase3
-  (declare(salience 10))
+  (declare(salience 20))
   (debug ?level)
   (status (step ?current))
-  ?f1<-(exec-order (table-id ?id)(step ?s2) (phase 3))
-  ;?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 3) (fail ?f))
-  ?f3<-(strategy-best-dispenser (type ?c) (pos-dispenser ?rd ?cd))
-  ?f4<-(astar-solution (value no))
-  ?f5<-(K-agent)
-  ?f6<-(start-astar)
+  ?f1<-(exec-order (table-id ?id) (step ?s2) (phase 3))
+  ?f2<-(strategy-best-dispenser (type ?c) (pos-dispenser ?rd ?cd))
+  ?f3<-(astar-solution (value no))
+  ?f4<-(K-agent)
 =>
   (modify ?f1 (step ?current) (phase 0))
-  (modify ?f5)
-  (retract ?f3 ?f4 ?f6)
+  (modify ?f4)
+  (retract ?f2 ?f3)
 
   ;debug
   (if (> ?level 0)
@@ -351,6 +353,7 @@
     (printout t " [DEBUG] [F3:s"?current":"?id"] Order moved to the bottom." crlf)
   )
 )
+
 ;
 ;  FASE 4 della Strategia: Il robot arrivato al dispenser/cestino carica/scarica.
 ;
@@ -538,8 +541,6 @@
 (defrule strategy-return-phase2_finish
   (status (step ?current))
   (debug ?level)
-
-  ;?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 4.5) (action finish))
   ?f1 <- (exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status finish))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
@@ -581,57 +582,63 @@
 ; FASE 5 della Strategia: Esecuzione di astar per determinare il piano per arrivare al tavolo ed esecuzione del piano.
 ;
 
-(defrule strategy-start-astar-to-table
-  (declare(salience 10))
-  ;(strategy-service-table (table-id ?id) (phase 5) (step ?s) )
-  (exec-order (table-id ?id) (phase 5))
-  (K-table (pos-r ?r) (pos-c ?c) (table-id ?id))
+;Controlle se esiste un piano per andare al best dispenser/trash con status OK
+(defrule strategy-existence-plane-5
+  (declare (salience 10))
+  (exec-order (table-id ?id) (phase 5) )
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
+  (K-agent (pos-r ?ra) (pos-c ?ca))
+  (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
 =>
-  (assert (start-astar (pos-r ?r) (pos-c ?c)))
+  (assert (plane-exist ?pid))
 )
 
-;Se esiste un piano per andare in una determinata posizione, e ho l'intenzione di andarci allora eseguo il piano.
-(defrule clean-start-astar-to-table
-  (declare(salience 15))
-  (status (step ?current))
-  ;(strategy-service-table (table-id ?id) (phase 5))
-  (exec-order (table-id ?id) (phase 5))
-  ?f1<-(start-astar (pos-r ?r) (pos-c ?c))
-  (K-agent (pos-r ?ra) (pos-c ?ca))
-  (plane (pos-start ?ra ?ca ?d) (pos-end ?r ?c))
-  (not(plan-executed (step ?current) (pos-start ?ra ?ca) (pos-end ?r ?c) (result fail)))
+;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
+(defrule strategy-create-plane-5
+  (exec-order (table-id ?id) (phase 5) )
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
+  (not (plane-exist))
 =>
+  (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
+)
+
+;Se il piano esiste allo lo eseguo.
+(defrule strategy-execute-plane-5
+  (declare (salience 1))
+  (exec-order (table-id ?id) (phase 5) )
+  ?f1<-(plane-exist ?pid)
+  (plane  (plane-id ?pid) (pos-start ?ra ?ca) (pos-end ?rt ?ct) (direction ?d) (status ok))
+=>
+  (assert (run-plane-astar (plane-id ?pid) (pos-start ?ra ?ca ?d) (pos-end ?rt ?ct) (phase 1)))
   (retract ?f1)
-  (assert (run-plane-astar (pos-start ?ra ?ca ?d) (pos-end ?r ?c) (phase 1)))
 )
 
 ;Eseguito il piano, il robot si trova vicino al tavolo.
 (defrule strategy-go-phase6
   (status (step ?current))
   (debug ?level)
-
-  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
-  ;?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a))
+  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rt ?ct) (result ok))
   ?f2<-(exec-order (table-id ?id) (phase 5) (drink-order ?do) (food-order ?fo) (status ?a))
 =>
   (modify ?f2 (phase 6) (fail 0))
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"] Init Phase 6, table approached deliveryclean, order (food: "?fo", drink: "?do") action ("?a")" crlf)
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Init Phase 6, Agent in front of table " ?id ", order (food: "?fo", drink: "?do") action ("?a")" crlf)
   )
 )
 
 ;Se il piano è fallito, il robot deve ripianificare per arrivare al tavolo. Cio significa rieseguire la fase 5.
 (defrule strategy-re-execute-phase5
+  (declare (salience 20))
   (status (step ?current))
   (debug ?level)
-  ?f1<- (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
-  ;?f2<-(strategy-service-table (table-id ?id) (fl ?fl) (dl ?dl) (phase 5) (action ?a) (fail ?f))
+  (plan-executed (plane-id ?pid)(step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
+  ?f1<-(plane (plane-id ?pid) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
   ?f2<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
   ?f3<-(K-agent)
 =>
-  (retract ?f1)
+  (modify ?f1 (status failure)) 
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
   (modify ?f3)
   
@@ -642,21 +649,19 @@
   )
 )
 
-;la modifica di k-agent è necessaria perchè altrimenti quando astar fallisce per numero massimo di nodi espansi non riparte
-;perchè clips non ri-esegue regole con gli stessi fatti (ordine diverso, ma k-agent identico ed è l'unico fatto usato da astar)
+;Se non esiste un percorso per arrivare a destinazione, l'ordine viene inserito al fondo.
+;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
 (defrule strategy-change-order-in-phase5
-  (declare(salience 10))
+  (declare (salience 20))
   (debug ?level)
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5))
-  ;?f2<-(strategy-service-table (step ?s2) (table-id ?id) (phase 5) (fail ?f))
-  ?f3<-(astar-solution (value no))
-  ?f4<-(K-agent)
-  ?f5<-(start-astar)
+  ?f2<-(astar-solution (value no))
+  ?f3<-(K-agent)
 =>
   (modify ?f1 (step ?current) (phase 0))
-  (retract ?f3 ?f5)
-  (modify ?f4)
+  (retract ?f2)
+  (modify ?f3)
 
   (if (> ?level 0)
     then

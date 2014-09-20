@@ -420,22 +420,25 @@
     (declare (salience 4))
     (stampa ?id)
     (exec-astar ?anc ?id $?)
+    (next-plane-id ?plane-id)
+    (start ?rs ?cs ?d1)
+    (goal-astar ?rg ?cg)
+    (cost-solution ?g)
 =>
     (assert (stampa ?anc))
+    (assert (plane (plane-id ?plane-id) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (direction ?d1) (cost ?g) (status ok)))
 )
 
 
 (defrule stampaSol1
   (declare (salience 3))
   (debug ?level)
+  (next-plane-id ?plane-id)
   ?f<-(stampa ?id)
   (node (ident ?id) (father ?anc&~NA))
   (exec-astar ?anc ?id ?oper ?d ?r ?c)
-  (start ?rs ?cs ?d1)
-  (goal-astar ?rg ?cg)
-  (cost-solution ?g)
 =>
-  (assert (plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g)))
+  (assert (step-plane  (plane-id ?plane-id) (action ?oper) (direction ?d) (pos-start ?r ?c) (father ?anc) (child ?id)))
   (retract ?f)
 
   ;debug
@@ -448,14 +451,15 @@
 
 ;regola per generare un fatto di tipo plane, quando deve essere eseguito un piano a costo 0
 (defrule stampaSolZeroCost
-        (declare (salience 2))
-        ?f<-(stampa ?id)
-        (start ?rs ?cs ?d1)
-        (goal-astar ?rg ?cg)
-  ;(cost-solution 0)
-  (not(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) ))
+  (declare (salience 2))
+  ?f<-(stampa ?id)
+  (next-plane-id ?plane-id)
+  (start ?rs ?cs ?d1)
+  (goal-astar ?rg ?cg)
+  (cost-solution 0)
+  
 =>
-        (assert(plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (cost 0)))
+  (assert (plane (plane-id ?plane-id) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (cost 0) (status ok)))
 )
 
 (defrule stampa-fine
@@ -466,11 +470,14 @@
     (open-better ?better)
     (alreadyclosed ?closed)
     (numberofnodes ?n )
+    ?f1<-(next-plane-id ?plane-id)
 =>
 ;   (printout t " stati espansi " ?n crlf)
 ;   (printout t " stati generati gia' in closed " ?closed crlf)
 ;   (printout t " stati generati gia' in open (open-worse) " ?worse crlf)
 ;   (printout t " stati generati gia' in open (open-better) " ?better crlf)
+    (retract ?f1)
+    (assert (next-plane-id (+ ?plane-id 1)))
     (focus CLEAN)
 )
 
