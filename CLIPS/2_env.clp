@@ -173,8 +173,8 @@
 
 =>
 
-    (load-facts "historyDave.txt")
-        (retract ?f1)
+    (load-facts "historyComplicata.txt")
+    (retract ?f1)
 )
 
 (defrule creation3

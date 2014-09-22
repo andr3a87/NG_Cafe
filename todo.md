@@ -3,14 +3,12 @@
 
 ### Strategie
 
-Serviamo le richieste in ordine di arrivo. (Strategy1)
+* Strategy-FIFO
+* Strategy-FIFO-WAIT
+* Strategy-LOW-PENALITY
 
 
 ### Domande da fare a Torasso
-
-### Regole di costruzione della mappa
-
-* nessun tavolo adiacente al muro	
 
 
 ### Ottimizzazioni
@@ -19,8 +17,6 @@ Serviamo le richieste in ordine di arrivo. (Strategy1)
 * Euristiche su chi servire prima o dopo
 
 ### Problemi Strategy1
-* Esecuzione di un piano a costo 0 già calcolato, quindi senza rifare astar. (fa le turnleft inutilmente).
 * Ottimizzare la regola 'run-plane-turn' nel file exec-plane
-* Se ho più piani creati da astar per arrivare a una determinata posizione, quale eseguo? (Caso in cui un piano è appena fallito non devo rieseguirlo).
-* Ultima azione del plane ha costo 0. Come mai??
-* Riga 630 togliere ?f1
+* Rimette a 'ok' un piano che era stato messo in precedenza a failure. Quando? (Strategy_FIFO)
+* Ottimizzare regole search-best-dispenser e found-best-dispenser in una sola. 

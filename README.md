@@ -21,7 +21,7 @@ Il modulo agent per semplicità di sviluppo è suddiviso in vari file:
 
 1. **percept**: contiene le regole in grado di aggiornare lo stato del mondo che l'agente conosce grazie alle percezioni.
 2. **a_star**: modulo per la pianificazione tramite a-star.
-3. **strategy1**: contiene la strategia1. Tale strategia prevede di servire i tavoli in ordine di richiesta ed è suddivisa in varie fasi.
+3. **strategy_FIFO**: La strategia prevede di servire i tavoli in ordine di richiesta ed è suddivisa in varie fasi.
 
 	**FASE 1**: Ricerca e individuazione del tavolo da servire. Viene servito un tavolo alla volta in ordine di richiesta più vecchia (FIFO)
 	
@@ -30,7 +30,9 @@ Il modulo agent per semplicità di sviluppo è suddiviso in vari file:
 	**FASE 3**: Esecuzione di astar per determinare il piano per arrivare al dispenser ed esecuzione del piano.
 
 	**FASE 4**: Il robot arrivato al dispenser carica.
+
 	**FASE 5**: Esecuzione di astar per determinare il piano per arrivare al tavolo ed esecuzione del piano.
+
     **FASE 6**: Il robot arrivato al tavolo scarica.
 
 	Ripetizione delle fasi 3,4,5,6 finchè l'ordine non è completamente evaso.

@@ -47,7 +47,7 @@
 (load "3_agent.clp")
 
 (load "4_percept.clp")
-(load "5_strategy_FIFO.clp")
+(load "5_strategy_FIFO_WAIT.clp")
 ;(set-break strategy-re-execute-phase3)
 ;(set-break strategy-re-execute-phase5)
 ;(set-break strategy-go-phase1)
@@ -60,5 +60,5 @@
 
 (reset)
 (run 257)
-(assert(stop-at-step 101))
-;(run 1200000)
+(assert(stop-at-step 80))
+(run 1200000)

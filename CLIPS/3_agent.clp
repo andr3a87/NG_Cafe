@@ -88,7 +88,7 @@
   (worst-dispenser 1000)
   (max-fail 3)
   (next-plane-id 1)
-  (debug 3)
+  (debug 2)
 )
 
 ; copia le prior cell sulla struttura K-cell
