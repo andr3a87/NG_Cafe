@@ -19,7 +19,7 @@
   (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0)))
+  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
 )
 
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
@@ -31,7 +31,7 @@
   (K-table (table-id ?sen) (clean no))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0)))
+  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
 )
 
 ;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
@@ -40,7 +40,7 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
 =>
-  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0)))
+  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
 )
 
 ;
@@ -50,18 +50,19 @@
 ;Ricerca dell'ordine da servire. La ricerca avviene sia sulle Inform che sulle Finish. Si ricerca l'ordine più vecchio non ancora servito.
 (defrule strategy-go-phase1
   (declare (salience 70))
-  (status (step ?current) )
+  (status (step ?current))
+  (best-pen ?pen)
   (debug ?level)
-  ?f1 <- (last-intention (step ?last) (time ?time))
+  ;?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
-  ?f2<-(exec-order (step ?next&:(and (> ?next ?last) (<= ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status))
-  (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish)))
+  ?f2<-(exec-order (step ?s) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (penality ?p&:(> ?p ?pen)) (phase 0))
+  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (action Inform|Finish) (phase 0)))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
   (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
-  (modify ?f1 (step ?next) (time ?t))
+  ;(modify ?f1 (step ?next) (time ?t))
   (modify ?f2 (phase 1))
 
   ;debug
@@ -101,17 +102,22 @@
     (modify ?f1 (phase 2))
   )
   ; se ho ricevuto una finish e non ho cibo caricato vado a pulire il tavolo
-  (if (and(= (str-compare ?status "finish") 0) (or (= ?lf 0) (= ?ld 0)) )
+  (if (and(= (str-compare ?status "finish") 0)  (= ?lf 0) (= ?ld 0) (=(str-compare ?clean "no")0) )
   then
     (modify ?f1 (table-id ?id) (phase 5))
   )
   ; se ho ricevuto una finish ma ho del cibo caricato inserisco questo ordine al fondo.
   ; Questo caso accade se dovevo portare del cibo al tavolo, ma non ho trovato una piano per arrivarci e quell'ordine è stato spostato in fondo.
   ; A questo punto il prox ordine da evadere è una finish, ma siccome non posso trasportate cibo e sporcizio sposto al fondo anche questo.
-  (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)) )
+  (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)) (=(str-compare ?clean "no")0) )
   then
     (modify ?f1 (step ?s1))
-  ) 
+  )
+  ;l'ordine da servire è una finish ma il tavolo è già pulito
+  (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0))
+  then
+    (modify ?f1 (table-id ?id) (phase FINISH))
+  )
 )
 
 ;
@@ -120,22 +126,6 @@
 
 ; Initializza la fase 2
 ; =====================
-; Appena viene avviata la fase 2 viene asserito un fatto best-dispenser
-(defrule strategy-initialize-phase2
-  (declare (salience 75))
-  (status (step ?current))
-  (debug ?level)
-  ;?f1<-(strategy-service-table (table-id ?id) (phase 2) (action ?a) (fl ?fl) (dl ?dl))
-  ?f1 <- (exec-order (drink-order ?do) (food-order ?fo) (table-id ?id) (phase 2) (status ?a))
-=>
-  (assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
-  
-  ;debug
-  (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F2:s"?current":"?id"] Init Phase 2 - Searching Best Dispenser... (action: " ?a ")" crlf)
-  )
-)
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispenser
 (defrule distance-manhattan-fo
@@ -192,36 +182,21 @@
 ;Regola che cerca il dispenser/cestino più vicino
 (defrule search-best-dispenser
   (declare (salience 60))
-  ?f1<-(best-dispenser (distance ?wd))
-  (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd ?cd) (distance ?d&:(< ?d ?wd)))
-=>
-  (modify ?f1 (distance ?d) (pos-best-dispenser ?rd ?cd))
-)
-
-;Trovato il dispenser/cestino più vicino passo alla fase 3
-;Questa regola mi serve per indicare il fatto che non vi sono dispenser più vicini di quello trovato. Blocca la ricerca.
-(defrule found-best-dispenser
-  (declare (salience 60))
   (status (step ?current))
   (debug ?level)
-
-  ?f1<-(best-dispenser (distance ?wd) (pos-best-dispenser ?rd ?cd))
-  (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
-  ;QUESTA REGOLA LA POSSO TOGLIERE??????????
-  (strategy-distance-dispenser (type ?type))
-  ;?f2<-(strategy-service-table (table-id ?id) (phase 2) (action ?a))
-  ?f2 <- (exec-order (table-id ?id) (phase 2) (status ?a))
-  (K-cell (pos-r ?rd) (pos-c ?cd) (contains ?c))
+  ?f1<-(exec-order (table-id ?id) (phase 2))
+  (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d)) 
+  (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
+  (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
-  (modify ?f2 (phase 3))
-  (assert (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c)))
-  (retract ?f1)
+  (assert(strategy-best-dispenser (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  (modify ?f1 (phase 3))
 
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?type " in ("?rd", "?cd") (action: " ?a ")"  crlf)
-    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?type " in ("?rd", "?cd")"  crlf)
+    (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?c " in ("?rd1", "?cd1")"  crlf)
+    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?c " in ("?rd1", "?cd1")"  crlf)
   )
 )
 
@@ -803,7 +778,7 @@
 ;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
 (defrule strategy-order-completed
   (status (step ?current))
-  (last-intention (step ?step))
+  ;(last-intention (step ?step))
   (debug ?level)
   ;?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 7))
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))

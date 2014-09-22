@@ -52,7 +52,7 @@
 ;(set-break strategy-re-execute-phase5)
 ;(set-break strategy-go-phase1)
 ;(set-break strategy-change-order-in-phase3)
-(set-break strategy-change-order-in-phase5)
+;(set-break search-best-dispenser)
 (load "6_exec-plane.clp")
 (load "7_a_star.clp")
 (load "8_clean-plane.clp")
@@ -60,5 +60,5 @@
 
 (reset)
 (run 257)
-(assert(stop-at-step 80))
+(assert(stop-at-step 200))
 (run 1200000)

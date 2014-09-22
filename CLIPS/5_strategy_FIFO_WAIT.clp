@@ -96,7 +96,7 @@
   then
     (modify ?f1 (status accepted))
   )
-  ; se ho ricevuto una finish e non ho cibo caricato vado a pulire il tavolo
+  ; se ho ricevuto una finish vado a pulire il tavolo.
   (if (= (str-compare ?status "finish") 0)  
   then
     (modify ?f1 (table-id ?id) (phase 5))
@@ -110,21 +110,6 @@
 ; Initializza la fase 2
 ; =====================
 ; Appena viene avviata la fase 2 viene asserito un fatto best-dispenser
-(defrule strategy-initialize-phase2
-  (declare (salience 75))
-  (status (step ?current))
-  (debug ?level)
-  ;?f1<-(strategy-service-table (table-id ?id) (phase 2) (action ?a) (fl ?fl) (dl ?dl))
-  ?f1 <- (exec-order (drink-order ?do) (food-order ?fo) (table-id ?id) (phase 2) (status ?a))
-=>
-  (assert (best-dispenser (distance 100000) (pos-best-dispenser null null)))
-  
-  ;debug
-  (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F2:s"?current":"?id"] Init Phase 2 - Searching Best Dispenser... (action: " ?a ")" crlf)
-  )
-)
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispenser
 (defrule distance-manhattan-fo
@@ -181,36 +166,21 @@
 ;Regola che cerca il dispenser/cestino più vicino
 (defrule search-best-dispenser
   (declare (salience 60))
-  ?f1<-(best-dispenser (distance ?wd))
-  (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd ?cd) (distance ?d&:(< ?d ?wd)))
-=>
-  (modify ?f1 (distance ?d) (pos-best-dispenser ?rd ?cd))
-)
-
-;Trovato il dispenser/cestino più vicino passo alla fase 3
-;Questa regola mi serve per indicare il fatto che non vi sono dispenser più vicini di quello trovato. Blocca la ricerca.
-(defrule found-best-dispenser
-  (declare (salience 60))
   (status (step ?current))
   (debug ?level)
-
-  ?f1<-(best-dispenser (distance ?wd) (pos-best-dispenser ?rd ?cd))
-  (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d&:(< ?d ?wd))))
-  ;QUESTA REGOLA LA POSSO TOGLIERE??????????
-  (strategy-distance-dispenser (type ?type))
-  ;?f2<-(strategy-service-table (table-id ?id) (phase 2) (action ?a))
-  ?f2 <- (exec-order (table-id ?id) (phase 2) (status ?a))
-  (K-cell (pos-r ?rd) (pos-c ?cd) (contains ?c))
+  ?f1<-(exec-order (table-id ?id) (phase 2))
+  (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d)) 
+  (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
+  (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
-  (modify ?f2 (phase 3))
-  (assert (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c)))
-  (retract ?f1)
+  (assert(strategy-best-dispenser (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  (modify ?f1 (phase 3))
 
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?type " in ("?rd", "?cd") (action: " ?a ")"  crlf)
-    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?type " in ("?rd", "?cd")"  crlf)
+    (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?c " in ("?rd1", "?cd1")"  crlf)
+    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?c " in ("?rd1", "?cd1")"  crlf)
   )
 )
 

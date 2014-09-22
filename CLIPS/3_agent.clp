@@ -54,6 +54,7 @@
   (slot food-order)
   (slot phase)
   (slot fail)
+  (slot penality)
 )
 
 ; fl = food to load, dl = drink to load
@@ -88,6 +89,7 @@
   (worst-dispenser 1000)
   (max-fail 3)
   (next-plane-id 1)
+  (best-pen 0)
   (debug 2)
 )
 
