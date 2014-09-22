@@ -59,17 +59,6 @@
 
 ; fl = food to load, dl = drink to load
 ; k-order-status
-(deftemplate strategy-service-table
-  (slot step)
-  (slot table-id)
-  (slot phase)
-  (multislot pos-best-dispenser)
-  (slot fl)
-  (slot dl)
-  (slot action)
-  (slot fail)
-)
-
 (deftemplate last-intention (slot step) (slot time))
 
 (deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink trash-food trash-drink)))

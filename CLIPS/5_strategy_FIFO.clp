@@ -75,7 +75,6 @@
 (defrule strategy-complete-phase1
   (declare (salience 70))
   (status (step ?s1))
-  ;?f1 <- (strategy-service-table (step ?s2) (table-id ?id) (phase 1) (action ?status))
   ?f1 <- (exec-order (step ?s2) (drink-order ?do) (food-order ?fo) (table-id ?id) (status ?status)  (phase 1) )
   (K-table (table-id ?id) (clean ?clean))
   (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
@@ -124,7 +123,6 @@
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispenser
 (defrule distance-manhattan-fo
         (declare (salience 70))
-        ;(strategy-service-table (table-id ?id) (phase 2) (fl ?fl) (action accepted))
         (exec-order (food-order ?fo) (table-id ?id) (phase 2) (status accepted))
         (K-agent (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld))
         (test (> ?fo 0))
@@ -139,7 +137,6 @@
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser 
 (defrule distance-manhattan-do
   (declare (salience 70))
-  ;(strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (action accepted))
   (exec-order (drink-order ?do) (table-id ?id) (phase 2) (status accepted))
   (K-agent (pos-r ?ra)(pos-c ?ca) (l-food ?lf) (l-drink ?ld))
   (test (> ?do 0))
@@ -154,7 +151,6 @@
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun trash basket (Food)
 (defrule distance-manhattan-tb
   (declare (salience 70))
-  ;(strategy-service-table (table-id ?id) (phase 2) (action delayed|finish))
   (exec-order (table-id ?id) (phase 2) (status delayed|finish))
   (K-agent (pos-r ?ra) (pos-c ?ca) (l_f_waste yes))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains TB))
@@ -165,7 +161,6 @@
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun recyclable basket (Drink)
 (defrule distance-manhattan-rb
   (declare (salience 70))
-  ;(strategy-service-table (table-id ?id) (phase 2) (action delayed|finish))
   (exec-order (table-id ?id) (phase 2) (status delayed|finish))
   (K-agent (pos-r ?ra) (pos-c ?ca) (l_d_waste yes))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains RB))
@@ -200,7 +195,6 @@
   (declare (salience 70))
   (status (step ?current))
   (debug ?level)
-  ;?f1<-(strategy-service-table (table-id ?id) (phase 2) (dl ?dl) (fl ?fl) (action accepted))
   ?f1<-(exec-order (table-id ?id) (phase 2) (food-order ?fo) (drink-order ?do) (status accepted))
   (not (strategy-distance-dispenser (type ?type)))
 =>
@@ -331,7 +325,7 @@
 
 ; regola per caricare il cibo
 ; ===========================
-; controlla che ci sia ancora del food da caricare (controlla l'ordine strategy-service-table)
+; controlla che ci sia ancora del food da caricare 
 ; controlla che non ci sia waste
 ; controlla che il truckload non sia pieno
 ; scatena azione di load-food verso dispenser
@@ -341,7 +335,6 @@
   (status (step ?current))
   (debug ?level)
 
-  ;?f1 <- (strategy-service-table (table-id ?id) (phase 4) (fl ?fl))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 4) (food-order ?fo))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type FD))        ; posizione del food dispenser
   (test (> ?fo 0))                                                   ; food to load > 0
@@ -366,7 +359,6 @@
   (status (step ?current))
   (debug ?level)
 
-  ;?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 4) (drink-order ?do))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type DD))
   (test (> ?do 0)) ; ci sono ancora drink da caricare
@@ -392,7 +384,6 @@
   (status (step ?current))
   (debug ?level)
 
-  ;?f1 <- (strategy-service-table (table-id ?id) (phase 4) (fl ?fl))
   (exec-order (step ?s2) (table-id ?id) (phase 4))
   (strategy-best-dispenser (pos-dispenser ?rfo ?cfo) (type TB))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l_f_waste yes))
@@ -421,7 +412,6 @@
   (status (step ?current))
   (debug ?level)
 
-  ;?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl))
   (exec-order (step ?s2) (table-id ?id) (phase 4))
   (strategy-best-dispenser (pos-dispenser ?rfo ?cfo) (type RB))
   ;controllo che l'agente possa operare sul disp.
@@ -445,7 +435,6 @@
 ; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule strategy-clean-best-dispenser
         (declare (salience 60))
-        ;?f1 <- (strategy-service-table (table-id ?id) (phase 4) (dl ?dl) (fl ?fl))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
         ?f2 <- (strategy-best-dispenser)
         (K-agent (l-food ?lf) (l-drink ?ld))
@@ -464,7 +453,6 @@
   (status (step ?current))
   (debug ?level)
 
-    ;?f1 <- (strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl) (action accepted))
     ?f1<-(exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status accepted))
     (K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
     (test (< (+ ?lf ?ld) 4))
@@ -484,7 +472,6 @@
   (status (step ?current))
   (debug ?level)
 
-  ;?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 4.5) (action delayed))
   ?f1<-(exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status delayed))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
@@ -533,7 +520,6 @@
   (status (step ?current))
   (debug ?level)
 
-  ;?f1<-(strategy-service-table (table-id ?id) (phase 4.5) (dl ?dl) (fl ?fl) (action ?a))
   ?f1 <- (exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status ?a))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   (or (test (= (+ ?lf ?ld) 4))
@@ -652,7 +638,6 @@
   (status (step ?current))
   (debug ?level)
 
-  ;(strategy-service-table (table-id ?id) (phase 6) (action accepted))
   (exec-order (step ?s2) (table-id ?id) (phase 6) (status accepted) (food-order ?fo))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf))
   (Table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo))
@@ -673,7 +658,6 @@
   (status (step ?current))
   (debug ?level)
 
-  ;(strategy-service-table (table-id ?id) (phase 6) (action accepted))
   (exec-order (step ?s2) (table-id ?id) (phase 6) (status accepted) (drink-order ?do))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld))
   (Table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo))
@@ -695,7 +679,6 @@
   (debug ?level)
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
-  ;?f3 <- (strategy-service-table (table-id ?id) (phase 6) (action delayed|finish))
   (exec-order (table-id ?id) (phase 6) (status  delayed|finish))
   ;controllo che l'agente posso operare sul tavolo.
   (or (and (test(= ?ra ?rt)) (test(= ?ca (+ ?ct 1))))
@@ -719,7 +702,6 @@
   (declare(salience 5))
   (debug ?level)
   (status (step ?current))
-  ;?f3 <- (strategy-service-table (table-id ?id) (phase 6))
   ?f3<-(exec-order (table-id ?id) (phase 6))
   =>
   (modify ?f3 (phase 7))
@@ -738,7 +720,6 @@
 (defrule strategy-return-phase7-to-2_accepted
   (status (step ?current))
   (debug ?level)
-  ;?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 7) (dl ?dl) (fl ?fl) (action accepted))
   ?f1<-(exec-order (table-id ?id) (phase 7) (status accepted) (food-order ?fo) (drink-order ?do))
   ; ho scaricato tutta la roba
   (test (> (+ ?fo ?do) 0))
@@ -756,7 +737,6 @@
 (defrule strategy-return-phase7-to-2_delayed
   (status (step ?current))
   (debug ?level)
-  ;?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 7) (action delayed|finish))
   ?f1<-(exec-order (table-id ?id) (phase 7) (status delayed|finish))
   (K-agent (l_d_waste ?ldw) (l_f_waste ?lfw))
   (test (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))) 
@@ -776,7 +756,6 @@
   (status (step ?current))
   (last-intention (step ?step))
   (debug ?level)
-  ;?f1 <- (strategy-service-table (step ?step) (table-id ?id) (phase 7))
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
 
   ;(K-agent (l-drink 0) (l-food 0))
