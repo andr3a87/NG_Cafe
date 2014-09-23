@@ -425,8 +425,8 @@
         (declare (salience 60))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
         ?f2 <- (strategy-best-dispenser)
-        (K-agent (l-food ?lf) (l-drink ?ld))
-        (test (or (=(- ?fo ?lf)0) (=(- ?do ?ld)0) (= (+ ?lf ?ld)4) ))
+        ;(K-agent (l-food ?lf) (l-drink ?ld))
+        ;(test (or (=(- ?fo ?lf)0) (=(- ?do ?ld)0) (= (+ ?lf ?ld)4) ))
 =>  
         (retract ?f2)
         (modify ?f1 (phase 4.5))

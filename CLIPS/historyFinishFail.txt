@@ -76,3 +76,8 @@
 
 (move-path P6 1 C2 4 7)
 (move-path P6 2 C2 4 6)
+
+
+;penality 1560 STRATEGY_FIFO_WAIT
+;penality 1560 STRATEGY_FIFO
+;penality 1433 LOW_PENALITY

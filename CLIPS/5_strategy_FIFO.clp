@@ -54,8 +54,8 @@
   (debug ?level)
   ?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
-  ?f2<-(exec-order (step ?next&:(and (> ?next ?last) (<= ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
-  (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish) (phase 0)))
+  ?f2<-(exec-order (step ?next&:(and (>= ?next ?last) (< ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
+  (not (exec-order (step ?lol&:(and (<= ?lol ?next) (> ?lol ?last) (< ?lol ?current))) (time-order ?t1&:(and(< ?t1 ?t) (neq ?t ?t1)))  (action Inform|Finish) (phase 0)))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -708,7 +708,7 @@
   (declare(salience 7))
   ?f1<-(canc-order-finish)
   (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
-  ?f2<-(exec-order (table-id ?id) (step ?step&:(< ?step ?s)) (status finish) (phase 0))
+  ?f2<-(exec-order (table-id ?id) (step ?step&:(<= ?step ?s)) (status finish) (phase 0))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
