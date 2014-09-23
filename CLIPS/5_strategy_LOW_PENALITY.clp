@@ -115,7 +115,7 @@
   ;l'ordine da servire è una finish ma il tavolo è già pulito
   (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0))
   then
-    (modify ?f1 (table-id ?id) (phase FINISH))
+    (modify ?f1 (table-id ?id) (phase COMPLETED))
   )
 )
 
@@ -694,7 +694,7 @@
   (test (= (+ ?ld ?lf) 0))
 =>
   (assert (exec (step ?ks) (action CleanTable) (param1 ?rt) (param2 ?ct)))
-  (assert (canc-order-finish)
+  (assert (canc-order-finish))
   ;debug
   (if (> ?level 0)
   then
@@ -705,13 +705,14 @@
 ;Regola che cancella gli ordini di finish precedenti all'ordine che sto servendo. Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato  
 (defrule strategy-delete-order-finish
   (declare(salience 7))
-  (canc-order-finish)
+  ?f1<-(canc-order-finish)
   (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
-  ?f1<-(exec-order (table-id ?id) (step ?step&:(< ?step ?s) (status finish) (phase 0)))
+  ?f2<-(exec-order (table-id ?id) (step ?step&:(< ?step ?s)) (status finish) (phase 0))
 =>
-  (modify ?f1 (status FINISH))
-
+  (retract ?f1)
+  (modify ?f2 (phase COMPLETED))
 )
+
 ;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
 (defrule go-phase7
   (declare(salience 5))
@@ -731,20 +732,20 @@
 ; FASE 7 della Strategia: Controllo se l'ordine è stato evaso.
 ;
 
-;Devo ancora consegnare della roba al tavolo. Devo ricercare il best-dispenser (FASE 2)
-(defrule strategy-return-phase7-to-2_accepted
+;Devo ancora consegnare della roba al tavolo. L'ordine aggiornato torna nella lista degli ordini da servire 
+(defrule strategy-return-search-order
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status accepted) (food-order ?fo) (drink-order ?do))
   ; ho scaricato tutta la roba
   (test (> (+ ?fo ?do) 0))
 =>
-  (modify ?f1 (phase 2))
+  (modify ?f1 (phase 0) (penality (*(+ ?do ?fo)2) ))
 
   ;debug
   (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
+    then
+    (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, search order with penality more low" crlf)
   )
 )
 
@@ -775,7 +776,7 @@
 
   ;(K-agent (l-drink 0) (l-food 0))
 => 
-  (modify ?f1 (phase FINISH))
+  (modify ?f1 (phase COMPLETED))
 
   ;debug
   (if (> ?level 0)

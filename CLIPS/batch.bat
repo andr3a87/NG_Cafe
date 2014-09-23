@@ -47,18 +47,20 @@
 (load "3_agent.clp")
 
 (load "4_percept.clp")
-(load "5_strategy_FIFO_WAIT.clp")
+(load "5_strategy_LOW_PENALITY.clp")
 ;(set-break strategy-re-execute-phase3)
 ;(set-break strategy-re-execute-phase5)
 ;(set-break strategy-go-phase1)
 ;(set-break strategy-change-order-in-phase3)
 ;(set-break search-best-dispenser)
+;(set-break strategy-do-CleanTable)
+;(set-break strategy-delete-order-finish)
 (load "6_exec-plane.clp")
 (load "7_a_star.clp")
 (load "8_clean-plane.clp")
-;(set-break clean)
+
 
 (reset)
 (run 257)
-(assert(stop-at-step 200))
+(assert(stop-at-step 144))
 (run 1200000)

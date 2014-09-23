@@ -54,8 +54,8 @@
   (debug ?level)
   ?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
-  ?f2<-(exec-order (step ?next&:(and (> ?next ?last) (<= ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status))
-  (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish)))
+  ?f2<-(exec-order (step ?next&:(and (> ?next ?last) (<= ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
+  (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish) (phase 0)))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -110,6 +110,11 @@
   (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)) (=(str-compare ?clean "no")0) )
   then
     (modify ?f1 (step ?s1))
+  )
+  ;l'ordine da servire è una finish ma il tavolo è già pulito
+  (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0))
+  then
+    (modify ?f1 (table-id ?id) (phase COMPLETED))
   ) 
 )
 
@@ -690,11 +695,23 @@
   (test (= (+ ?ld ?lf) 0))
 =>
   (assert (exec (step ?ks) (action CleanTable) (param1 ?rt) (param2 ?ct)))
+  (assert (canc-order-finish))
   ;debug
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CleanTable" crlf)
   )
+)
+
+;Regola che cancella gli ordini di finish precedenti all'ordine che sto servendo. Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato  
+(defrule strategy-delete-order-finish
+  (declare(salience 7))
+  ?f1<-(canc-order-finish)
+  (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
+  ?f2<-(exec-order (table-id ?id) (step ?step&:(< ?step ?s)) (status finish) (phase 0))
+=>
+  (retract ?f1)
+  (modify ?f2 (phase COMPLETED))
 )
 
 ;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
@@ -760,7 +777,7 @@
 
   ;(K-agent (l-drink 0) (l-food 0))
 => 
-  (modify ?f1 (phase FINISH))
+  (modify ?f1 (phase COMPLETED))
 
   ;debug
   (if (> ?level 0)

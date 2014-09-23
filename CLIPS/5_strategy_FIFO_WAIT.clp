@@ -751,7 +751,7 @@
 
   ;(K-agent (l-drink 0) (l-food 0))
 => 
-  (modify ?f1 (phase FINISH))
+  (modify ?f1 (phase COMPLETED))
 
   ;debug
   (if (> ?level 0)

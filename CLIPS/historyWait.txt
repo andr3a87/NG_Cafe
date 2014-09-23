@@ -39,6 +39,7 @@
 
 ;penality 3399 STRATEGY_FIFO_WAIT
 ;penality 3011 STRATEGY_FIFO
+;penality 2870 LOW_PENALITY
 
 
 
