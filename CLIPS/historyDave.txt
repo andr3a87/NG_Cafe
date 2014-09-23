@@ -87,3 +87,8 @@
 
 ;penality no-solution STRATEGY_FIFO_WAIT
 ;penality 6620 STRATEGY_FIFO
+
+;Non funziona con la strategia FIFO_WAIT proprio per come è fatta la strategia. Per definizione, il robottino si mette in wait
+;quando vuole raggiungere una cella occupata da una persona e aspetta fintanto che la cella non si libera. Ma se ci troviamo nel
+;caso in cui la persona vuole muoversi verso la cella occupata dal robot e il robot vuole muoversi verso la cella occupata dalla
+;persona si va a creare un deadlock.
