@@ -33,6 +33,8 @@
   (slot l-food)
 )
 
+
+
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc-vision (slot step))
 (deftemplate last-perc-load (slot step))
@@ -81,6 +83,17 @@
   (best-pen 0)
   (debug 2)
 )
+
+
+;DEFTEMPLATE STRATEGY HARD
+(deftemplate qty-order-sum (slot type(allowed-values accepted delayed finished)) (slot pen) (slot qty-fo) (slot qty-do) )
+(deffacts initial-fact-agent2
+  (qty-order-sum (type accepted) (pen 0) (qty-fo 0) (qty-do 0))
+  (qty-order-sum (type delayed) (pen 0) (qty-fo 0) (qty-do 0))
+  (qty-order-sum (type finished) (pen 0) (qty-fo 0) (qty-do 0))  
+)
+
+
 
 ; copia le prior cell sulla struttura K-cell
 (defrule  beginagent_kcell
