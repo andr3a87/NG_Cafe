@@ -8,33 +8,33 @@
 )
 
 (defrule S0
-  (K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?d) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
+  (K-agent (pos-r ?r) (pos-c ?c) (direction ?d))
 =>
-	(assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
-	(assert (start ?r ?c ?d))
-	(assert (current 0))
-	(assert (lastnode 0))
-	(assert (open-worse 0))
-	(assert (open-better 0))
-	(assert (alreadyclosed 0))
-	(assert (numberofnodes 0))
+        (assert (node (ident 0) (gcost 0) (fcost 0) (father NA) (pos-r ?r) (pos-c ?c) (direction ?d) (open yes)) )
+        (assert (start ?r ?c ?d))
+        (assert (current 0))
+        (assert (lastnode 0))
+        (assert (open-worse 0))
+        (assert (open-better 0))
+        (assert (alreadyclosed 0))
+        (assert (numberofnodes 0))
 )
 
 ;Definiamo i goal. Sono di due tipi.
 ;Se la cella di destinazione è vuota il goal è rappresentato da (goal-astar ?r ?c)
 ;Se la cella di destianzione è un tavolo,un dispenser o un cestino il goal è rappresentato dalle 4 celle adiacenti al tavolo.
 (defrule S0-goal-table
-	(goal-astar ?r ?c)
-	(K-cell (pos-r ?r) (pos-c ?c) (contains Table|DD|FD|TB|RB))
+        (goal-astar ?r ?c)
+        (K-cell (pos-r ?r) (pos-c ?c) (contains Table|DD|FD|TB|RB))
 =>
   (assert (end-astar (- ?r 1) ?c))
-	(assert (end-astar (+ ?r 1) ?c))
-	(assert (end-astar ?r (- ?c 1)))
-	(assert (end-astar ?r (+ ?c 1)))
+        (assert (end-astar (+ ?r 1) ?c))
+        (assert (end-astar ?r (- ?c 1)))
+        (assert (end-astar ?r (+ ?c 1)))
 )
 
 (defrule S0-goal-empty
-	(goal-astar ?r ?c)
+        (goal-astar ?r ?c)
   (K-cell (pos-r ?r) (pos-c ?c) (contains Empty))
 =>
   (assert (end-astar ?r ?c))
@@ -42,14 +42,21 @@
 
 (defrule achieved-goal
   (declare (salience 100))
+  (debug ?level)
   (current ?id)
   (goal-astar ?gr ?gc)
   (end-astar ?r ?c)
   (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))
 =>
-  (printout t " Esiste soluzione per goal (" ?gr "," ?gc ") in (" ?r "," ?c ")  con costo "  ?g crlf)
   (assert (stampa ?id))
   (assert (cost-solution ?g))
+
+  ;debug
+  (if (> ?level 2)
+    then
+    (printout t " [DEBUG] [ASTAR] Esiste soluzione per goal (" ?gr "," ?gc ") in (" ?r "," ?c ")  con costo "  ?g crlf)
+  )
+
   (focus PRINT)
 )
 
@@ -61,7 +68,7 @@
   (declare (salience 50))
   (current ?curr)
   (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction north) (open yes))
-  (K-cell (pos-r =(+ ?r 1)) (pos-c ?c) (contains Empty|Person))
+  (K-cell (pos-r =(+ ?r 1)) (pos-c ?c) (contains Empty))
 =>
   (assert (apply ?curr forward ?r ?c north (+ ?r 1) ?c))
 )
@@ -70,7 +77,7 @@
   (declare (salience 50))
   (current ?curr)
   (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction south) (open yes))
-  (K-cell (pos-r =(- ?r 1)) (pos-c ?c) (contains Empty|Person))
+  (K-cell (pos-r =(- ?r 1)) (pos-c ?c) (contains Empty))
 =>
   (assert (apply ?curr forward ?r ?c south (- ?r 1) ?c))
 )
@@ -79,7 +86,7 @@
   (declare (salience 50))
   (current ?curr)
   (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction east) (open yes))
-  (K-cell (pos-r ?r) (pos-c =(+ ?c 1)) (contains Empty|Person))
+  (K-cell (pos-r ?r) (pos-c =(+ ?c 1)) (contains Empty))
 =>
   (assert (apply ?curr forward ?r ?c east ?r (+ ?c 1)))
 )
@@ -88,7 +95,7 @@
   (declare (salience 50))
   (current ?curr)
   (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction west) (open yes))
-  (K-cell (pos-r ?r) (pos-c =(- ?c 1)) (contains Empty|Person ))
+  (K-cell (pos-r ?r) (pos-c =(- ?c 1)) (contains Empty))
 =>
   (assert (apply ?curr forward ?r ?c west ?r (- ?c 1)))
 )
@@ -135,18 +142,18 @@
               (newnode (ident (+ ?n 2)) (pos-r ?r) (pos-c ?c) (direction east)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnleft-apply-west
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction west) (open yes))
 
 
-   	=> (assert (apply ?curr turnleft-west ?r ?c west))
+        => (assert (apply ?curr turnleft-west ?r ?c west))
 )
 
 (defrule turnleft-exec-astar-west
@@ -161,18 +168,18 @@
               (newnode (ident (+ ?n 3)) (pos-r ?r) (pos-c ?c) (direction south)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
+        (father ?curr)))
     (retract ?f1)
     (focus NEW)
 )
 
 (defrule turnleft-apply-north
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction north) (open yes))
 
 
-   	=> (assert (apply ?curr turnleft-north ?r ?c north))
+        => (assert (apply ?curr turnleft-north ?r ?c north))
 )
 
 (defrule turnleft-exec-astar-north
@@ -187,18 +194,18 @@
               (newnode (ident (+ ?n 4)) (pos-r ?r) (pos-c ?c) (direction west)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnleft-apply-east
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction east) (open yes))
 
 
-   	=> (assert (apply ?curr turnleft-east ?r ?c east))
+        => (assert (apply ?curr turnleft-east ?r ?c east))
 )
 
 (defrule turnleft-exec-astar-east
@@ -213,9 +220,9 @@
               (newnode (ident (+ ?n 5)) (pos-r ?r) (pos-c ?c) (direction north)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 ;
@@ -223,12 +230,12 @@
 ;
 
 (defrule turnright-apply-south
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction south) (open yes))
 
 
-   	=> (assert (apply ?curr turnright-south ?r ?c south))
+        => (assert (apply ?curr turnright-south ?r ?c south))
 )
 
 (defrule turnright-exec-astar-south
@@ -243,18 +250,18 @@
               (newnode (ident (+ ?n 6)) (pos-r ?r) (pos-c ?c) (direction west)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnright-apply-west
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction west) (open yes))
 
 
-   	=> (assert (apply ?curr turnright-west ?r ?c west))
+        => (assert (apply ?curr turnright-west ?r ?c west))
 )
 
 (defrule turnright-exec-astar-west
@@ -269,18 +276,18 @@
               (newnode (ident (+ ?n 7)) (pos-r ?r) (pos-c ?c) (direction north)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnright-apply-north
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction north) (open yes))
 
 
-   	=> (assert (apply ?curr turnright-north ?r ?c north))
+        => (assert (apply ?curr turnright-north ?r ?c north))
 )
 
 (defrule turnright-exec-astar-north
@@ -295,18 +302,18 @@
               (newnode (ident (+ ?n 8)) (pos-r ?r) (pos-c ?c) (direction east)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 (defrule turnright-apply-east
-	(declare (salience 50))
+        (declare (salience 50))
         (current ?curr)
         (node (ident ?curr) (pos-r ?r) (pos-c ?c) (direction east) (open yes))
 
 
-   	=> (assert (apply ?curr turnright-east ?r ?c east))
+        => (assert (apply ?curr turnright-east ?r ?c east))
 )
 
 (defrule turnright-exec-astar-east
@@ -321,34 +328,43 @@
               (newnode (ident (+ ?n 9)) (pos-r ?r) (pos-c ?c) (direction south)
                        (gcost (+ ?g 1)) (fcost (+ (abs (- ?x ?r)) (abs (- ?y ?c)) ?g 1))
 
- 	(father ?curr)))
-      	(retract ?f1)
-      	(focus NEW)
+        (father ?curr)))
+        (retract ?f1)
+        (focus NEW)
 )
 
 
 (defrule change-current
-         (declare (salience 49))
-?f1 <-   (current ?curr)
-?f2 <-   (node (ident ?curr))
-         (node (ident ?best&:(neq ?best ?curr)) (fcost ?bestcost) (open yes))
-         (not (node (ident ?id&:(neq ?id ?curr)) (fcost ?gg&:(< ?gg ?bestcost)) (open yes)))
-?f3 <-   (lastnode ?last)
-   =>    (assert (current ?best) (lastnode (+ ?last 10)))
-         (retract ?f1 ?f3)
-         (modify ?f2 (open no)))
+ (declare (salience 49))
+  ?f1<-(current ?curr)
+  ?f2<-(node (ident ?curr))
+  (node (ident ?best&:(neq ?best ?curr)) (fcost ?bestcost) (open yes))
+  (not (node (ident ?id&:(neq ?id ?curr)) (fcost ?gg&:(< ?gg ?bestcost)) (open yes)))
+  ?f3<-(lastnode ?last)
+=>    
+  (assert (current ?best) (lastnode (+ ?last 10)))
+  (retract ?f1 ?f3)
+  (modify ?f2 (open no))
+)
 
 (defrule close-empty
-         (declare (salience 49))
-?f1 <-   (current ?curr)
-?f2 <-   (node (ident ?curr))
-         (not (node (ident ?id&:(neq ?id ?curr))  (open yes)))
-     =>
-         (retract ?f1)
-         (modify ?f2 (open no))
-         (printout t " fail (last  node expanded " ?curr ")" crlf)
-         (focus CLEAN)
-         ;(halt)
+  (declare (salience 49))
+  (debug ?level)
+  ?f1<-(current ?curr)
+  ?f2<-(node (ident ?curr))
+  (not (node (ident ?id&:(neq ?id ?curr))  (open yes)))
+=>
+  (retract ?f1)
+  (modify ?f2 (open no))
+  (assert (astar-solution (value no)))
+
+  ;debug
+  (if (> ?level 2)
+    then
+    (printout t " [DEBUG] [ASTAR] fail (last  node expanded " ?curr ")" crlf)
+  )
+
+  (focus CLEAN)
 )
 
 (defmodule NEW (import ASTAR ?ALL) (export ?ALL))
@@ -404,36 +420,46 @@
     (declare (salience 4))
     (stampa ?id)
     (exec-astar ?anc ?id $?)
+    (next-plane-id ?plane-id)
+    (start ?rs ?cs ?d1)
+    (goal-astar ?rg ?cg)
+    (cost-solution ?g)
 =>
     (assert (stampa ?anc))
+    (assert (plane (plane-id ?plane-id) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (direction ?d1) (cost ?g) (status ok)))
 )
 
 
 (defrule stampaSol1
-	(declare (salience 3))
+  (declare (salience 3))
+  (debug ?level)
+  (next-plane-id ?plane-id)
   ?f<-(stampa ?id)
-	(node (ident ?id) (father ?anc&~NA))
-	(exec-astar ?anc ?id ?oper ?d ?r ?c)
-  (start ?rs ?cs ?d1)
-  (goal-astar ?rg ?cg)
-  (cost-solution ?g)
+  (node (ident ?id) (father ?anc&~NA))
+  (exec-astar ?anc ?id ?oper ?d ?r ?c)
 =>
-	(printout t " Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
-  (assert (plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (exec-astar-sol ?anc ?id ?oper ?d ?r ?c) (cost ?g)))
-	(retract ?f)
+  (assert (step-plane  (plane-id ?plane-id) (action ?oper) (direction ?d) (pos-start ?r ?c) (father ?anc) (child ?id)))
+  (retract ?f)
+
+  ;debug
+  (if (> ?level 2)
+    then
+    (printout t " [DEBUG] [ASTAR] Eseguo azione " ?oper " direzione " ?d " da stato (" ?r "," ?c ") " crlf)
+  )
 )
 
 
 ;regola per generare un fatto di tipo plane, quando deve essere eseguito un piano a costo 0
 (defrule stampaSolZeroCost
-	(declare (salience 2))
-	?f<-(stampa ?id)
-	(start ?rs ?cs ?d1)
-	(goal-astar ?rg ?cg)
-  ;(cost-solution 0)
-  (not(plane (pos-start ?rs ?cs) (pos-end ?rg ?cg) ))
+  (declare (salience 2))
+  ?f<-(stampa ?id)
+  (next-plane-id ?plane-id)
+  (start ?rs ?cs ?d1)
+  (goal-astar ?rg ?cg)
+  (cost-solution 0)
+  
 =>
-	(assert(plane (pos-start ?rs ?cs ?d1) (pos-end ?rg ?cg) (cost 0)))
+  (assert (plane (plane-id ?plane-id) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (cost 0) (status ok)))
 )
 
 (defrule stampa-fine
@@ -444,11 +470,14 @@
     (open-better ?better)
     (alreadyclosed ?closed)
     (numberofnodes ?n )
+    ?f1<-(next-plane-id ?plane-id)
 =>
 ;   (printout t " stati espansi " ?n crlf)
 ;   (printout t " stati generati gia' in closed " ?closed crlf)
 ;   (printout t " stati generati gia' in open (open-worse) " ?worse crlf)
 ;   (printout t " stati generati gia' in open (open-better) " ?better crlf)
+    (retract ?f1)
+    (assert (next-plane-id (+ ?plane-id 1)))
     (focus CLEAN)
 )
 

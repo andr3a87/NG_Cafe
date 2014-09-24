@@ -44,7 +44,8 @@
 
              (prior-cell (pos-r 2) (pos-c 5) (contains Empty))
 
-             (prior-cell (pos-r 2) (pos-c 6) (contains Empty))
+             ;(prior-cell (pos-r 2) (pos-c 6) (contains Empty))
+             (prior-cell (pos-r 2) (pos-c 6) (contains Parking))
 
              (prior-cell (pos-r 2) (pos-c 7) (contains Empty))
 
@@ -176,7 +177,8 @@
 
              (prior-cell (pos-r 8) (pos-c 5) (contains TB))
 
-             (prior-cell (pos-r 8) (pos-c 6) (contains Parking))
+             ;(prior-cell (pos-r 8) (pos-c 6) (contains Parking))
+             (prior-cell (pos-r 8) (pos-c 6) (contains Empty))
 
              (prior-cell (pos-r 8) (pos-c 7) (contains RB))
 
