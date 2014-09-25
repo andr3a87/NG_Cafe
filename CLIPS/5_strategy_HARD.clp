@@ -17,11 +17,10 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
   (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
-  ?f1<-(qty-order-sum (type accepted) (pen ?pen1) (sum-fo ?sfo) (sum-do ?sdo))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
-  (modify ?f1 (pen (+ ?pen1 (*(+ ?do ?fo)2))) (sum-fo (+ ?sfo ?fo)) (sum-do (+ ?sdo ?do)))
+  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted)  (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
+  (assert (update-penality))
 )
 
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
@@ -31,11 +30,10 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type order) (drink-order ?do) (food-order ?fo))
   (K-table (table-id ?sen) (clean no))
-  ?f1<-(qty-order-sum (type accepted) (pen ?pen1) (sum-fo ?sfo) (sum-do ?sdo))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (+ ?do ?fo))))
-  (modify ?f1 (pen (+ ?pen1 (+ ?do ?fo))) (sum-fo (+ ?sfo ?fo)) (sum-do (+ ?sdo ?do)))
+  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (+ ?do ?fo))))
+  (assert (update-penality))
 )
 
 ;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
@@ -43,35 +41,133 @@
   (declare (salience 150))
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
-  ?f1<-(qty-order-sum (type accepted) (pen ?pen1))
 =>
-  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
-  (modify ?f1 (pen (+ ?pen1 3)))
+  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (origin-status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
+  (assert (update-penality))
 )
+
+(defrule update-penality-1
+  (declare (salience 150))
+  (status (step ?current))
+  ?f1<-(update-penality)
+  (exec-order (step ?current) (action Inform) (status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (penality ?pen))
+  ?f2<-(qty-order-sum (type accepted) (pen ?pen1) (qty-fo ?sfo) (qty-do ?sdo))
+=>
+  (retract ?f1)
+  (modify ?f2 (pen (+ ?pen1 ?pen)) (qty-fo (+ ?sfo ?fo)) (qty-do (+ ?sdo ?do)))
+)
+
+(defrule update-penality-2
+  (declare (salience 150))
+  (status (step ?current))
+  ?f1<-(update-penality)
+  (exec-order (step ?current) (action Inform) (status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (penality ?pen))
+  ?f2<-(qty-order-sum (type delayed) (pen ?pen1) (qty-fo ?sfo) (qty-do ?sdo))
+=>
+  (retract ?f1)
+  (modify ?f2 (pen (+ ?pen1 ?pen)) (qty-fo (+ ?sfo ?fo)) (qty-do (+ ?sdo ?do)))
+)
+
+(defrule update-penality-3
+  (declare (salience 150))
+  (status (step ?current))
+  ?f1<-(update-penality)
+  (exec-order (step ?current) (action Finish) (status finish) (drink-order 0) (food-order 0) (phase 0) (penality ?pen))
+  ?f2<-(qty-order-sum (type finish) (pen ?pen1))
+=>
+  (retract ?f1)
+  (modify ?f1 (pen (+ ?pen1 ?pen)))
+)
+
 
 ;
 ; FASE 1 della Strategia: Ricerca di un tavolo da servire.
 ;
 
-;Ricerca dell'ordine da servire. La ricerca avviene sia sulle Inform che sulle Finish. Si ricerca l'ordine più vecchio non ancora servito.
-(defrule strategy-go-phase1-accepted
+;L'ordine da servire deve essere un ordine di accepted sum-penality-accepted >= sum-penality-finish + sum-penality-delayed
+(defrule evalutation-order-1
+  (declare (salience 95))
+  (status (step ?current))
+  (debug ?level)
+  ;La valutazione avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
+  (exec-order (phase 0))
+  (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
+
+  (qty-order-sum (type accepted) (pen ?pen1))
+  (qty-order-sum (type delayed) (pen ?pen2))
+  (qty-order-sum (type finish) (pen ?pen3))
+  (test(>= ?pen1 (+ ?pen2 ?pen3)))
+  (K-agent (l-drink ?) (l-food ?) (l_d_waste no) (l_f_waste no))
+=>
+  (assert (found-order-accepted))
+)
+
+;L'ordine da servire deve essere un ordine di delayed/finish sum-penality-accepted < sum-penality-finish + sum-penality-delayed
+(defrule evalutation-order-2
+  (declare (salience 95))
+  (status (step ?current))
+  (debug ?level)
+  ;La valutazione avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
+  (exec-order (phase 0))
+  (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
+
+  (qty-order-sum (type accepted) (pen ?pen1))
+  (qty-order-sum (type delayed) (pen ?pen2))
+  (qty-order-sum (type finish) (pen ?pen3))
+  (test(< ?pen1 (+ ?pen2 ?pen3)))
+  (K-agent (l-drink 0) (l-food 0) (l_d_waste ?) (l_f_waste ?))
+=>
+  (assert (found-order-finish-delayed))
+)
+
+;L'ordine da servire deve essere un ordine di accepted sum-penality-accepted >= sum-penality-finish + sum-penality-delayed ma ho sporco a bordo devo andare al cestino
+(defrule evalutation-order-3
+  (declare (salience 95))
+  (status (step ?current))
+  (debug ?level)
+  ;La valutazione avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
+  (exec-order (phase 0))
+  (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
+
+  (qty-order-sum (type accepted) (pen ?pen1))
+  (qty-order-sum (type delayed) (pen ?pen2))
+  (qty-order-sum (type finish) (pen ?pen3))
+  (test(>= ?pen1 (+ ?pen2 ?pen3)))
+  (K-agent (l-drink 0) (l-food 0) (l_d_waste ?ldw) (l_f_waste ?lfw))
+  (test(or(=(str-compare ?ldw "yes")0) (=(str-compare ?lfw "yes")0)))
+=>
+  (assert (go-to-basket))
+)
+
+;L'ordine da servire deve essere un ordine di delayed/finish sum-penality-accepted < sum-penality-finish + sum-penality-delayed ma ho consumazioni a bordo.
+(defrule evalutation-order-4
+  (declare (salience 95))
+  (status (step ?current))
+  (debug ?level)
+  ;La valutazione avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
+  (exec-order (phase 0))
+  (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
+
+  (qty-order-sum (type accepted) (pen ?pen1))
+  (qty-order-sum (type delayed) (pen ?pen2))
+  (qty-order-sum (type finish) (pen ?pen3))
+  (test(< ?pen1 (+ ?pen2 ?pen3)))
+  (K-agent (l-drink ?ld&:(> ?ld 0)) (l-food ?lf&:(> ?lf 0)) (l_d_waste no) (l_f_waste no))
+=>
+  (assert (force-delivery (min 1000) ))
+)
+
+;Ricerca dell'ordine accepted da servire con penalità + alta. 
+(defrule strategy-search-order-accepted-1
   (declare (salience 70))
   (status (step ?current))
   (best-pen ?pen)
   (debug ?level)
-  (qty-order-sum (type accepted) (pen ?pen1))
-  (qty-order-sum (type delayed) (pen ?pen2))
-  (qty-order-sum (type finish) (pen ?pen3))
-  (K-agent (l-drink 0) (l-food 0)
-  (test(>= ?pen1 (+ ?pen2 ?pen3)))
-  ; cerca una exec di tipo inform
+  ?f1<-(found-order-accepted)
   ?f2<-(exec-order (step ?s)  (table-id ?sen) (time-order ?t) (status accepted) (penality ?p&:(> ?p ?pen)) (phase 0))
   (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (status accepted) (phase 0)))
-
-  ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
-  (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
-  ;(modify ?f1 (step ?next) (time ?t))
+  (retract ?f1)
   (modify ?f2 (phase 1))
 
   ;debug
@@ -80,24 +176,48 @@
       (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
   )
 )
-(defrule strategy-go-phase1-delayed-finish
+
+;Ricerca dell'ordine accepted da servire che minimizzi le consegne. 
+;Obiettivo è arrivare ad avere il robot con 0 food e 0 drink a bordo perchè devo passare alla fase di pulizia dei tavoli.
+(defrule strategy-search-order-accepted-2
+  (declare (salience 70))
+  (status (step ?current))
+  (debug ?level)
+  (K-agent (l-drink ?ld) (l-food ?lf))
+  ?f1<-(force-delivery (min ?min))
+  (exec-order (step ?s) (food-order ?fo) (drink-order ?do)  (table-id ?sen) (status accepted) (phase 0))
+  (test(< (+ (- ?lf ?fo ) (- ?ld ?do )) ?min))
+=>
+  (modify ?f1 (min =(+ (- ?lf ?fo ) (- ?ld ?do ))) (step ?s) (table-id ?sen))
+
+  ;debug
+  (if (> ?level 0)
+    then
+      (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
+  )
+)
+
+;Trovato l'ordine che minimizza il numero di consegne, vado a consegnare al tavolo.
+(defrule strategy-search-order-accepted-2bis
+  (declare (salience 65))
+  ?f1<-(force-delivery (min ?min) (step ?step) (table-id ?sen))
+  ?f2<-(exec-order (step ?step) (table-id ?sen) (status accepted) (phase 0))
+ =>
+   (retract ?f1)
+   (modify ?f2 (phase 5))
+)
+
+;Ricerca dell'ordine delayed/finish da servire con penalità + alta. 
+(defrule strategy-search-order-finish-delayed
   (declare (salience 70))
   (status (step ?current))
   (best-pen ?pen)
   (debug ?level)
-  (qty-order-sum (type accepted) (pen ?pen1))
-  (qty-order-sum (type delayed) (pen ?pen2))
-  (qty-order-sum (type finish) (pen ?pen3))
-  (K-agent (l-drink 0) (l-food 0)
-  (test(>= ?pen1 (+ ?pen2 ?pen3)))
-  ; cerca una exec di tipo inform
+  ?f1<-(found-order-finish-delayed)
   ?f2<-(exec-order (step ?s)  (table-id ?sen) (time-order ?t) (status delayed|finish) (penality ?p&:(> ?p ?pen)) (phase 0))
   (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (status delayed|finish) (phase 0)))
-
-  ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
-  (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
-  ;(modify ?f1 (step ?next) (time ?t))
+  (retract ?f1)
   (modify ?f2 (phase 1))
 
   ;debug
@@ -106,33 +226,36 @@
       (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
   )
 )
+
 
 ;Trovato l'ordine eseguo la fase di competenza
 (defrule strategy-complete-phase1
-  (declare (salience 70))
+  (declare (salience 60))
   (status (step ?s1))
   ?f1 <- (exec-order (step ?s2) (drink-order ?do) (food-order ?fo) (table-id ?id) (status ?status)  (phase 1) )
   (K-table (table-id ?id) (clean ?clean))
   (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
-  ?f2<-(qty-order-sum (type accepted) (pen ?pen1) (sum-fo ?sfo1) (sum-do ?sdo1))
-  ?f3<-(qty-order-sum (type delayed) (pen ?pen2) (sum-fo ?sfo2) (sum-do ?sdo2))
+  ?f2<-(qty-order-sum (type accepted) (pen ?pen1) (qty-fo ?sfo1) (qty-do ?sdo1))
+  ?f3<-(qty-order-sum (type delayed) (pen ?pen2) (qty-fo ?sfo2) (qty-do ?sdo2))
 =>
   ; vado alla fase 2 se l'ordine è accettato, ovvero posso cercare già il dispenser più vicino
   (if (=(str-compare ?status "accepted") 0) 
   then
     (modify ?f1 (table-id ?id) (phase 2))
   )
+
   ; se l'ordine è delayed e il tavolo è sporco (ossia non l'ho ancora pulito), vado alla fase 5
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 5))
   )
   ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e non ho sporco a bordo modifico in accepted, così da gestirlo come un ordine normale.
+  ; la penalità rimane calcolata come un delayed
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0) )
   then
     (modify ?f1 (status accepted))
-    (modify ?f2 (+ ?pen1 (*(+ ?do ?fo)2)) (+ ?sfo1 ?fo) (+ ?sdo1 ?do))
-    (modify ?f3 (- ?pen2 (+ ?do ?fo)) (- ?sfo2 ?fo) (- ?sdo2 ?do))
+    (modify ?f2 (pen(+ ?pen1 (+ ?do ?fo))) (qty-fo(+ ?sfo1 ?fo))  (qty-do(+ ?sdo1 ?do)))
+    (modify ?f3 (pen (- ?pen2 (+ ?do ?fo))) (qty-fo(- ?sfo2 ?fo)) (qty-do(- ?sdo2 ?do)))
   )
   ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e ho sporco a bordo modifico vado alla fase 2 per andare al cestino.
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)) )
@@ -146,7 +269,7 @@
   )
   ; se ho ricevuto una finish ma ho del cibo caricato inserisco questo ordine al fondo.
   ; Questo caso accade se dovevo portare del cibo al tavolo, ma non ho trovato una piano per arrivarci e quell'ordine è stato spostato in fondo.
-  ; A questo punto il prox ordine da evadere è una finish, ma siccome non posso trasportate cibo e sporcizio sposto al fondo anche questo.
+  ; A questo punto il prox ordine da evadere è una finish, ma siccome non posso trasportate cibo e sporcizia sposto al fondo anche questo.
   (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)) (=(str-compare ?clean "no")0) )
   then
     (modify ?f1 (step ?s1))
@@ -370,23 +493,19 @@
 
 ; regola per caricare il cibo
 ; ===========================
-; controlla che ci sia ancora del food da caricare
-; controlla che non ci sia waste
-; controlla che il truckload non sia pieno
-; scatena azione di load-food verso dispenser
-; scatena diminuzione fl in strategy-service-table
+
 
 (defrule strategy-do-LoadFood
   (declare (salience 70))
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 4) (food-order ?fo))
-  ?f2<-(qty-order-sum (type accepted) (sum-fo ?sfo))
-  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type FD))        ; posizione del food dispenser
-  (test (> ?fo 0))                                                   ; food to load > 0
+  ?f2<-(qty-order-sum (type accepted) (qty-fo ?sfo))
+  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type FD))        ;
+  (test (> ?fo 0))                                                   
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   (test (< (+ ?lf ?ld) 4))
-  (test (<= ?lf ?sfo))
+  (test (< ?lf ?sfo))
 
 =>
   (assert (exec (step ?ks) (action LoadFood) (param1 ?rd) (param2 ?cd)))
@@ -406,13 +525,13 @@
   (status (step ?current))
   (debug ?level)
 
-  ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 4) (drink-order ?do) (type current))
-  ?f2<-(qty-order-sum (type accepted) (sum-do ?sdo))
+  ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 4) (drink-order ?do))
+  ?f2<-(qty-order-sum (type accepted) (qty-do ?sdo))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type DD))
-  (test (> ?do 0)) ; ci sono ancora drink da caricare
+  (test (> ?do 0))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   (test (< (+ ?lf ?ld) 4))
-  (test (<= ?ld ?sdo))
+  (test (< ?ld ?sdo))
 =>
   (assert (exec (step ?ks) (action LoadDrink) (param1 ?rd) (param2 ?cd)))
         

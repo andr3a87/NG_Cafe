@@ -51,6 +51,7 @@
   (slot action  (allowed-values Finish Inform))
   (slot table-id)
   (slot time-order)
+  (slot origin-status)
   (slot status)
   (slot drink-order)
   (slot food-order)
@@ -86,11 +87,12 @@
 
 
 ;DEFTEMPLATE STRATEGY HARD
-(deftemplate qty-order-sum (slot type(allowed-values accepted delayed finished)) (slot pen) (slot qty-fo) (slot qty-do) )
+(deftemplate qty-order-sum (slot type(allowed-values accepted delayed finish)) (slot pen) (slot qty-fo) (slot qty-do))
+(deftemplate force-delivery (slot min) (slot step) (slot table-id))
 (deffacts initial-fact-agent2
   (qty-order-sum (type accepted) (pen 0) (qty-fo 0) (qty-do 0))
   (qty-order-sum (type delayed) (pen 0) (qty-fo 0) (qty-do 0))
-  (qty-order-sum (type finished) (pen 0) (qty-fo 0) (qty-do 0))  
+  (qty-order-sum (type finish) (pen 0) (qty-fo 0) (qty-do 0))  
 )
 
 
