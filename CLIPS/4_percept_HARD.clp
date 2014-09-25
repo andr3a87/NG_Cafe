@@ -276,7 +276,6 @@
   ; modifica tavolo, aggiungiamo un food al tavolo
   (modify ?f2 (step ?s) (time ?t) (l-food (+ ?klf 1)) (clean no))
   ;modifica ordine, consumazione consegnata
-  (modify ?f3 (food-order (- ?fo 1)))
   (if (=(str-compare ?status "delayed")0)
     then
       (modify ?f3 (food-order (- ?fo 1)) (penality (- ?pen1 1)) )
@@ -310,14 +309,13 @@
   ; modifica tavolo, aggiungiamo un drink al tavolo
   (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
   ;modifica ordine, consumazione consegnata
-  (modify ?f3 (drink-order (- ?do 1)))
   (if (=(str-compare ?status "delayed")0)
     then
       (modify ?f3 (drink-order (- ?do 1)) (penality (- ?pen1 1)) )
-      (modify ?f4 (qty-fo (- ?sdo 1)) (pen (- ?pen 1)))
+      (modify ?f4 (qty-do (- ?sdo 1)) (pen (- ?pen 1)))
     else
       (modify ?f3 (drink-order (- ?do 1)) (penality (- ?pen1 2)) )
-      (modify ?f4 (qty-fo (- ?sdo 1)) (pen (- ?pen 2)))
+      (modify ?f4 (qty-do (- ?sdo 1)) (pen (- ?pen 2)))
   )
 )
 
@@ -343,7 +341,6 @@
   (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo il food
   (modify ?f2 (step ?s) (time ?t) (l-food (+ ?klf 1)) (clean no))
-  (modify ?f3 (food-order (- ?fo 1)))
   (if (=(str-compare ?status "delayed")0)
     then
       (modify ?f3 (food-order (- ?fo 1)) (penality (- ?pen1 1)) )
@@ -378,14 +375,13 @@
   (modify ?last-l (step ?s))
   ; modifica tavolo, aggiungiamo il drink
   (modify ?f2 (step ?s) (time ?t) (l-drink (+ ?kld 1)) (clean no))
-  (modify ?f3 (drink-order (- ?do 1)))
   (if (=(str-compare ?status "delayed")0)
     then
       (modify ?f3 (drink-order (- ?do 1)) (penality (- ?pen1 1)) )
-      (modify ?f4 (qty-fo (- ?sdo 1)) (pen (- ?pen 1)))
+      (modify ?f4 (qty-do (- ?sdo 1)) (pen (- ?pen 1)))
     else
       (modify ?f3 (drink-order (- ?do 1)) (penality (- ?pen1 2)) )
-      (modify ?f4 (qty-fo (- ?sdo 1)) (pen (- ?pen 2)))
+      (modify ?f4 (qty-do (- ?sdo 1)) (pen (- ?pen 2)))
   )
 )
 
