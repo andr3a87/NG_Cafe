@@ -264,7 +264,7 @@
   (test (> ?s ?old-s) )
   ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   ?f2<-(K-table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo) (l-food ?klf))
-  ?f3<-(exec-order (step ?s2) (table-id ?id) (food-order ?fo) (origin-status ?status) (phase 6))
+  ?f3<-(exec-order (step ?s2) (table-id ?id) (food-order ?fo) (origin-status ?status) (penality ?pen1) (phase 6))
   ?f4<-(qty-order-sum (type accepted) (pen ?pen) (qty-fo ?sfo))
 
   (exec (step =(- ?s 1)) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo))
@@ -279,8 +279,10 @@
   (modify ?f3 (food-order (- ?fo 1)))
   (if (=(str-compare ?status "delayed")0)
     then
+      (modify ?f3 (food-order (- ?fo 1)) (penality (- ?pen1 1)) )
       (modify ?f4 (qty-fo (- ?sfo 1)) (pen (- ?pen 1)))
     else
+      (modify ?f3 (food-order (- ?fo 1)) (penality (- ?pen1 2)) )
       (modify ?f4 (qty-fo (- ?sfo 1)) (pen (- ?pen 2)))
   )
  
@@ -295,7 +297,7 @@
   (test (> ?s ?old-s))
   ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   ?f2<-(K-table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo) (l-drink ?kld))
-  ?f3<-(exec-order (step ?s2) (table-id ?id) (drink-order ?do)  (origin-status ?status) (phase 6))
+  ?f3<-(exec-order (step ?s2) (table-id ?id) (drink-order ?do)  (origin-status ?status) (penality ?pen1) (phase 6))
   ?f4<-(qty-order-sum (type accepted) (pen ?pen) (qty-do ?sdo))
   (exec (step =(- ?s 1)) (action DeliveryDrink) (param1 ?rfo) (param2 ?cfo))
   ;(strategy-service-table (step ?s2) (table-id ?id))
@@ -311,8 +313,10 @@
   (modify ?f3 (drink-order (- ?do 1)))
   (if (=(str-compare ?status "delayed")0)
     then
+      (modify ?f3 (drink-order (- ?do 1)) (penality (- ?pen1 1)) )
       (modify ?f4 (qty-fo (- ?sdo 1)) (pen (- ?pen 1)))
     else
+      (modify ?f3 (drink-order (- ?do 1)) (penality (- ?pen1 2)) )
       (modify ?f4 (qty-fo (- ?sdo 1)) (pen (- ?pen 2)))
   )
 )
@@ -330,7 +334,7 @@
   (test (= ?lf 1))
   (exec (step =(- ?s 1))(action DeliveryFood) (param1 ?rfo) (param2 ?cfo))
   ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-food ?klf))
-  ?f3<-(exec-order (step ?s2) (table-id ?id) (food-order ?fo) (origin-status ?status)  (phase 6))
+  ?f3<-(exec-order (step ?s2) (table-id ?id) (food-order ?fo) (origin-status ?status) (penality ?pen1) (phase 6))
   ?f4<-(qty-order-sum (type accepted) (pen ?pen) (qty-fo ?sfo))
   =>
   ; modifica l'agente
@@ -342,8 +346,10 @@
   (modify ?f3 (food-order (- ?fo 1)))
   (if (=(str-compare ?status "delayed")0)
     then
+      (modify ?f3 (food-order (- ?fo 1)) (penality (- ?pen1 1)) )
       (modify ?f4 (qty-fo (- ?sfo 1)) (pen (- ?pen 1)))
     else
+      (modify ?f3 (food-order (- ?fo 1)) (penality (- ?pen1 2)))
       (modify ?f4 (qty-fo (- ?sfo 1)) (pen (- ?pen 2)))
   )
 )
@@ -361,7 +367,7 @@
   ?f2<-(K-table (table-id ?tid) (pos-r ?rfo) (pos-c ?cfo) (l-drink ?kld))
   (exec (step =(- ?s 1))(action DeliveryDrink) (param1 ?rfo) (param2 ?cfo))
   ;(strategy-service-table (step ?s2) (table-id ?id))
-  ?f3<-(exec-order (step ?s2) (table-id ?id) (drink-order ?do) (origin-status ?status) (phase 6))
+  ?f3<-(exec-order (step ?s2) (table-id ?id) (drink-order ?do) (origin-status ?status) (penality ?pen1) (phase 6))
   ?f4<-(qty-order-sum (type accepted) (pen ?pen) (qty-do ?sdo))
 
   =>
@@ -375,8 +381,10 @@
   (modify ?f3 (drink-order (- ?do 1)))
   (if (=(str-compare ?status "delayed")0)
     then
+      (modify ?f3 (drink-order (- ?do 1)) (penality (- ?pen1 1)) )
       (modify ?f4 (qty-fo (- ?sdo 1)) (pen (- ?pen 1)))
     else
+      (modify ?f3 (drink-order (- ?do 1)) (penality (- ?pen1 2)) )
       (modify ?f4 (qty-fo (- ?sdo 1)) (pen (- ?pen 2)))
   )
 )
