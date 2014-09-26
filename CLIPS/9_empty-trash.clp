@@ -63,8 +63,8 @@
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F2:s"?current"] Dispenser/Basket Found: " ?c " in ("?rd1", "?cd1")"  crlf)
-    (printout t " [DEBUG] [F2:s"?current"] Init Phase 2: Pianifica Astar verso dispenser " ?c " in ("?rd1", "?cd1")"  crlf)
+    (printout t " [DEBUG] [ET] [F1:s"?current"] Dispenser/Basket Found: " ?c " in ("?rd1", "?cd1")"  crlf)
+    (printout t " [DEBUG] [ET] [F1:s"?current"] Init Phase 2: Pianifica Astar verso dispenser " ?c " in ("?rd1", "?cd1")"  crlf)
   )
 )
 
@@ -129,7 +129,7 @@
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F4:s"?current"] Init Phase 4 - Agent in front of best dispenser: "?c" in ("?rd","?cd")" crlf)
+    (printout t " [DEBUG] [ET] [F4:s"?current"] Init Phase 4 - Agent in front of best dispenser: "?c" in ("?rd","?cd")" crlf)
   )
 )
 
@@ -152,7 +152,7 @@
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F3:s"?current"] Init Phase 3: Plane Failed. Re-Plane Astar to dispenser: "?c" in ("?rd","?cd")" crlf)
+    (printout t " [DEBUG] [ET] [F3:s"?current"] Init Phase 3: Plane Failed. Re-Plane Astar to dispenser: "?c" in ("?rd","?cd")" crlf)
   )
 )
 
@@ -175,7 +175,7 @@
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F3:s"?current"] A-Star not found solution to the basket: "?c" in ("?rd","?cd")" crlf)
+    (printout t " [DEBUG] [ET] [F3:s"?current"] A-Star not found solution to the basket: "?c" in ("?rd","?cd")" crlf)
   )
 )
 
@@ -243,7 +243,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F4:s"?current"] EmptyFood in TrashBasket: ("?rfo","?cfo")" crlf)
+  (printout t " [DEBUG] [ET] [F4:s"?current"] EmptyFood in TrashBasket: ("?rfo","?cfo")" crlf)
   )
 )
 
@@ -270,7 +270,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F4:s"?current"] Release drink in RecyclableBasket: ("?rfo","?cfo")" crlf)
+  (printout t " [DEBUG] [ET] [F4:s"?current"] Release drink in RecyclableBasket: ("?rfo","?cfo")" crlf)
   )
 )
 
