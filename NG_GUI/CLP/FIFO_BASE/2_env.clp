@@ -173,7 +173,7 @@
 
 =>
 
-    (load-facts "historyComplicata.txt")
+    (load-facts "history.txt")
     (retract ?f1)
 )
 
