@@ -89,6 +89,7 @@
 ;DEFTEMPLATE STRATEGY HARD
 (deftemplate qty-order-sum (slot type(allowed-values accepted delayed finish)) (slot pen) (slot qty-fo) (slot qty-do))
 (deftemplate force-delivery (slot min) (slot step) (slot table-id))
+(deftemplate go-to-basket (slot phase))
 (deffacts initial-fact-agent2
   (qty-order-sum (type accepted) (pen 0) (qty-fo 0) (qty-do 0))
   (qty-order-sum (type delayed) (pen 0) (qty-fo 0) (qty-do 0))

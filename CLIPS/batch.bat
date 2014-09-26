@@ -58,6 +58,7 @@
 (load "6_exec-plane.clp")
 (load "7_a_star.clp")
 (load "8_clean-plane.clp")
+(load "9_empty-trash.clp")
 
 
 (reset)

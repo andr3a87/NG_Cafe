@@ -136,7 +136,7 @@
   (K-agent (l-drink 0) (l-food 0) (l_d_waste ?ldw) (l_f_waste ?lfw))
   (test(or(=(str-compare ?ldw "yes")0) (=(str-compare ?lfw "yes")0)))
 =>
-  (assert (go-to-basket))
+  (assert (go-to-basket (phase 1)))
   (focus EMPTY-TRASH)
 )
 
