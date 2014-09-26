@@ -397,6 +397,7 @@
 =>
   (modify ?f2 (l-drink 0) (clean yes))
   (modify ?f1 (l_d_waste yes))
+  (assert (update-current-order-table-cleaned))
 )
 
 (defrule k-percept-clean-table_2
@@ -411,6 +412,7 @@
 =>
   (modify ?f2 (l-food 0) (clean yes))
   (modify ?f1 (l_f_waste yes))
+  (assert (update-current-order-table-cleaned))
 )
 
 (defrule k-percept-clean-table_3
@@ -425,6 +427,7 @@
 =>
   (modify ?f2 (clean yes) (l-food 0) (l-drink 0))
   (modify ?f1 (l_d_waste yes) (l_f_waste yes))
+  (assert (update-current-order-table-cleaned))
 )
 
 (defrule k-percept-release

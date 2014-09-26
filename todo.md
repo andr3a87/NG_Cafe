@@ -19,3 +19,4 @@
 ### Problemi Strategie
 * Ottimizzare la regola 'run-plane-turn' nel file exec-plane
 * Rimette a 'ok' un piano che era stato messo in precedenza a failure. Quando? (Strategy_FIFO)
+* LOW_PENALITY, quando consegno aggiornare penalità.
