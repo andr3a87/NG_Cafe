@@ -47,7 +47,7 @@
 (load "3_agent.clp")
 
 (load "4_percept_HARD.clp")
-(load "5_strategy_HARD.clp")
+(load "5_strategy_LOW_PENALITY.clp")
 ;(set-break strategy-re-execute-phase3)
 ;(set-break strategy-re-execute-phase5)
 ;(set-break strategy-go-phase1)
@@ -63,5 +63,5 @@
 
 (reset)
 (run 257)
-;(assert(stop-at-step 35))
+(assert(stop-at-step 48))
 ;(run 1200000)

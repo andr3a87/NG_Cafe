@@ -23,7 +23,7 @@
   (assert (update-penality))
 )
 
-;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
+;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish.
 ;Inform con strategy-return-phase6-to-2_delayed
 (defrule answer-msg-order2
   (declare (salience 150))
@@ -36,7 +36,7 @@
   (assert (update-penality))
 )
 
-;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
+;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco.
 (defrule answer-msg-order3
   (declare (salience 150))
   (status (step ?current))
@@ -86,7 +86,7 @@
 
 ;L'ordine da servire deve essere un ordine di accepted sum-penality-accepted >= sum-penality-finish + sum-penality-delayed
 (defrule evalutation-order-1
-  (declare (salience 95))
+  (declare (salience 71))
   (status (step ?current))
   (debug ?level)
   ;La valutazione avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -104,7 +104,7 @@
 
 ;L'ordine da servire deve essere un ordine di delayed/finish sum-penality-accepted < sum-penality-finish + sum-penality-delayed
 (defrule evalutation-order-2
-  (declare (salience 95))
+  (declare (salience 71))
   (status (step ?current))
   (debug ?level)
   ;La valutazione avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -122,7 +122,7 @@
 
 ;L'ordine da servire deve essere un ordine di accepted sum-penality-accepted >= sum-penality-finish + sum-penality-delayed ma ho sporco a bordo devo andare al cestino
 (defrule evalutation-order-3
-  (declare (salience 95))
+  (declare (salience 71))
   (status (step ?current))
   (debug ?level)
   ;La valutazione avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -142,7 +142,7 @@
 
 ;L'ordine da servire deve essere un ordine di delayed/finish sum-penality-accepted < sum-penality-finish + sum-penality-delayed ma ho consumazioni a bordo.
 (defrule evalutation-order-4
-  (declare (salience 95))
+  (declare (salience 71))
   (status (step ?current))
   (debug ?level)
   ;La valutazione avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -158,7 +158,7 @@
   (assert (force-delivery (min 1000)))
 )
 
-;Ricerca dell'ordine accepted da servire con penalità + alta. 
+;Ricerca dell'ordine accepted da servire con penalità + alta.
 (defrule strategy-search-order-accepted-1
   (declare (salience 70))
   (status (step ?current))
@@ -178,7 +178,7 @@
   )
 )
 
-;Ricerca dell'ordine accepted da servire che minimizzi le consegne. 
+;Ricerca dell'ordine accepted da servire che minimizzi le consegne.
 ;Obiettivo è arrivare ad avere il robot con 0 food e 0 drink a bordo perchè devo passare alla fase di pulizia dei tavoli.
 (defrule strategy-search-order-accepted-2
   (declare (salience 70))
@@ -208,7 +208,7 @@
    (modify ?f2 (phase 5))
 )
 
-;Ricerca dell'ordine delayed/finish da servire con penalità + alta. 
+;Ricerca dell'ordine delayed/finish da servire con penalità + alta.
 (defrule strategy-search-order-finish-delayed
   (declare (salience 70))
   (status (step ?current))
@@ -239,7 +239,7 @@
   ?f3<-(qty-order-sum (type delayed) (pen ?pen2) (qty-fo ?sfo2) (qty-do ?sdo2))
 =>
   ; vado alla fase 2 se l'ordine è accettato, ovvero posso cercare già il dispenser più vicino
-  (if (=(str-compare ?status "accepted") 0) 
+  (if (=(str-compare ?status "accepted") 0)
   then
     (modify ?f1 (table-id ?id) (phase 2))
   )
@@ -273,7 +273,7 @@
   (assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
 )
 
-;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser 
+;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser
 (defrule distance-manhattan-do
   (declare (salience 70))
   (exec-order (drink-order ?do) (table-id ?id) (phase 2) (status accepted))
@@ -293,7 +293,7 @@
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 2))
-  (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d)) 
+  (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d))
   (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
   (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
@@ -391,7 +391,7 @@
   )
 )
 
-;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-dispenser. 
+;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-dispenser.
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto.
 (defrule strategy-re-execute-phase3
   (declare (salience 20))
@@ -403,7 +403,7 @@
   ?f2<-(exec-order (table-id ?id) (phase 3) (fail ?f))
   ?f3<-(K-agent)
 =>
-  (modify ?f1 (status failure)) 
+  (modify ?f1 (status failure))
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
   (modify ?f3)
 
@@ -452,14 +452,14 @@
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 4) (food-order ?fo))
   ?f2<-(qty-order-sum (type accepted) (qty-fo ?sfo))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type FD))        ;
-  (test (> ?fo 0))                                                   
+  (test (> ?fo 0))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   (test (< (+ ?lf ?ld) 4))
   (test (< ?lf ?sfo))
 
 =>
   (assert (exec (step ?ks) (action LoadFood) (param1 ?rd) (param2 ?cd)))
-        
+
   ;debug
   (if (> ?level 0)
   then
@@ -484,7 +484,7 @@
   (test (< ?ld ?sdo))
 =>
   (assert (exec (step ?ks) (action LoadDrink) (param1 ?rd) (param2 ?cd)))
-        
+
   ;debug
   (if (> ?level 0)
   then
@@ -492,19 +492,19 @@
   )
 )
 
-; Una volta caricato o scaricato rimuovo il fatto best-dispenser. 
+; Una volta caricato o scaricato rimuovo il fatto best-dispenser.
 ; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule strategy-clean-best-dispenser
         (declare (salience 60))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
         ?f2 <- (strategy-best-dispenser)
-=>  
+=>
         (retract ?f2)
         (modify ?f1 (phase 4.5))
 )
 
 ;
-; FASE 4.5 della Strategia: 
+; FASE 4.5 della Strategia:
 ;
 
 ;Controllo se deve caricare altra roba.
@@ -607,10 +607,10 @@
   ?f2<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
   ?f3<-(K-agent)
 =>
-  (modify ?f1 (status failure)) 
+  (modify ?f1 (status failure))
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
   (modify ?f3)
-  
+
   ;debug
   (if (> ?level 0)
     then
@@ -735,7 +735,7 @@
 
 
 ;Regola che cancella gli ordini di finish precedenti all'ordine che sto servendo (in questo caso sto servendo un ordine delayed)
-;Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato  
+;Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato
 (defrule strategy-complete-previous-order-finish
   (declare(salience 7))
   ?f1<-(complete-order delayed)
@@ -782,7 +782,7 @@
 ; FASE 7 della Strategia: Controllo se l'ordine è stato evaso.
 ;
 
-;Devo ancora consegnare della roba al tavolo. L'ordine aggiornato torna nella lista degli ordini da servire 
+;Devo ancora consegnare della roba al tavolo. L'ordine aggiornato torna nella lista degli ordini da servire
 (defrule strategy-update-order
   (status (step ?current))
   (debug ?level)
@@ -806,7 +806,7 @@
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
   ;(K-agent (l-drink 0) (l-food 0))
-=> 
+=>
   (modify ?f1 (phase COMPLETED))
 
   ;debug
@@ -814,4 +814,10 @@
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step:" ?step " of table:" ?id " is completed" crlf)
   )
+)
+
+(defrule go-to-empty-trash
+  (go-to-basket)
+=>
+  (focus EMPTY-TRASH)
 )

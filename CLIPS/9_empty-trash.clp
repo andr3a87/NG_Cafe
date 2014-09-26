@@ -53,7 +53,7 @@
   (status (step ?current))
   (debug ?level)
   ?f1<-(go-to-basket (phase 1))
-  (et-distance-basket (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d)) 
+  (et-distance-basket (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d))
   (not (et-distance-basket  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
   (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
@@ -94,14 +94,15 @@
 =>
   (assert (plane-exist ?pid))
 )
-;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
+;Se il piano non esiste allora d evo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule et-create-plane-3
   (declare (salience 1))
   ?f1<-(go-to-basket (phase 2))
   (et-best-basket (pos ?rd ?cd) (type ?c))
   (not (plane-exist))
 =>
-  (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+  (assert (goal-astar ?rd ?cd))
+  (focus ASTAR)
 )
 
 ;Se il piano esiste allo lo eseguo.
@@ -133,7 +134,7 @@
   )
 )
 
-;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-trash. 
+;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-trash.
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto.
 (defrule et-re-execute-phase3
   (declare (salience 20))
@@ -145,7 +146,7 @@
   ?f2<-(go-to-basket (phase 2))
   ?f3<-(K-agent)
 =>
-  (modify ?f1 (status failure)) 
+  (modify ?f1 (status failure))
   (modify ?f2 (phase 2))
   (modify ?f3)
 
@@ -156,10 +157,10 @@
   )
 )
 
-;Se non esiste un percorso per arrivare a destinazione, torno al modulo strategy. 
+;Se non esiste un percorso per arrivare a destinazione, torno al modulo strategy.
 ;Posso andare a pulire un altro tavolo.
 ;Posso cercare un altro cestino.
-;Insisto col perseguire il fatto di voler arrivare a questo cestino. 
+;Insisto col perseguire il fatto di voler arrivare a questo cestino.
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
 (defrule et-change-order-in-phase3
   (declare(salience 20))
@@ -180,7 +181,7 @@
 )
 
 ;
-; FASE ND: 
+; FASE ND:
 ;
 
 ; non abbiamo una strada per il basket, cerchiamo una finish/delayed disponibile e forziamo l'ordine alla fase 5 (ricerca tavolo da pulire)
@@ -193,7 +194,7 @@
 =>
   (retract ?f1)
   (modify ?f2 (phase 5))
-  (focus AGENT)
+  (pop-focus)
 )
 
 ; non abbiamo una strada per il basket, cerchiamo un altro cestino e forziamo il go-to-basket
@@ -228,7 +229,7 @@
   (declare (salience 70))
   (status (step ?current))
   (debug ?level)
-  
+
   (go-to-basket (phase 3))
   (et-best-basket (pos ?rfo ?cfo) (type TB))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l_f_waste yes))
@@ -274,13 +275,13 @@
   )
 )
 
-; Una volta scaricato rimuovo il fatto best-dispenser. 
+; Una volta scaricato rimuovo il fatto best-dispenser.
 ; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule et-clean-best-dispenser
         (declare (salience 60))
         ?f1<-(go-to-basket (phase 3))
         ?f2 <- (et-best-basket)
-=>  
+=>
         (retract ?f2)
         (modify ?f1 (phase 4))
 )
@@ -293,7 +294,7 @@
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   =>
   (retract ?f1)
-  (focus AGENT)
+  (pop-focus)
 )
 
 (defrule empty-trash-completed2
@@ -302,5 +303,5 @@
   (test(or (str-compare ?ldw "yes")0 (str-compare ?lfw "yes")0) )
   =>
   (retract ?f1)
-  (focus AGENT)
+  (pop-focus)
 )
