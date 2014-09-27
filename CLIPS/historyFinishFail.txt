@@ -81,3 +81,4 @@
 ;penality 1560 STRATEGY_FIFO_WAIT
 ;penality 1560 STRATEGY_FIFO
 ;penality 1433 LOW_PENALITY
+;penality 1433 HARD

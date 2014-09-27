@@ -12,7 +12,6 @@
 
 
 ### Ottimizzazioni
-* Caricare cibo di prenotazioni diverse
 * Controllare se la consumazione a un tavolo è stata terminata (CheckFinish)
 * Euristiche su chi servire prima o dopo
 
@@ -20,3 +19,4 @@
 * Ottimizzare la regola 'run-plane-turn' nel file exec-plane
 * Rimette a 'ok' un piano che era stato messo in precedenza a failure. Quando? (Strategy_FIFO)
 * LOW_PENALITY, quando consegno aggiornare penalità.
+* eseguire piano al contrario
