@@ -46,8 +46,8 @@
 (load "3_agent.clp")
 
 (load "4_percept.clp")
-(load "5_strategy_FIFO.clp")
-(load "6_exec-plane.clp")
+(load "5_exec-plane.clp")
+(load "6_strategy_FIFO.clp")
 (load "7_a_star.clp")
 (load "8_clean-plane.clp")
 

@@ -19,7 +19,7 @@
   (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0)))
+  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
 )
 
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
@@ -31,7 +31,7 @@
   (K-table (table-id ?sen) (clean no))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0)))
+  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (+ ?do ?fo))))
 )
 
 ;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
@@ -40,7 +40,7 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
 =>
-  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0)))
+  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (origin-status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
 )
 
 ;
@@ -50,18 +50,19 @@
 ;Ricerca dell'ordine da servire. La ricerca avviene sia sulle Inform che sulle Finish. Si ricerca l'ordine più vecchio non ancora servito.
 (defrule strategy-go-phase1
   (declare (salience 70))
-  (status (step ?current) )
+  (status (step ?current))
+  (best-pen ?pen)
   (debug ?level)
-  ?f1 <- (last-intention (step ?last) (time ?time))
+  ;?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
-  ?f2<-(exec-order (step ?next&:(and (>= ?next ?last) (< ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
-  (not (exec-order (step ?lol&:(and (<= ?lol ?next) (> ?lol ?last) (< ?lol ?current))) (time-order ?t1&:(and(< ?t1 ?t) (neq ?t ?t1)))  (action Inform|Finish) (phase 0)))
+  ?f2<-(exec-order (step ?s) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (penality ?p&:(> ?p ?pen)) (phase 0))
+  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (action Inform|Finish) (phase 0)))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
   (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
-  (modify ?f1 (step ?next) (time ?t))
+  ;(modify ?f1 (step ?next) (time ?t))
   (modify ?f2 (phase 1))
 
   ;debug
@@ -115,7 +116,7 @@
   (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0))
   then
     (modify ?f1 (table-id ?id) (phase COMPLETED))
-  ) 
+  )
 )
 
 ;
@@ -173,7 +174,6 @@
   (assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type trash-drink)))
 )
 
-
 ;Regola che cerca il dispenser/cestino più vicino
 (defrule search-best-dispenser
   (declare (salience 60))
@@ -194,7 +194,6 @@
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?c " in ("?rd1", "?cd1")"  crlf)
   )
 )
-
 
 (defrule strategy-all-loaded-go-phase5
   (declare (salience 70))
@@ -232,25 +231,23 @@
 ;Controlle se esiste un piano per andare al best dispenser/trash con status OK
 (defrule strategy-existence-plane-3
   (declare (salience 10))
-  (status (step ?current))
   (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
 =>
   (assert (plane-exist ?pid))
-  (printout t " [INFO] [F3:s"?current":"?id"] Esiste gia' un piano per arrivare al tavolo, non ripianifico." crlf)
+  (printout t " [INFO] [F3:s"?current":"?id"] Exist a plane for go to the dispenser." crlf)
 )
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-3
   (declare (salience 1))
-  (status (step ?current))
   (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
-  (printout t " [INFO] [F3:s"?current":"?id"] Avvio astar per arrivare in: "?rd ","?cd crlf)
+  (printout t " [INFO] [F3:s"?current":"?id"] Run Astar to: "?rd ","?cd crlf)
 )
 
 ;Se il piano esiste allo lo eseguo.
@@ -275,7 +272,7 @@
 =>
   (modify ?f1 (phase 4) (fail 0))
   (assert(set-plane-in-position ?rd ?cd))
-  (focus SET-PLANE-AT-ONE)
+  (focus SET-PLANE-AT-OK)
   ;debug
   (if (> ?level 0)
     then
@@ -298,6 +295,8 @@
   (modify ?f1 (status failure)) 
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
   (modify ?f3)
+  (assert(set-plane-in-position ?rd ?cd))
+  (focus SET-PLANE-AT-OK)
 
   ;debug
   (if (> ?level 0)
@@ -320,8 +319,6 @@
   (modify ?f1 (step ?current) (phase 0))
   (modify ?f4)
   (retract ?f2 ?f3)
-  (assert(set-plane-in-position ?rd ?cd))
-  (focus SET-PLANE-AT-ONE)
 
   ;debug
   (if (> ?level 0)
@@ -337,7 +334,7 @@
 
 ; regola per caricare il cibo
 ; ===========================
-; controlla che ci sia ancora del food da caricare 
+; controlla che ci sia ancora del food da caricare
 ; controlla che non ci sia waste
 ; controlla che il truckload non sia pieno
 ; scatena azione di load-food verso dispenser
@@ -449,8 +446,6 @@
         (declare (salience 60))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
         ?f2 <- (strategy-best-dispenser)
-        ;(K-agent (l-food ?lf) (l-drink ?ld))
-        ;(test (or (=(- ?fo ?lf)0) (=(- ?do ?ld)0) (= (+ ?lf ?ld)4) ))
 =>  
         (retract ?f2)
         (modify ?f1 (phase 4.5))
@@ -560,6 +555,7 @@
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
 =>
   (assert (plane-exist ?pid))
+  (printout t " [INFO] [F5:s"?current":"?id"] Exist a plane for go to the table." crlf)
 )
 
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
@@ -570,6 +566,7 @@
   (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
+  (printout t " [INFO] [F5:s"?current":"?id"] Run Astar to: "?rt ","?ct crlf)
 )
 
 ;Se il piano esiste allo lo eseguo.
@@ -592,7 +589,8 @@
   ?f2<-(exec-order (table-id ?id) (phase 5) (drink-order ?do) (food-order ?fo) (status ?a))
 =>
   (modify ?f2 (phase 6) (fail 0))
-  (assert(set-plane-in-position ?rt ?ct))  (focus SET-PLANE-AT-ONE)
+  (assert(set-plane-in-position ?rt ?ct))  
+  (focus SET-PLANE-AT-OK)
   ;debug
   (if (> ?level 0)
   then
@@ -607,13 +605,15 @@
   (debug ?level)
   (plan-executed (plane-id ?pid)(step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
   ?f1<-(plane (plane-id ?pid) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   ?f2<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
   ?f3<-(K-agent)
 =>
   (modify ?f1 (status failure)) 
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
   (modify ?f3)
-  
+  (assert(set-plane-in-position ?rt ?ct))
+  (focus SET-PLANE-AT-OK)
   ;debug
   (if (> ?level 0)
     then
@@ -628,15 +628,12 @@
   (debug ?level)
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5))
-  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   ?f2<-(astar-solution (value no))
   ?f3<-(K-agent)
 =>
   (modify ?f1 (step ?current) (phase 0))
   (retract ?f2)
   (modify ?f3)
-  (assert(set-plane-in-position ?rt ?ct))
-  (focus SET-PLANE-AT-ONE)
 
   (if (> ?level 0)
     then
@@ -719,7 +716,7 @@
   (declare(salience 7))
   ?f1<-(canc-order-finish)
   (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
-  ?f2<-(exec-order (table-id ?id) (step ?step&:(<= ?step ?s)) (status finish) (phase 0))
+  ?f2<-(exec-order (table-id ?id) (step ?step&:(< ?step ?s)) (status finish) (phase 0))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
@@ -744,20 +741,20 @@
 ; FASE 7 della Strategia: Controllo se l'ordine è stato evaso.
 ;
 
-;Devo ancora consegnare della roba al tavolo. Devo ricercare il best-dispenser (FASE 2)
-(defrule strategy-return-phase7-to-2_accepted
+;Devo ancora consegnare della roba al tavolo. L'ordine aggiornato torna nella lista degli ordini da servire 
+(defrule strategy-return-search-order
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status accepted) (food-order ?fo) (drink-order ?do))
   ; ho scaricato tutta la roba
   (test (> (+ ?fo ?do) 0))
 =>
-  (modify ?f1 (phase 2))
+  (modify ?f1 (phase 0))
 
   ;debug
   (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
+    then
+    (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, search order with penality more high" crlf)
   )
 )
 
@@ -782,7 +779,7 @@
 ;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
 (defrule strategy-order-completed
   (status (step ?current))
-  (last-intention (step ?step))
+  ;(last-intention (step ?step))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
 
@@ -797,7 +794,7 @@
   )
 )
 
-(defmodule SET-PLANE-AT-ONE (import AGENT ?ALL) (export ?ALL))
+(defmodule SET-PLANE-AT-OK (import AGENT ?ALL) (export ?ALL))
 
 ; Imposto il piano a ok
 (defrule set-plane
@@ -816,4 +813,3 @@
   (retract ?f1)
   (pop-focus)
 )
-
