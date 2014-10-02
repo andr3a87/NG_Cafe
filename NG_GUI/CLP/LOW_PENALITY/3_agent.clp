@@ -77,7 +77,7 @@
   (last-perc (step -1))
   (last-perc-vision (step -1))
   (last-perc-load (step -1))
-  (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.  
+  (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
   (max-fail 3)
   (next-plane-id 1)
@@ -89,10 +89,11 @@
 ;DEFTEMPLATE STRATEGY HARD
 (deftemplate qty-order-sum (slot type(allowed-values accepted delayed finish)) (slot pen) (slot qty-fo) (slot qty-do))
 (deftemplate force-delivery (slot min) (slot step) (slot table-id))
+(deftemplate go-to-basket (slot phase))
 (deffacts initial-fact-agent2
   (qty-order-sum (type accepted) (pen 0) (qty-fo 0) (qty-do 0))
   (qty-order-sum (type delayed) (pen 0) (qty-fo 0) (qty-do 0))
-  (qty-order-sum (type finish) (pen 0) (qty-fo 0) (qty-do 0))  
+  (qty-order-sum (type finish) (pen 0) (qty-fo 0) (qty-do 0))
 )
 
 
@@ -151,13 +152,13 @@
   (status (step ?i))
   (exec (step ?i))
 =>
-  (focus MAIN))
+  (pop-focus))
 
 (defrule stop
   (declare (salience 200))
   (status (step ?i))
   (stop-at-step ?i)
-  
+
 =>
   (halt)
 )

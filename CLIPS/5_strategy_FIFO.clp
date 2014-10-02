@@ -232,21 +232,25 @@
 ;Controlle se esiste un piano per andare al best dispenser/trash con status OK
 (defrule strategy-existence-plane-3
   (declare (salience 10))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
 =>
   (assert (plane-exist ?pid))
+  (printout t " [INFO] [F3:s"?current":"?id"] Esiste gia' un piano per arrivare al tavolo, non ripianifico." crlf)
 )
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-3
   (declare (salience 1))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+  (printout t " [INFO] [F3:s"?current":"?id"] Avvio astar per arrivare in: "?rd ","?cd crlf)
 )
 
 ;Se il piano esiste allo lo eseguo.
@@ -270,7 +274,8 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
 =>
   (modify ?f1 (phase 4) (fail 0))
-
+  (assert(set-plane-in-position ?rd ?cd))
+  (focus SET-PLANE-AT-ONE)
   ;debug
   (if (> ?level 0)
     then
@@ -315,6 +320,8 @@
   (modify ?f1 (step ?current) (phase 0))
   (modify ?f4)
   (retract ?f2 ?f3)
+  (assert(set-plane-in-position ?rd ?cd))
+  (focus SET-PLANE-AT-ONE)
 
   ;debug
   (if (> ?level 0)
@@ -585,6 +592,7 @@
   ?f2<-(exec-order (table-id ?id) (phase 5) (drink-order ?do) (food-order ?fo) (status ?a))
 =>
   (modify ?f2 (phase 6) (fail 0))
+  (assert(set-plane-in-position ?rt ?ct))  (focus SET-PLANE-AT-ONE)
   ;debug
   (if (> ?level 0)
   then
@@ -620,12 +628,15 @@
   (debug ?level)
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5))
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   ?f2<-(astar-solution (value no))
   ?f3<-(K-agent)
 =>
   (modify ?f1 (step ?current) (phase 0))
   (retract ?f2)
   (modify ?f3)
+  (assert(set-plane-in-position ?rt ?ct))
+  (focus SET-PLANE-AT-ONE)
 
   (if (> ?level 0)
     then
@@ -785,3 +796,24 @@
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step:" ?step " of table:" ?id " is completed" crlf)
   )
 )
+
+(defmodule SET-PLANE-AT-ONE (import AGENT ?ALL) (export ?ALL))
+
+; Imposto il piano a ok
+(defrule set-plane
+  (declare(salience 10))
+  (set-plane-in-position ?rd ?cd)
+  ?f1<-(plane  (plane-id ?pid) (pos-end ?rd ?cd) (status failure))
+=>
+  (modify ?f1 (status ok))
+)
+
+(defrule set-plane-2
+  (declare(salience 10))
+  ?f1<-(set-plane-in-position ?rd ?cd)
+  
+=>
+  (retract ?f1)
+  (pop-focus)
+)
+
