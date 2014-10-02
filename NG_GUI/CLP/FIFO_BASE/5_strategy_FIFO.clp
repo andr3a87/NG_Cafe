@@ -270,7 +270,8 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
 =>
   (modify ?f1 (phase 4) (fail 0))
-
+  (assert(set-plane-in-position ?rd ?cd))
+  (focus SET-PLANE-AT-ONE)
   ;debug
   (if (> ?level 0)
     then
@@ -315,6 +316,8 @@
   (modify ?f1 (step ?current) (phase 0))
   (modify ?f4)
   (retract ?f2 ?f3)
+  (assert(set-plane-in-position ?rd ?cd))
+  (focus SET-PLANE-AT-ONE)
 
   ;debug
   (if (> ?level 0)
@@ -585,6 +588,8 @@
   ?f2<-(exec-order (table-id ?id) (phase 5) (drink-order ?do) (food-order ?fo) (status ?a))
 =>
   (modify ?f2 (phase 6) (fail 0))
+  (set-plane-in-position ?rt ?ct)
+  (focus SET-PLANE-AT-ONE)
   ;debug
   (if (> ?level 0)
   then
@@ -626,7 +631,9 @@
   (modify ?f1 (step ?current) (phase 0))
   (retract ?f2)
   (modify ?f3)
-
+  (set-plane-in-position ?rt ?ct)
+  (focus SET-PLANE-AT-ONE)
+  
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F5:s"?current":"?id"] A-Star not found solution to the table: "?id crlf)
@@ -785,3 +792,24 @@
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step:" ?step " of table:" ?id " is completed" crlf)
   )
 )
+
+(defmodule SET-PLANE-AT-ONE (import AGENT ?ALL) (export ?ALL))
+
+; Imposto il piano a ok
+(defrule set-plane
+  (declare(salience 10))
+  (set-plane-in-position ?rd ?cd)
+  ?f1<-(plane  (plane-id ?pid) (pos-end ?rd ?cd) (status fail))
+=>
+  (modify ?f1 (status ok))
+)
+
+(defrule set-plane-2
+  (declare(salience 10))
+  ?f1<-(set-plane-in-position ?rd ?cd)
+  
+=>
+  (retract ?f1)
+  (pop-focus)
+)
+
