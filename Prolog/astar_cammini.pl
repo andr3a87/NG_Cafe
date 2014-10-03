@@ -26,9 +26,6 @@ finale(pos(7,9)).
 
 :-dynamic(f_val/1). f_val(0).
 :-dynamic(h_val/1). h_val(0).
-:-dynamic(soglia/1). soglia(99999).  /**Dato che soglia non poteva essere modificato tramite
-                        retract/assert ho dovuto create questa regola dinamica*/
-/**Devo ancora capire bene l'utilità di questo valore*/
 
 
 
@@ -84,18 +81,19 @@ open_node(nodo(Fcost, Gcost, S, Lista_Az), Lista_childern) :-
 
 best_node(_,[],[]).
 best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-
-        finale(Goal),
+        finale(Goal),        
         trasforma(Az, S, Nuovo_S),
         append(Lista_Az, [Az], Nuova_lista_az),
         best_node(nodo(Fcost, Gcost, S, Lista_Az), R_az, Old_children),
-        G1 is G + 1,
+        G1 is Gcost + 1,
         calcolo_euristica(Nuovo_S, Goal, G1),
-        ord_union(Old_children, nodo(f_val(F), G1, Nuova_S, Nuova_lista_az), Lista_children).
+        f_val(F),
+        ord_add_element(Old_children, nodo(F, G1, Nuovo_S, Nuova_lista_az), Lista_children).
 
 astar :-
         iniziale(S),
         finale(Goal),
         calcolo_euristica(S, Goal, 0),
         f_val(Fcost),
-        ric_astar([node(Fcost, 0, S, [])], [], Ris),
-        write(Ris).
+        ric_astar([nodo(Fcost, 0, S, [])], [], Ris),
+        write(Ris
