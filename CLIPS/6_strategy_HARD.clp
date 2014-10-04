@@ -91,7 +91,7 @@
 
 ;per ogni tavolo a cui è stato già consengato tutto il cibo, calcola la distanza dal robot
 (defrule search-order-for-checkfinish
-  (declare (salience 5))
+  (declare (salience 140))
   (search-order-for-checkfinish)
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?tid) (clean no))
   (K-agent (pos-r ?ra) (pos-c ?ca))
@@ -100,6 +100,7 @@
 )
 
 (defrule found-order-for-checkfinish
+  (declare (salience 140))
   (status (step ?current))
   ?f1<-(search-order-for-checkfinish)
   (table-distance (table-id ?tid) (distance ?d))

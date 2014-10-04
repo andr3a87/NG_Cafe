@@ -216,12 +216,11 @@
   (declare (salience 6))
   (status (step ?current))
   (best-pen ?pen)
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?tid) (clean no))
   ?f1<-(go-to-basket (phase ND))
-  ?f2<-(exec-order (step ?s) (table-id ?tid) (status accepted) (phase COMPLETED) (check-finish no))
-  (not (exec-order (step ?s1&:(> ?s1 ?s))  (table-id ?tid) (status accepted) (phase COMPLETED)))
 =>
+  (assert (search-order-for-checkfinish))
   (retract ?f1)
-  (assert (exec-order (step ?current) (table-id ?tid) (origin-status check-finish) (status check-finish) (food-order 0) (drink-order 0) (penality 0) (fail 0) (phase 5)))
   (pop-focus)
 )
 
