@@ -99,7 +99,7 @@
   (declare (salience 1))
   ?f1<-(go-to-basket (phase 2))
   (et-best-basket (pos ?rd ?cd) (type ?c))
-  (not (plane-exist))
+  (not (plane-exist ?))
 =>
   (assert (goal-astar ?rd ?cd))
   (focus ASTAR)
@@ -114,6 +114,7 @@
 =>
   (assert (run-plane-astar (plane-id ?pid) (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd) (phase 1)))
   (retract ?f1)
+  (pop-focus)
 )
 
 ;Eseguito il piano, il robot si trova vicino al cestino piu vicino.
@@ -124,6 +125,7 @@
   (plan-executed (plane-id ?pid) (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
   ?f1<-(go-to-basket (phase 2))
   (et-best-basket (pos ?rd ?cd) (type ?c))
+  (not (plane-exist ?))
 =>
   (modify ?f1 (phase 3))
 
@@ -185,6 +187,7 @@
 ;
 
 ; non abbiamo una strada per il basket, cerchiamo una finish/delayed disponibile e forziamo l'ordine alla fase 5 (ricerca tavolo da pulire)
+; OTTIMIZZAZIONE: introdurre nella ricerca il più vicino.
 (defrule et-search-another-finish-order
   (declare (salience 10))
   (best-pen ?pen)
@@ -206,6 +209,20 @@
 =>
   (modify ?f1 (phase 1))
   (retract ?f2 ?f3)
+)
+
+;Cerichiamo l'ultimo ordine di un tavolo COMPLETED e proviamo a vedere se ha terminato di consumare per pulire.
+(defrule et-check-finish
+  (declare (salience 6))
+  (status (step ?current))
+  (best-pen ?pen)
+  ?f1<-(go-to-basket (phase ND))
+  ?f2<-(exec-order (step ?s) (table-id ?tid) (status accepted) (phase COMPLETED) (check-finish no))
+  (not (exec-order (step ?s1&:(> ?s1 ?s))  (table-id ?tid) (status accepted) (phase COMPLETED)))
+=>
+  (retract ?f1)
+  (assert (exec-order (step ?current) (table-id ?tid) (origin-status check-finish) (status check-finish) (food-order 0) (drink-order 0) (penality 0) (fail 0) (phase 5)))
+  (pop-focus)
 )
 
 (defrule et-no-basket-wait

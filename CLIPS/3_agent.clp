@@ -58,6 +58,7 @@
   (slot phase)
   (slot fail)
   (slot penality)
+  (slot check-finish (default no))
 )
 
 ; fl = food to load, dl = drink to load

@@ -81,4 +81,4 @@
 ;penality 1560 STRATEGY_FIFO_WAIT
 ;penality 1560 STRATEGY_FIFO
 ;penality 1433 LOW_PENALITY
-;penality 1433 HARD
+;penality 672 HARD (non arriva l'ordine FINISH perchè al tabolo T4 non è stata consegnato tutt l'ordine)

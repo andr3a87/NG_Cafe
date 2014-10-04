@@ -47,7 +47,8 @@
 (load "3_agent.clp")
 
 (load "4_percept_HARD.clp")
-(load "5_strategy_LOW_PENALITY.clp")
+(load "5_exec-plane.clp")
+(load "6_strategy_HARD.clp")
 ;(set-break strategy-re-execute-phase3)
 ;(set-break strategy-re-execute-phase5)
 ;(set-break strategy-go-phase1)
@@ -55,7 +56,6 @@
 ;(set-break search-best-dispenser)
 ;(set-break strategy-do-CleanTable)
 ;(set-break strategy-go-phase1)
-(load "6_exec-plane.clp")
 (load "7_a_star.clp")
 (load "8_clean-plane.clp")
 (load "9_empty-trash.clp")
@@ -63,5 +63,5 @@
 
 (reset)
 (run 257)
-(assert(stop-at-step 48))
-;(run 1200000)
+(assert(stop-at-step 130))
+(run 12000000)
