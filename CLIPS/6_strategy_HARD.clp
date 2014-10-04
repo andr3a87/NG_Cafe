@@ -79,6 +79,37 @@
   (modify ?f2 (pen (+ ?pen1 ?pen)))
 )
 
+;Se non sto facendo nulla prima della wait provo a effettuare una checkfinish su un tavolo che aveva oridinato.
+(defrule strategy-check-finish
+  (declare (salience 140))
+  (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?tid) (clean no))
+
+=>
+  (assert (search-order-for-checkfinish))
+)
+
+;per ogni tavolo a cui è stato già consengato tutto il cibo, calcola la distanza dal robot
+(defrule search-order-for-checkfinish
+  (declare (salience 5))
+  (search-order-for-checkfinish)
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?tid) (clean no))
+  (K-agent (pos-r ?ra) (pos-c ?ca))
+=>
+  (assert(table-distance (table-id ?tid) (distance (+ (abs(- ?ra ?rt)) (abs(- ?ca ?ct))))))
+)
+
+(defrule found-order-for-checkfinish
+  (status (step ?current))
+  ?f1<-(search-order-for-checkfinish)
+  (table-distance (table-id ?tid) (distance ?d))
+  (not(table-distance (table-id ?tid2) (distance ?d1&:(< ?d1 ?d))))
+=>
+  (assert (exec-order (step ?current) (table-id ?tid) (origin-status check-finish) (status check-finish) (food-order 0) (drink-order 0) (penality 0) (fail 0) (phase 5)))
+  (retract ?f1)
+  (focus CLEAN-TABLE-DISTANCE)
+)
+
 
 ;
 ; FASE 1 della Strategia: Ricerca di un tavolo da servire.
@@ -879,4 +910,12 @@
 =>
   (retract ?f1)
   (pop-focus)
+)
+
+(defmodule CLEAN-TABLE-DISTANCE (import AGENT ?ALL) (export ?ALL))
+
+(defrule clean-table-distance
+  ?f1<-(table-distance)
+=>
+  (retract ?f1)
 )

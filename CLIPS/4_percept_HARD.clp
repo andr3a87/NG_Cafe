@@ -453,10 +453,11 @@
 (defrule k-percept-check-finish
   (declare(salience 100))
   (status (step ?current))
-  (perc-finish (step ?s) (time ?t) (finish yes))
+  ?last-f <- (last-perc-finish (step ?old-s))
+  (test (> ?current ?old-s))
+  (perc-finish (step ?current) (time ?t) (finish yes))
   ?f1<-(exec-order (step ?s) (table-id ?tid) (status check-finish) (penality 0) (phase 6))
-  ?f2<-(exec-order (step ?s1) (table-id ?tid) (status accepted) (phase COMPLETED) (check-finish no))
 =>
   (modify ?f1 (status finish) (phase 6))
-  (modify ?f2 (check-finish yes))
+  (modify ?last-f (step ?current))
 )
