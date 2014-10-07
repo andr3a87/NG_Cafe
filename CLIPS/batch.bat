@@ -63,5 +63,5 @@
 
 (reset)
 (run 257)
-(assert(stop-at-step 75))
+(assert(stop-at-step 77))
 (run 12000000)

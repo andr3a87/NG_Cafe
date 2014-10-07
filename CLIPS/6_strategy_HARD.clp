@@ -19,7 +19,7 @@
   (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted)  (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted)  (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
   (assert (update-penality))
 )
 
@@ -32,7 +32,7 @@
   (K-table (table-id ?sen) (clean no))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (+ ?do ?fo))))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (+ ?do ?fo))))
   (assert (update-penality))
 )
 
@@ -42,7 +42,7 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
 =>
-  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (origin-status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Finish) (table-id ?sen) (time-order ?t) (status finish) (origin-status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
   (assert (update-penality))
 )
 
@@ -82,18 +82,25 @@
 ;Se non sto facendo nulla prima della wait provo a effettuare una checkfinish su un tavolo che aveva oridinato.
 (defrule strategy-check-finish
   (declare (salience 140))
+  (debug ?level)
+  (status (step ?current))
   (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?tid) (clean no))
 
 =>
   (assert (search-order-for-checkfinish))
+  (if (> ?level 0)
+    then
+      (printout t " [INFO] [F0:s"?current":] No job to do." crlf)
+  )
 )
 
 ;per ogni tavolo a cui è stato già consengato tutto il cibo, calcola la distanza dal robot
 (defrule search-order-for-checkfinish
   (declare (salience 140))
+  (status (step ?current))
   (search-order-for-checkfinish)
-  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?tid) (clean no))
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?tid) (clean no) (step-checkfinish ?scf&:(neq ?scf ?current)))
   (K-agent (pos-r ?ra) (pos-c ?ca))
 =>
   (assert(table-distance (table-id ?tid) (distance (+ (abs(- ?ra ?rt)) (abs(- ?ca ?ct))))))
@@ -101,6 +108,7 @@
 
 (defrule found-order-for-checkfinish
   (declare (salience 140))
+  (debug ?level)
   (status (step ?current))
   ?f1<-(search-order-for-checkfinish)
   (table-distance (table-id ?tid) (distance ?d))
@@ -108,8 +116,21 @@
 =>
   (assert (exec-order (step ?current) (table-id ?tid) (origin-status check-finish) (status check-finish) (food-order 0) (drink-order 0) (penality 0) (fail 0) (phase 5)))
   (retract ?f1)
+  (if (> ?level 0)
+    then
+      (printout t " [INFO] [F0:s"?current":] Checkfinish on table:" ?tid crlf)
+  )
   (focus CLEAN-TABLE-DISTANCE)
 )
+
+;Se non sto facendo nulla prima della wait provo a effettuare una checkfinish su un tavolo che aveva oridinato.
+;(defrule strategy-empty-trash
+;  (declare (salience 140))
+;  (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
+;=>
+;  (assert (go-to-basket (phase 1)))
+;  (focus EMPTY-TRASH)
+;)
 
 
 ;
@@ -197,7 +218,7 @@
   (best-pen ?pen)
   (debug ?level)
   ?f1<-(found-order-accepted)
-  ?f2<-(exec-order (step ?s)  (table-id ?sen) (time-order ?t) (status accepted) (penality ?p&:(> ?p ?pen)) (phase 0))
+  ?f2<-(exec-order (step ?s) (origin-order-step ?step) (table-id ?sen) (time-order ?t) (status accepted) (penality ?p&:(> ?p ?pen)) (phase 0))
   (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (status accepted) (phase 0)))
 =>
   (retract ?f1)
@@ -206,7 +227,7 @@
   ;debug
   (if (> ?level 0)
     then
-      (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
+      (printout t " [DEBUG] [F0:s"?current":"-1"] Init Phase 1 - table: " ?sen ". Step of order is:" ?step crlf)
   )
 )
 
@@ -218,7 +239,7 @@
   (debug ?level)
   (K-agent (l-drink ?ld) (l-food ?lf))
   ?f1<-(force-delivery (min ?min))
-  (exec-order (step ?s) (food-order ?fo) (drink-order ?do)  (table-id ?sen) (status accepted) (phase 0))
+  (exec-order (step ?s) (origin-order-step ?step) (food-order ?fo) (drink-order ?do)  (table-id ?sen) (status accepted) (phase 0))
   (test(< (+ (- ?lf ?fo ) (- ?ld ?do )) ?min))
 =>
   (modify ?f1 (min =(+ (- ?lf ?fo ) (- ?ld ?do ))) (step ?s) (table-id ?sen))
@@ -226,7 +247,7 @@
   ;debug
   (if (> ?level 0)
     then
-      (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
+      (printout t " [DEBUG] [F0:s"?current":"-1"] Init Phase 1 - table: " ?sen ". Step of order is:" ?step crlf)
   )
 )
 
@@ -247,7 +268,7 @@
   (best-pen ?pen)
   (debug ?level)
   ?f1<-(found-order-finish-delayed)
-  ?f2<-(exec-order (step ?s)  (table-id ?sen) (time-order ?t) (status delayed|finish) (penality ?p&:(> ?p ?pen)) (phase 0))
+  ?f2<-(exec-order (step ?s) (origin-order-step ?step)  (table-id ?sen) (time-order ?t) (status delayed|finish) (penality ?p&:(> ?p ?pen)) (phase 0))
   (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (status delayed|finish) (phase 0)))
 =>
   (retract ?f1)
@@ -256,7 +277,7 @@
   ;debug
   (if (> ?level 0)
     then
-      (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
+      (printout t " [DEBUG] [F0:s"?current":"-1"] Init Phase 1 - table: " ?sen ". Step of order is:" ?step crlf)
   )
 )
 
@@ -335,8 +356,7 @@
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?c " in ("?rd1", "?cd1")"  crlf)
-    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?c " in ("?rd1", "?cd1")"  crlf)
+    (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser Found: " ?c " in ("?rd1", "?cd1")"  crlf)
   )
 )
 
@@ -353,8 +373,7 @@
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F2:s"?current":"?id"] Agent hasn't space available. Useless found dispenser."  crlf)
-    (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fo", drink: "?do")" crlf)
+    (printout t " [DEBUG] [F2:s"?current":"?id"] Go to the table: " ?id  crlf)
   )
 )
 
@@ -395,23 +414,25 @@
   (not (plane-exist ?))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
-  (printout t " [INFO] [F3:s"?current":"?id"] Run Astar to: "?rd ","?cd crlf)
+  (printout t " [INFO] [F3:s"?current":"?id"] Not exist a valid plane. Run Astar to: "?rd ","?cd crlf)
 )
 
 ;Se il piano esiste allo lo eseguo.
 (defrule strategy-execute-plane-3
   (declare (salience 1))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 3) )
   ?f1<-(plane-exist ?pid)
   (plane  (plane-id ?pid) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (direction ?d) (status ok))
 =>
   (assert (run-plane-astar (plane-id ?pid) (pos-start ?ra ?ca ?d) (pos-end ?rd ?cd) (phase 1)))
+  (printout t " [INFO] [F3:s"?current":"?id"] Exec plane: "?pid crlf)
   (retract ?f1)
 )
 
 ;Eseguito il piano, il robot si trova vicino al dispenser/cestino piu vicino.
 (defrule strategy-go-phase4
-  (declare (salience 2))
+  (declare (salience 11))
   (status (step ?current))
   (debug ?level)
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
@@ -580,7 +601,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fo", drink: "?do") action "?a crlf)
+   (printout t " [DEBUG] [F5:s"?current":"?id"] Go to the table: " ?id crlf)
   )
 )
 
@@ -626,7 +647,7 @@
 
 ;Eseguito il piano, il robot si trova vicino al tavolo.
 (defrule strategy-go-phase6
-  (declare (salience 2))
+  (declare (salience 11))
   (status (step ?current))
   (debug ?level)
   (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct))
@@ -671,7 +692,7 @@
   (declare (salience 20))
   (debug ?level)
   (status (step ?current))
-  ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5))
+  ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5) (status finish|delayed|accepted))
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   ?f2<-(astar-solution (value no))
   ?f3<-(K-agent)
@@ -686,6 +707,31 @@
     then
     (printout t " [DEBUG] [F5:s"?current":"?id"] A-Star not found solution to the table: "?id crlf)
     (printout t " [DEBUG] [F5:s"?current":"?id"] Order moved to the bottom." crlf)
+  )
+)
+
+;Se non esiste un percorso per arrivare a destinazione, l'ordine di checkfinish viene buttato.
+;lo step che indica quando si voleva fare una checkfinish viene aggiornato.
+;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
+(defrule strategy-remove-order-checkfinish
+  (declare (salience 20))
+  (debug ?level)
+  (status (step ?current))
+  ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5) (status check-finish))
+  ?f4<-(K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
+  ?f2<-(astar-solution (value no))
+  ?f3<-(K-agent)
+=>
+  (retract ?f1 ?f2)
+  (modify ?f3)
+  (modify ?f4 (step-checkfinish ?current))
+  (assert(set-plane-in-position ?rt ?ct))
+  (focus SET-PLANE-AT-OK)
+
+  (if (> ?level 0)
+    then
+    (printout t " [DEBUG] [F5:s"?current":"?id"] A-Star not found solution to the table: "?id crlf)
+    (printout t " [DEBUG] [F5:s"?current":"?id"] Order checkfinish is removed." crlf)
   )
 )
 ;
@@ -747,7 +793,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CleanTable" crlf)
+  (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CheckFinish" crlf)
   )
 )
 
@@ -874,7 +920,7 @@
 (defrule strategy-order-completed
   (status (step ?current))
   (debug ?level)
-  ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
+  ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (phase 7) (food-order 0) (drink-order 0))
   ;(K-agent (l-drink 0) (l-food 0))
 =>
   (modify ?f1 (phase COMPLETED))
@@ -882,7 +928,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step:" ?step " of table:" ?id " is completed" crlf)
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step " ?step " of table: " ?id " is completed" crlf)
   )
 )
 

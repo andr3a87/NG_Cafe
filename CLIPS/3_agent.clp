@@ -31,6 +31,7 @@
   (slot clean (allowed-values yes no))
   (slot l-drink)
   (slot l-food)
+  (slot step-checkfinish (default -1))
 )
 
 
@@ -48,6 +49,7 @@
 (deftemplate run-plane-astar (slot plane-id) (multislot pos-start) (multislot pos-end) (slot phase))
 
 (deftemplate exec-order
+  (slot origin-order-step)
   (slot step)   ;// l'environment incrementa il passo
   (slot action  (allowed-values Finish Inform))
   (slot table-id)

@@ -19,7 +19,7 @@
   (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
 )
 
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
@@ -31,7 +31,7 @@
   (K-table (table-id ?sen) (clean no))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (+ ?do ?fo))))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (+ ?do ?fo))))
 )
 
 ;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
@@ -40,7 +40,7 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
 =>
-  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (origin-status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Finish) (table-id ?sen) (time-order ?t) (status finish) (origin-status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
 )
 
 ;
@@ -781,7 +781,7 @@
   (status (step ?current))
   ;(last-intention (step ?step))
   (debug ?level)
-  ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
+  ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (phase 7) (food-order 0) (drink-order 0))
 
   ;(K-agent (l-drink 0) (l-food 0))
 => 
@@ -790,7 +790,7 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step:" ?step " of table:" ?id " is completed" crlf)
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
   )
 )
 
