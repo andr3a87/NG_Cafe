@@ -123,14 +123,14 @@
   (focus CLEAN-TABLE-DISTANCE)
 )
 
-;Se non sto facendo nulla prima della wait provo a effettuare una checkfinish su un tavolo che aveva oridinato.
-;(defrule strategy-empty-trash
-;  (declare (salience 140))
-;  (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
-;=>
-;  (assert (go-to-basket (phase 1)))
-;  (focus EMPTY-TRASH)
-;)
+Se non sto facendo nulla prima della wait provo a effettuare una checkfinish su un tavolo che aveva oridinato.
+(defrule strategy-empty-trash
+  (declare (salience 135))
+  (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
+=>
+  (assert (go-to-basket (phase 1)))
+  (focus EMPTY-TRASH)
+)
 
 
 ;

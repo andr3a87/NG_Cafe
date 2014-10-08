@@ -34,7 +34,7 @@
 (event (step 111) (type request) (source T2) (food 2) (drink 2))
 
 (personmove (step 50) (ident C3) (path-id P3))
-(personmove (step 58) (ident C3) (path-id P4))
+(personmove (step 62) (ident C3) (path-id P4))
 (personmove (step 98) (ident C1) (path-id P1))
 (personmove (step 120) (ident C1) (path-id P5))
 (personmove (step 130) (ident C1) (path-id P6))
@@ -66,6 +66,6 @@
 ;penality 4488 STRATEGY_FIFO_WAIT
 ;penality 4841 STRATEGY_FIFO
 ;penality 4426 LOW_PENALITY
-;penality 4115 HARD
+;penality 3946 HARD
 
 
