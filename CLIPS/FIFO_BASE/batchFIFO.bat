@@ -43,13 +43,13 @@
 (set-break delivery_WRONG_4)
 (set-break delivery_WRONG_5)
 
-(load "3_agent.clp")
+(load "../3_agent.clp")
 
 (load "4_percept.clp")
-(load "5_exec-plane.clp")
+(load "../5_exec-plane.clp")
 (load "6_strategy_FIFO.clp")
-(load "7_a_star.clp")
-(load "8_clean-plane.clp")
+(load "../7_a_star.clp")
+(load "../8_clean-plane.clp")
 
 (reset)
 (run 257)

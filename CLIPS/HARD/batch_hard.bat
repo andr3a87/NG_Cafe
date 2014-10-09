@@ -43,10 +43,10 @@
 (set-break delivery_WRONG_4)
 (set-break delivery_WRONG_5)
 
-(load "3_agent.clp")
+(load "../3_agent.clp")
 
 (load "4_percept_HARD.clp")
-(load "5_exec-plane.clp")
+(load "../5_exec-plane.clp")
 (load "6_strategy_HARD.clp")
 ;(set-break strategy-re-execute-phase3)
 ;(set-break strategy-re-execute-phase5)
@@ -55,8 +55,8 @@
 ;(set-break search-best-dispenser)
 ;(set-break strategy-do-CleanTable)
 ;(set-break strategy-go-phase1)
-(load "7_a_star.clp")
-(load "8_clean-plane.clp")
+(load "../7_a_star.clp")
+(load "../8_clean-plane.clp")
 (load "9_empty-trash.clp")
 
 
