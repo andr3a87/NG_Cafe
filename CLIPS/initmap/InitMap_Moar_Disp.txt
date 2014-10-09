@@ -1,6 +1,6 @@
 (maxduration 500)
 
-(initial_agentposition (pos-r 1) (pos-c 5) (direction north))
+(initial_agentposition (pos-r 6) (pos-c 6) (direction east))
 (Table (table-id T1) (pos-r 8) (pos-c 3))
 
 (Table (table-id T2) (pos-r 2) (pos-c 8))
@@ -10,7 +10,7 @@
 (RecyclableBasket (RB-id RB2) (pos-r 2) (pos-c 2))
 (FoodDispenser  (FD-id FD1) (pos-r 4) (pos-c 2))
 (DrinkDispenser  (DD-id DD1) (pos-r 7) (pos-c 6))
-(DrinkDispenser  (DD-id DD2) (pos-r 4) (pos-c 3))
+(DrinkDispenser  (DD-id DD2) (pos-r 3) (pos-c 2))
 
             (prior-cell (pos-r 1) (pos-c 1) (contains Wall))
 
