@@ -54,3 +54,5 @@
 (move-path P2 1 C2  7 10)
 (move-path P2 2 C2  7 9)
 (move-path P2 3 C2  7 8)
+
+;penality 1702 STRATEGY_FIFO
