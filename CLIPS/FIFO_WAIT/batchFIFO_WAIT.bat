@@ -1,6 +1,6 @@
 (clear)
-(load "1_main.clp")
-(load "2_env.clp")
+(load "../1_main.clp")
+(load "../2_env.clp")
 (set-break forward-north-bump)
 (set-break forward-south-bump)
 (set-break forward-east-bump)
