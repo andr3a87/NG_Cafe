@@ -50,6 +50,7 @@
 (event (step 45) (type finish) (source T2))
 (event (step 46) (type request) (source T2) (food 3) (drink 3))
 (event (step 51) (type request) (source T3) (food 0) (drink 1))
+
 (event (step 126) (type request) (source T1) (food 2) (drink 0))
 (event (step 130) (type finish) (source T2))
 (event (step 132) (type request) (source T2) (food 1) (drink 1))

@@ -231,6 +231,7 @@
 ;Controlle se esiste un piano per andare al best dispenser/trash con status OK
 (defrule strategy-existence-plane-3
   (declare (salience 10))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
@@ -242,6 +243,7 @@
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-3
   (declare (salience 1))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (not (plane-exist))
@@ -549,6 +551,7 @@
 ;Controlle se esiste un piano per andare al best dispenser/trash con status OK
 (defrule strategy-existence-plane-5
   (declare (salience 10))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 5) )
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (K-agent (pos-r ?ra) (pos-c ?ca))
@@ -561,6 +564,7 @@
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-5
   (declare (salience 1))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 5) )
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (not (plane-exist))

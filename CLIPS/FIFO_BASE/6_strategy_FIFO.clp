@@ -540,6 +540,7 @@
 ;Controlle se esiste un piano per andare al best dispenser/trash con status OK
 (defrule strategy-existence-plane-5
   (declare (salience 10))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 5) )
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (K-agent (pos-r ?ra) (pos-c ?ca))
@@ -552,6 +553,7 @@
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-5
   (declare (salience 1))
+  (status (step ?current))
   (exec-order (table-id ?id) (phase 5) )
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (not (plane-exist))
@@ -581,25 +583,7 @@
 =>
   (modify ?f2 (phase 6) (fail 0))
   (assert(set-plane-in-position ?rt ?ct))  
-  (focus (defmodule SET-PLANE-AT-OK (import AGENT ?ALL) (export ?ALL))
-
-; Imposto il piano a ok
-(defrule set-plane
-  (declare(salience 10))
-  (set-plane-in-position ?rd ?cd)
-  ?f1<-(plane  (plane-id ?pid) (pos-end ?rd ?cd) (status failure))
-=>
-  (modify ?f1 (status ok))
-)
-
-(defrule set-plane-2
-  (declare(salience 10))
-  ?f1<-(set-plane-in-position ?rd ?cd)
-  
-=>
-  (retract ?f1)
-  (pop-focus)
-SET-PLANE-AT-OK)
+  (focus SET-PLANE-AT-OK)
   ;debug
   (if (> ?level 0)
   then
@@ -643,25 +627,7 @@ SET-PLANE-AT-OK)
   (retract ?f2)
   (modify ?f3)
   (assert(set-plane-in-position ?rt ?ct))
-  (focus (defmodule SET-PLANE-AT-OK (import AGENT ?ALL) (export ?ALL))
-
-; Imposto il piano a ok
-(defrule set-plane
-  (declare(salience 10))
-  (set-plane-in-position ?rd ?cd)
-  ?f1<-(plane  (plane-id ?pid) (pos-end ?rd ?cd) (status failure))
-=>
-  (modify ?f1 (status ok))
-)
-
-(defrule set-plane-2
-  (declare(salience 10))
-  ?f1<-(set-plane-in-position ?rd ?cd)
-  
-=>
-  (retract ?f1)
-  (pop-focus)
-SET-PLANE-AT-OK)
+  (focus SET-PLANE-AT-OK)
 
   (if (> ?level 0)
     then
@@ -807,11 +773,8 @@ SET-PLANE-AT-OK)
 ;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
 (defrule strategy-order-completed
   (status (step ?current))
-  (last-intention (origin-order-step ?step))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
-
-  ;(K-agent (l-drink 0) (l-food 0))
 => 
   (modify ?f1 (phase COMPLETED))
 
