@@ -16,7 +16,7 @@ Ogni strategia è stata suddivisa in fasi dove ogni fase si occupa di uno specif
 \subsection{Astar}
 Tutte le strategia utilizzano il modulo Astar per pianificare dei piani che permettano al nostro robot di spostarsi da un punto A a un punto B. Il punto A è la posizione del robot al momento della pianificazione mentre il goal (il punto B) è dato dalla cella destinazione. La cella destinazione può essere un dispenser, un cestino o un tavolo. Il modulo astar calcolerà quali sono i 4 punti di accesso alla nostra destinazione e si fermerà non appena arriverà a uno di esso.
 
-La strategia può terminare fornendo un piano, oppure può fallire. Per memorizzare il piano creato vengono usate due strutture:
+Il modulo A* può terminare fornendo un piano, oppure può fallire. Per memorizzare il piano creato vengono usate due strutture:
 
 \begin{lstlisting}
 (deftemplate plane 
@@ -40,3 +40,13 @@ La strategia può terminare fornendo un piano, oppure può fallire. Per memorizz
 \end{lstlisting}
 
 La struttura step-plane indica i vari passi per eseguire il piano plane. I piani vengono memorizzati in modo tale che il robot non debba ripianificare più volte uno stesso percorso. Vengono memorizzati solo i piani principali; nel caso in cui un piano fallisca il piano "riparatore" non viene memorizzato.
+
+\chapter{Strategie}
+\section{Strategia FIFO WAIT}
+La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto semplice, dove il primo ordine che arriva è l'ordine che viene servito. Vi sono vari casi per completare un ordine:\begin{itemize}
+  \item Ordine Accepted: un ordine di questo tipo verrà completato solo quando verranno consegnate al tavolo tutte le consumazioni richieste.
+  \item Ordine Delayed: un ordine di questo tipo verrà completato solo quando verranno consegnate al tavolo tutte le consumazioni richieste. Rispetto al caso precedente le consumazioni non potranno esser consengate fin quando il tavolo non sarà finito.
+  \item Ordine Finish: un ordine di questo tipo verrà completato solo quanto verrà pulito il tavolo e il robot butterà lo sporco nei vari cestini.
+\end{itemize}
+
+\includegraphics[width=\textwidth]{schema-fifo-wait.png}

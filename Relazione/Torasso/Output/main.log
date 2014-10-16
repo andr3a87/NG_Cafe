@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  13 OCT 2014 18:17
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  16 OCT 2014 12:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -656,22 +656,44 @@ LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10.95> not available
 [1
 
 
-])
+] [2]
+Chapter 2.
+<images/schema-fifo-wait.png, id=78, 1251.67625pt x 2416.02625pt>
+File: images/schema-fifo-wait.png Graphic file (type png)
+<use images/schema-fifo-wait.png>
+Package pdftex.def Info: images/schema-fifo-wait.png used on input line 52.
+(pdftex.def)             Requested size: 360.0pt x 694.87865pt.
+)
+Overfull \hbox (17.0pt too wide) in paragraph at lines 52--107
+[][]
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 52--107
+
+ []
+
+[3
+
+]
+Overfull \vbox (99.07838pt too high) has occurred while \output is active []
+
+[4 <./images/schema-fifo-wait.png>]
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 108.
-[2]
+[5]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 108.
 (Output/main.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 108.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 108.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 6E37CCCF702FBB360BAA02D509D85F8D;160.
+(rerunfilecheck)             Checksum: FCF8B068A4CE2DA0570C37700E0B3C3C;269.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 108.
  ) 
 Here is how much of TeX's memory you used:
- 8496 strings out of 493107
- 119324 string characters out of 6138433
- 222398 words of memory out of 5000000
- 11795 multiletter control sequences out of 15000+600000
+ 8510 strings out of 493107
+ 119544 string characters out of 6138433
+ 222407 words of memory out of 5000000
+ 11801 multiletter control sequences out of 15000+600000
  85819 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  29i,7n,32p,590b,1059s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -684,10 +706,10 @@ ts/type1/public/lm/lmr12.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/
 lmr17.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/texliv
 e/2014/texmf-dist/fonts/type1/public/lm/lmro10.pfb><c:/texlive/2014/texmf-dist/
 fonts/type1/public/lm/lmsy10.pfb>
-Output written on Output/main.pdf (4 pages, 191143 bytes).
+Output written on Output/main.pdf (7 pages, 345978 bytes).
 PDF statistics:
- 105 PDF objects out of 1000 (max. 8388607)
- 89 compressed objects within 1 object stream
- 26 named destinations out of 1000 (max. 500000)
- 25 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 136 PDF objects out of 1000 (max. 8388607)
+ 114 compressed objects within 2 object streams
+ 31 named destinations out of 1000 (max. 500000)
+ 46 words of extra memory for PDF output out of 10000 (max. 10000000)
 

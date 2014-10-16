@@ -47,6 +47,7 @@
   (goal-astar ?gr ?gc)
   (end-astar ?r ?c)
   (node (ident ?id) (pos-r ?r) (pos-c ?c) (direction ?) (gcost ?g))
+  (K-cell (pos-r ?r) (pos-c ?c) (contains Empty))
 =>
   (assert (stampa ?id))
   (assert (cost-solution ?g))

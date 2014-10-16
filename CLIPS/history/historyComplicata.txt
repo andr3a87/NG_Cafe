@@ -63,7 +63,7 @@
 (move-path P6 1 C1 9 4)
 (move-path P6 2 C1 8 4)
 
-;penality 4488 STRATEGY_FIFO_WAIT
+;penality 5048 STRATEGY_FIFO_WAIT
 ;penality 4841 STRATEGY_FIFO
 ;penality 4426 LOW_PENALITY
 ;penality 3946 HARD

@@ -12,6 +12,7 @@
 
 ;Regole per rispondere alla richiesta ordini da parte dei tavoli.
 ;Attiva quando ricevo un ordine da un tavolo Inform con accepted
+
 (defrule answer-msg-order1
   (declare (salience 150))
   (status (step ?current))
@@ -19,7 +20,7 @@
   (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0)))
 )
 
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
@@ -31,7 +32,7 @@
   (K-table (table-id ?sen) (clean no))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (assert (exec-order (step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (+ ?do ?fo))))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0)))
 )
 
 ;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
@@ -40,7 +41,7 @@
   (status (step ?current))
   (msg-to-agent (request-time ?t) (step ?current) (sender ?sen) (type finish))
 =>
-  (assert (exec-order (step ?current)(action Finish) (table-id ?sen) (time-order ?t) (status finish) (origin-status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0) (penality 3)))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Finish) (table-id ?sen) (time-order ?t) (status finish) (drink-order 0) (food-order 0) (phase 0) (fail 0)))
 )
 
 ;
@@ -50,19 +51,18 @@
 ;Ricerca dell'ordine da servire. La ricerca avviene sia sulle Inform che sulle Finish. Si ricerca l'ordine più vecchio non ancora servito.
 (defrule strategy-go-phase1
   (declare (salience 70))
-  (status (step ?current))
-  (best-pen ?pen)
+  (status (step ?current) )
   (debug ?level)
-  ;?f1 <- (last-intention (step ?last) (time ?time))
+  ?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
-  ?f2<-(exec-order (step ?s) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (action Inform|Finish) (phase 0)))
+  ?f2<-(exec-order (step ?next&:(and (> ?next ?last) (<= ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status))
+  (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish)))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
   (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
-  ;(modify ?f1 (step ?next) (time ?t))
+  (modify ?f1 (step ?next) (time ?t))
   (modify ?f2 (phase 1))
 
   ;debug
@@ -90,32 +90,15 @@
   then
     (modify ?f1 (table-id ?id) (phase 5))
   )
-  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e non ho sporco a bordo modifico in accepted, così da gestirlo come un ordine normale.
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0) )
-  then
-    (modify ?f1 (status accepted))
-  )
-  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e ho sporco a bordo modifico vado alla fase 2 per andare al cestino.
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)) )
-  then
-    (modify ?f1 (phase 2))
-  )
-  ; se ho ricevuto una finish e non ho cibo caricato vado a pulire il tavolo
-  (if (and(= (str-compare ?status "finish") 0)  (= ?lf 0) (= ?ld 0) (=(str-compare ?clean "no")0) )
+  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) modifico in accepted, così da gestirlo come un ordine normale.
+  ;(if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
+  ;then
+  ;  (modify ?f1 (status accepted))
+  ;)
+  ; se ho ricevuto una finish vado a pulire il tavolo.
+  (if (= (str-compare ?status "finish") 0)  
   then
     (modify ?f1 (table-id ?id) (phase 5))
-  )
-  ; se ho ricevuto una finish ma ho del cibo caricato inserisco questo ordine al fondo.
-  ; Questo caso accade se dovevo portare del cibo al tavolo, ma non ho trovato una piano per arrivarci e quell'ordine è stato spostato in fondo.
-  ; A questo punto il prox ordine da evadere è una finish, ma siccome non posso trasportate cibo e sporcizio sposto al fondo anche questo.
-  (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)) (=(str-compare ?clean "no")0) )
-  then
-    (modify ?f1 (step ?s1))
-  )
-  ;l'ordine da servire è una finish ma il tavolo è già pulito
-  (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0))
-  then
-    (modify ?f1 (table-id ?id) (phase COMPLETED))
   )
 )
 
@@ -125,6 +108,7 @@
 
 ; Initializza la fase 2
 ; =====================
+; Appena viene avviata la fase 2 viene asserito un fatto best-dispenser
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun food-dispenser
 (defrule distance-manhattan-fo
@@ -238,6 +222,7 @@
 =>
   (assert (plane-exist ?pid))
 )
+
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-3
   (declare (salience 1))
@@ -277,63 +262,56 @@
   )
 )
 
-;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-dispenser. 
+;Piano fallito, il robot aspetta e prova a rieseguire il piano. 
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto.
 (defrule strategy-re-execute-phase3
   (declare (salience 20))
   (status (step ?current))
   (debug ?level)
-  (plan-executed (plane-id ?pid) (step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
-  ?f1<-(plane (plane-id ?pid) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
-  ?f2<-(exec-order (table-id ?id) (phase 3) (fail ?f))
-  ?f3<-(K-agent)
+  (plan-executed (plane-id ?pid) (step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
+  ?f1<-(exec-order (table-id ?id) (phase 3) (fail ?f))
+  ?f2<-(K-agent)
 =>
-  (modify ?f1 (status failure)) 
-  (modify ?f2 (phase 3) (fail (+ ?f 1)))
-  (modify ?f3)
+  (modify ?f1 (phase 3) (fail (+ ?f 1)))
+  (modify ?f2)
+  (assert (exec (step ?current) (action Wait)))
 
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Plane Failed. Re-Plane Astar to dispenser: "?c" in ("?rd","?cd")" crlf)
+    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Plane Failed. Wait and try again go to: "?c" in ("?rd","?cd")" crlf)
   )
 )
 
-;Se non esiste un percorso per arrivare a destinazione, l'ordine viene inserito al fondo.
+;Se non esiste un percorso per arrivare a destinazione, aspetto e provo a ricalcolare astar.
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
-(defrule strategy-change-order-in-phase3
+(defrule strategy-no-astar-solution-in-phase3
   (declare(salience 20))
   (debug ?level)
   (status (step ?current))
+  (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   ?f1<-(exec-order (table-id ?id) (step ?s2) (phase 3))
-  ?f2<-(strategy-best-dispenser (type ?c) (pos-dispenser ?rd ?cd))
-  ?f3<-(astar-solution (value no))
-  ?f4<-(K-agent)
+  ?f2<-(astar-solution (value no))
+  ?f3<-(K-agent)
 =>
-  (modify ?f1 (step ?current) (phase 0))
-  (modify ?f4)
-  (retract ?f2 ?f3)
+  (modify ?f1 (phase 3))
+  (modify ?f3)
+  (retract ?f2)
+  (assert (exec (step ?current) (action Wait)))
 
   ;debug
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] A-Star not found solution to the dispenser: "?c" in ("?rd","?cd")" crlf)
-    (printout t " [DEBUG] [F3:s"?current":"?id"] Order moved to the bottom." crlf)
+    (printout t " [DEBUG] [F3:s"?current":"?id"] Wait and try again." crlf)
   )
 )
-
 ;
 ;  FASE 4 della Strategia: Il robot arrivato al dispenser/cestino carica/scarica.
 ;
 
 ; regola per caricare il cibo
-; ===========================
-; controlla che ci sia ancora del food da caricare
-; controlla che non ci sia waste
-; controlla che il truckload non sia pieno
-; scatena azione di load-food verso dispenser
-; scatena diminuzione fl in strategy-service-table
 (defrule strategy-do-LoadFood
   (declare (salience 70))
   (status (step ?current))
@@ -356,8 +334,6 @@
 )
 
 ; regola per caricare il drink
-; ===========================
-; medesime situazioni del food
 (defrule strategy-do-LoadDrink
   (declare (salience 70))
   (status (step ?current))
@@ -436,11 +412,12 @@
 )
 
 ; Una volta caricato o scaricato rimuovo il fatto best-dispenser. 
-; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule strategy-clean-best-dispenser
         (declare (salience 60))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
         ?f2 <- (strategy-best-dispenser)
+        ;(K-agent (l-food ?lf) (l-drink ?ld))
+        ;(test (or (=(- ?fo ?lf)0) (=(- ?do ?ld)0) (= (+ ?lf ?ld)4) ))
 =>  
         (retract ?f2)
         (modify ?f1 (phase 4.5))
@@ -470,7 +447,7 @@
 )
 
 ;Controllo se ho altro sporco da scaricare.
-(defrule strategy-return-phase2_clean
+(defrule strategy-return-phase2_delayed
   (status (step ?current))
   (debug ?level)
 
@@ -501,6 +478,7 @@
 (defrule strategy-return-phase2_finish
   (status (step ?current))
   (debug ?level)
+
   ?f1 <- (exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status finish))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
@@ -590,29 +568,30 @@
 )
 
 ;Se il piano è fallito, il robot deve ripianificare per arrivare al tavolo. Cio significa rieseguire la fase 5.
+;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
 (defrule strategy-re-execute-phase5
-  (declare (salience 20))
+  (declare (salience 1))
   (status (step ?current))
   (debug ?level)
-  (plan-executed (plane-id ?pid)(step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
-  ?f1<-(plane (plane-id ?pid) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
+  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   ?f2<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
   ?f3<-(K-agent)
 =>
-  (modify ?f1 (status failure)) 
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
   (modify ?f3)
+  (assert (exec (step ?current) (action Wait)))
   
   ;debug
   (if (> ?level 0)
     then
-    (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5: Plane Failed. Re-Plane Astar to table: "?id crlf)
+    (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 5: Plane Failed. Wait and try again." crlf)
   )
 )
 
-;Se non esiste un percorso per arrivare a destinazione, l'ordine viene inserito al fondo.
+
+;Se non esiste un percorso per arrivare alla destinazione, vado in wait e riprovo.
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
-(defrule strategy-change-order-in-phase5
+(defrule strategy-no-astar-solution-in-phase5
   (declare (salience 20))
   (debug ?level)
   (status (step ?current))
@@ -620,14 +599,15 @@
   ?f2<-(astar-solution (value no))
   ?f3<-(K-agent)
 =>
-  (modify ?f1 (step ?current) (phase 0))
+  (modify ?f1 (phase 5))
   (retract ?f2)
   (modify ?f3)
+  (assert (exec (step ?current) (action Wait)))
 
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F5:s"?current":"?id"] A-Star not found solution to the table: "?id crlf)
-    (printout t " [DEBUG] [F5:s"?current":"?id"] Order moved to the bottom." crlf)
+    (printout t " [DEBUG] [F5:s"?current":"?id"] Wait and try again." crlf)
   )
 )
 ;
@@ -681,7 +661,8 @@
   (debug ?level)
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
-  (exec-order (table-id ?id) (phase 6) (status  delayed|finish))
+  (exec-order (table-id ?id) (phase 6) (status  ?status))
+  (test(or(=(str-compare ?status "delayed")0) (=(str-compare ?status "finish")0)))
   ;controllo che l'agente posso operare sul tavolo.
   (or (and (test(= ?ra ?rt)) (test(= ?ca (+ ?ct 1))))
       (and (test(= ?ra ?rt)) (test(= ?ca (- ?ct 1))))
@@ -692,7 +673,11 @@
   (test (= (+ ?ld ?lf) 0))
 =>
   (assert (exec (step ?ks) (action CleanTable) (param1 ?rt) (param2 ?ct)))
-  (assert (canc-order-finish))
+  (if (=(str-compare ?status "finish")0)
+    then
+    (assert (complete-order ?status))
+  )
+  
   ;debug
   (if (> ?level 0)
   then
@@ -700,15 +685,14 @@
   )
 )
 
-;Regola che cancella gli ordini di finish precedenti all'ordine che sto servendo. Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato  
-(defrule strategy-delete-order-finish
+(defrule strategy-set-as-accepted-next-delayed-orders
   (declare(salience 7))
-  ?f1<-(canc-order-finish)
-  (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
-  ?f2<-(exec-order (table-id ?id) (step ?step&:(< ?step ?s)) (status finish) (phase 0))
+  ?f1<-(complete-order finish)
+  (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
 =>
   (retract ?f1)
-  (modify ?f2 (phase COMPLETED))
+  (modify ?f2 (status accepted))
 )
 
 ;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
@@ -730,20 +714,20 @@
 ; FASE 7 della Strategia: Controllo se l'ordine è stato evaso.
 ;
 
-;Devo ancora consegnare della roba al tavolo. L'ordine aggiornato torna nella lista degli ordini da servire 
-(defrule strategy-return-search-order
+;Devo ancora consegnare della roba al tavolo. Devo ricercare il best-dispenser (FASE 2)
+(defrule strategy-return-phase7-to-2_accepted
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status accepted) (food-order ?fo) (drink-order ?do))
   ; ho scaricato tutta la roba
   (test (> (+ ?fo ?do) 0))
 =>
-  (modify ?f1 (phase 0) (penality (*(+ ?do ?fo)2) ))
+  (modify ?f1 (phase 2))
 
   ;debug
   (if (> ?level 0)
-    then
-    (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, search order with penality more low" crlf)
+  then
+  (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
   )
 )
 
@@ -764,11 +748,10 @@
   )
 )
 
-;Ordine completato, retract fatto service table. Devo trovare il nuovo ordine da evadare.
+;Ordine completato. Devo trovare il nuovo ordine da evadare.
 ;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
 (defrule strategy-order-completed
   (status (step ?current))
-  ;(last-intention (step ?step))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
 
@@ -779,6 +762,6 @@
   ;debug
   (if (> ?level 0)
   then
-  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step:" ?step " of table:" ?id " is completed" crlf)
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
   )
 )

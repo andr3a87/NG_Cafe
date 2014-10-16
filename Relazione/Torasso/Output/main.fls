@@ -184,6 +184,9 @@ INPUT c:/texlive/2014/texmf-dist/tex/latex/lm/omslmr.fd
 INPUT c:/texlive/2014/texmf-dist/tex/latex/lm/omslmr.fd
 INPUT c:/texlive/2014/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
 INPUT c:/texlive/2014/texmf-dist/fonts/tfm/public/lm/ec-lmro10.tfm
+INPUT images/schema-fifo-wait.png
+INPUT ./images/schema-fifo-wait.png
+INPUT ./images/schema-fifo-wait.png
 INPUT Output/main.aux
 INPUT Output/main.out
 INPUT Output/main.out

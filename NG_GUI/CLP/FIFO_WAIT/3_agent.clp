@@ -31,11 +31,15 @@
   (slot clean (allowed-values yes no))
   (slot l-drink)
   (slot l-food)
+  (slot step-checkfinish (default -1))
 )
+
+
 
 ; step dell'ultima percezione esaminata
 (deftemplate last-perc-vision (slot step))
 (deftemplate last-perc-load (slot step))
+(deftemplate last-perc-finish (slot step))
 (deftemplate last-perc (slot step))
 
 ;(deftemplate last-perc-load (slot step))
@@ -45,16 +49,19 @@
 (deftemplate run-plane-astar (slot plane-id) (multislot pos-start) (multislot pos-end) (slot phase))
 
 (deftemplate exec-order
+  (slot origin-order-step)
   (slot step)   ;// l'environment incrementa il passo
   (slot action  (allowed-values Finish Inform))
   (slot table-id)
   (slot time-order)
+  (slot origin-status)
   (slot status)
   (slot drink-order)
   (slot food-order)
   (slot phase)
   (slot fail)
   (slot penality)
+  (slot check-finish (default no))
 )
 
 ; fl = food to load, dl = drink to load
@@ -74,13 +81,28 @@
   (last-perc (step -1))
   (last-perc-vision (step -1))
   (last-perc-load (step -1))
-  (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.  
+  (last-perc-finish (step -1))
+  (last-intention (step -1) (time -1)) ; All'inzio non ci sono percezioni quindi last-perc è impostata a -1.
   (worst-dispenser 1000)
   (max-fail 3)
   (next-plane-id 1)
   (best-pen 0)
   (debug 2)
 )
+
+
+;DEFTEMPLATE STRATEGY HARD
+(deftemplate qty-order-sum (slot type (allowed-values accepted delayed finish)) (slot pen) (slot qty-fo) (slot qty-do))
+(deftemplate force-delivery (slot min) (slot step) (slot table-id))
+(deftemplate go-to-basket (slot phase))
+(deftemplate table-distance (slot table-id) (slot distance))
+(deffacts initial-fact-agent2
+  (qty-order-sum (type accepted) (pen 0) (qty-fo 0) (qty-do 0))
+  (qty-order-sum (type delayed) (pen 0) (qty-fo 0) (qty-do 0))
+  (qty-order-sum (type finish) (pen 0) (qty-fo 0) (qty-do 0))
+)
+
+
 
 ; copia le prior cell sulla struttura K-cell
 (defrule  beginagent_kcell
@@ -136,13 +158,13 @@
   (status (step ?i))
   (exec (step ?i))
 =>
-  (focus MAIN))
+  (pop-focus))
 
 (defrule stop
   (declare (salience 200))
   (status (step ?i))
   (stop-at-step ?i)
-  
+
 =>
   (halt)
 )
