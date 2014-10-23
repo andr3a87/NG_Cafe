@@ -48,7 +48,8 @@
 
 (personmove (step 25) (ident C4) (path-id P7))
 (personmove (step 50) (ident C3) (path-id P3))
-;(personmove (step 58) (ident C3) (path-id P4))
+(personmove (step 58) (ident C3) (path-id P4))
+(personmove (step 81) (ident C3) (path-id P8))
 (personmove (step 140) (ident C1) (path-id P1))
 (personmove (step 150) (ident C1) (path-id P5))
 (personmove (step 200) (ident C1) (path-id P6))
@@ -84,6 +85,9 @@
 (move-path P7 4 C4 6 8)
 (move-path P7 5 C4 7 8)
 (move-path P7 6 C4 7 9)
+
+(move-path P8 1 C3 9 7)
+(move-path P8 2 C3 9 6)
 
 ;penality no-solution STRATEGY_FIFO_WAIT
 ;penality 6620 STRATEGY_FIFO
