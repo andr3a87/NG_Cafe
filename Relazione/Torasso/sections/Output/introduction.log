@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  16 OCT 2014 11:46
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.15)  22 OCT 2014 14:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -2818,7 +2818,7 @@ Missing character: There is no i in font nullfont!
 Missing character: There is no . in font nullfont!
 ! Undefined control sequence.
 l.52 \includegraphics
-                     [width=400px]{schema-fifo-wait2.png}
+                     [width=\textwidth]{schema-fifo-wait.png}
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -2832,11 +2832,27 @@ Missing character: There is no d in font nullfont!
 Missing character: There is no t in font nullfont!
 Missing character: There is no h in font nullfont!
 Missing character: There is no = in font nullfont!
-Missing character: There is no 4 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no 0 in font nullfont!
-Missing character: There is no p in font nullfont!
-Missing character: There is no x in font nullfont!
+! Missing number, treated as zero.
+<to be read again> 
+                   ]
+l.52 \includegraphics[width=\textwidth]
+                                       {schema-fifo-wait.png}
+A number should have been here; I inserted `0'.
+(If you can't figure out why I needed to see a number,
+look up `weird error' in the index to The TeXbook.)
+
+! Illegal unit of measure (pt inserted).
+<to be read again> 
+                   ]
+l.52 \includegraphics[width=\textwidth]
+                                       {schema-fifo-wait.png}
+Dimensions can be in units of em, ex, in, pt, pc,
+cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
+I'll assume that you meant to say pt, for printer's points.
+To recover gracefully from this error, it's best to
+delete the erroneous units; e.g., type `2' to delete
+two letters. (See Chapter 27 of The TeXbook.)
+
 Missing character: There is no ] in font nullfont!
 Missing character: There is no s in font nullfont!
 Missing character: There is no c in font nullfont!
@@ -2854,7 +2870,6 @@ Missing character: There is no w in font nullfont!
 Missing character: There is no a in font nullfont!
 Missing character: There is no i in font nullfont!
 Missing character: There is no t in font nullfont!
-Missing character: There is no 2 in font nullfont!
 Missing character: There is no . in font nullfont!
 Missing character: There is no p in font nullfont!
 Missing character: There is no n in font nullfont!
@@ -2867,8 +2882,8 @@ Missing character: There is no g in font nullfont!
 
  
 Here is how much of TeX's memory you used:
- 22 strings out of 493107
- 551 string characters out of 6138433
+ 22 strings out of 493109
+ 551 string characters out of 6138586
  54965 words of memory out of 5000000
  3582 multiletter control sequences out of 15000+600000
  3640 words of font info for 14 fonts, out of 8000000 for 9000

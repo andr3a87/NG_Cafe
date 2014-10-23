@@ -45,8 +45,21 @@ La struttura step-plane indica i vari passi per eseguire il piano plane. I piani
 \section{Strategia FIFO WAIT}
 La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto semplice, dove il primo ordine che arriva è l'ordine che viene servito. Vi sono vari casi per completare un ordine:\begin{itemize}
   \item Ordine Accepted: un ordine di questo tipo verrà completato solo quando verranno consegnate al tavolo tutte le consumazioni richieste.
-  \item Ordine Delayed: un ordine di questo tipo verrà completato solo quando verranno consegnate al tavolo tutte le consumazioni richieste. Rispetto al caso precedente le consumazioni non potranno esser consengate fin quando il tavolo non sarà finito.
+  \item Ordine Delayed: un ordine di questo tipo verrà completato solo quando verranno consegnate al tavolo tutte le consumazioni richieste. Rispetto al caso precedente le consumazioni non potranno esser consengate fin quando il tavolo non verrà pulito e le consumazioni buttate nel cestino.
   \item Ordine Finish: un ordine di questo tipo verrà completato solo quanto verrà pulito il tavolo e il robot butterà lo sporco nei vari cestini.
 \end{itemize}
 
 \includegraphics[width=\textwidth]{schema-fifo-wait.png}
+
+Come possiamo vedere dallo schema abbiamo suddiviso la nostre strategia in 7 fasi:
+\begin{itemize}
+  \item Fase 1: Nella prima fase viene individuato quale sarà l'ordine da servire. 
+  \item Fase 2: In questa fase si andrà ad individuare quale sarà il cestino o il dispenser presso il quale il nostro robot dovrà recarsi. La ricerca del cestino o del dispenser dipene dal tipo di ordine.
+  \item Fase 3: In questa fase il robot arriverà alla destinazione prefissata. Per far ciò deve prima calcolare un piano con A* e poi eseguirlo. Il piano viene calcolato solo se non ne esiste già uno. In caso A* non trovi soluzione il robot esegue una wait e prova a ricalcolare A* fin quando non trova una soluzione.
+  Quando il robot ha un piano per raggiungere la sua destinazione lo esegue. Nel caso in cui il piano fallisca il robot esegue una wait e prova a rieseguirlo.
+  \item Fase 4: Il robot a seconda dell'ordine che sta servendo si troverà davanti un dispenser per caricare delle consumazioni (ordine accepted) oppure davanti a un cestino per buttare lo sporco (ordine delayed o finish).
+  \item Fase 4.5: Questa è fase di controllo in cui il robot decide a seconda dell'ordine cosa deve fare. Per esempio se era un ordine accepted e ha caricato solo i 'food' e gli mancano i 'drink' dovrà ritornare alla fase 2; analogamente se era un ordine di finish o delayed e deve ancora buttare dello sporco.
+  \item Fase 5: Identica alla fase 3 tranne per il fatto che la destinazione sarà un tavolo.
+  \item Fase 6: Il robot in questa fase si trova in una posizione su cui può operare sul tavolo. Nel caso di ordine accepted rilascio tuttle le consumazioni caricate; in caso di ordine finish o delayed pulisco il tavolo.
+  \item Fase 7: In questa fase controllo se l'ordine può essere considerato completato.
+\end{itemize}
