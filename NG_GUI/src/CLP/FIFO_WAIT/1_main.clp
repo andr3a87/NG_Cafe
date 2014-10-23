@@ -1,4 +1,4 @@
-﻿; Questo programma contiene il simulatore dell'agente robotico per applicazione NG-CAFE'
+; Questo programma contiene il simulatore dell'agente robotico per applicazione NG-CAFE'
 ;
 ;
 ;  Si noti che la parte di funzionamento dell'agente è separata
@@ -113,7 +113,7 @@
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "history.txt")
+  (load-facts "InitMap.txt")
   (assert (create-map)
   (create-initial-setting)
   (create-history))

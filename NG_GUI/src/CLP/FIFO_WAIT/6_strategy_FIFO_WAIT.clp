@@ -91,10 +91,10 @@
     (modify ?f1 (table-id ?id) (phase 5))
   )
   ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) modifico in accepted, così da gestirlo come un ordine normale.
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
-  then
-    (modify ?f1 (status accepted))
-  )
+  ;(if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
+  ;then
+  ;  (modify ?f1 (status accepted))
+  ;)
   ; se ho ricevuto una finish vado a pulire il tavolo.
   (if (= (str-compare ?status "finish") 0)  
   then
@@ -312,12 +312,6 @@
 ;
 
 ; regola per caricare il cibo
-; ===========================
-; controlla che ci sia ancora del food da caricare 
-; controlla che non ci sia waste
-; controlla che il truckload non sia pieno
-; scatena azione di load-food verso dispenser
-; scatena diminuzione fl in strategy-service-table
 (defrule strategy-do-LoadFood
   (declare (salience 70))
   (status (step ?current))
@@ -340,8 +334,6 @@
 )
 
 ; regola per caricare il drink
-; ===========================
-; medesime situazioni del food
 (defrule strategy-do-LoadDrink
   (declare (salience 70))
   (status (step ?current))
@@ -420,7 +412,6 @@
 )
 
 ; Una volta caricato o scaricato rimuovo il fatto best-dispenser. 
-; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule strategy-clean-best-dispenser
         (declare (salience 60))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
@@ -456,7 +447,7 @@
 )
 
 ;Controllo se ho altro sporco da scaricare.
-(defrule strategy-return-phase2_clean
+(defrule strategy-return-phase2_delayed
   (status (step ?current))
   (debug ?level)
 
@@ -670,7 +661,8 @@
   (debug ?level)
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
-  (exec-order (table-id ?id) (phase 6) (status  delayed|finish))
+  (exec-order (table-id ?id) (phase 6) (status  ?status))
+  (test(or(=(str-compare ?status "delayed")0) (=(str-compare ?status "finish")0)))
   ;controllo che l'agente posso operare sul tavolo.
   (or (and (test(= ?ra ?rt)) (test(= ?ca (+ ?ct 1))))
       (and (test(= ?ra ?rt)) (test(= ?ca (- ?ct 1))))
@@ -681,11 +673,26 @@
   (test (= (+ ?ld ?lf) 0))
 =>
   (assert (exec (step ?ks) (action CleanTable) (param1 ?rt) (param2 ?ct)))
+  (if (=(str-compare ?status "finish")0)
+    then
+    (assert (complete-order ?status))
+  )
+  
   ;debug
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CleanTable" crlf)
   )
+)
+
+(defrule strategy-set-as-accepted-next-delayed-orders
+  (declare(salience 7))
+  ?f1<-(complete-order finish)
+  (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
+=>
+  (retract ?f1)
+  (modify ?f2 (status accepted))
 )
 
 ;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
