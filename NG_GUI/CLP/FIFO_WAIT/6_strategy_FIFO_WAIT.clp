@@ -69,6 +69,8 @@
   (if (> ?level 0)
     then
       (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
+      (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Inizializza Fase 1 - target tavolo: %p1") (param1 ?sen)))
+
   )
 )
 
@@ -161,7 +163,7 @@
 ;Regola che cerca il dispenser/cestino più vicino
 (defrule search-best-dispenser
   (declare (salience 60))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 2))
   (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d)) 
@@ -176,12 +178,14 @@
     then
     (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?c " in ("?rd1", "?cd1")"  crlf)
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?c " in ("?rd1", "?cd1")"  crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Dispenser/Basket Found in: %p1, %p2") (param1 ?rd1) (param2 ?cd1)))
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 3: Pianifica Astar verso dispenser")))
   )
 )
 
 (defrule strategy-all-loaded-go-phase5
   (declare (salience 70))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 2) (food-order ?fo) (drink-order ?do) (status accepted))
   (not (strategy-distance-dispenser (type ?type)))
@@ -193,6 +197,8 @@
     then
     (printout t " [DEBUG] [F2:s"?current":"?id"] Agent hasn't space available. Useless found dispenser."  crlf)
     (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fo", drink: "?do")" crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent hasn't space available. Useless found dispenser.")))
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 5, a-star towards table %p1, order") (param1 ?id)))
   )
 )
 
@@ -247,7 +253,7 @@
 ;Eseguito il piano, il robot si trova vicino al dispenser/cestino piu vicino.
 (defrule strategy-go-phase4
   (declare (salience 1))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   (plan-executed (plane-id ?pid) (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result ok))
   ?f1<-(exec-order (table-id ?id) (phase 3) )
@@ -259,6 +265,7 @@
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4:s"?current":"?id"] Init Phase 4 - Agent in front of best dispenser: "?c" in ("?rd","?cd")" crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 4 - Agent in front of best dispenser: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
   )
 )
 
@@ -266,7 +273,7 @@
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto.
 (defrule strategy-re-execute-phase3
   (declare (salience 20))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (plan-executed (plane-id ?pid) (step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
@@ -281,6 +288,8 @@
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Plane Failed. Wait and try again go to: "?c" in ("?rd","?cd")" crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 3: Plane Failed. Wait and try again go to: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
+
   )
 )
 
@@ -289,7 +298,7 @@
 (defrule strategy-no-astar-solution-in-phase3
   (declare(salience 20))
   (debug ?level)
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   ?f1<-(exec-order (table-id ?id) (step ?s2) (phase 3))
   ?f2<-(astar-solution (value no))
@@ -305,6 +314,8 @@
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] A-Star not found solution to the dispenser: "?c" in ("?rd","?cd")" crlf)
     (printout t " [DEBUG] [F3:s"?current":"?id"] Wait and try again." crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "A-Star not found solution to the dispenser: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Wait and try again.")))
   )
 )
 ;
@@ -314,7 +325,7 @@
 ; regola per caricare il cibo
 (defrule strategy-do-LoadFood
   (declare (salience 70))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 4) (food-order ?fo))
@@ -330,13 +341,14 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F4:s"?current":"?id"] Loading food in dipsenser FD: ("?rd","?cd")" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Loading food in dipsenser FD")))
   )
 )
 
 ; regola per caricare il drink
 (defrule strategy-do-LoadDrink
   (declare (salience 70))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 4) (drink-order ?do))
@@ -352,6 +364,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F4:s"?current":"?id"] Loading drink in dispenser DD: ("?rd","?cd")" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Loading drink in dispenser DD")))
   )
 )
 
@@ -361,7 +374,7 @@
 ; controllo che l'agente possa operare sul trash basket ovvero che sia in una posizione adiacente.
 (defrule strategy-do-EmptyFood
   (declare (salience 70))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   (exec-order (step ?s2) (table-id ?id) (phase 4))
@@ -380,6 +393,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F4:s"?current":"?id"] EmptyFood in TrashBasket: ("?rfo","?cfo")" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "EmptyFood in TrashBasket: %p1 %p2") (param1 ?rfo) (param2 ?cfo))) 
   )
 )
 
@@ -389,7 +403,7 @@
 ; controllo che l'agente possa operare sul trash basket ovvero che sia in una posizione adiacente.
 (defrule strategy-do-Release
   (declare (salience 70))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   (exec-order (step ?s2) (table-id ?id) (phase 4))
@@ -408,6 +422,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F4:s"?current":"?id"] Release drink in RecyclableBasket: ("?rfo","?cfo")" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Release drink in RecyclableBasket: %p1 %p2") (param1 ?rfo) (param2 ?cfo))) 
   )
 )
 
@@ -429,7 +444,7 @@
 
 ;Controllo se deve caricare altra roba
 (defrule strategy-return-phase2_order
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
     ?f1<-(exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status accepted))
@@ -443,12 +458,14 @@
     (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has space available, return to Phase 2" crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent has space available, return to Phase 2"))) 
+
     )
 )
 
 ;Controllo se ho altro sporco da scaricare.
 (defrule strategy-return-phase2_delayed
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   ?f1<-(exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status delayed))
@@ -462,6 +479,7 @@
     (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent has trash, return to Phase 2: agent trash")))
     )
   else
     (modify ?f1 (phase 2) (status accepted))
@@ -470,13 +488,14 @@
     (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has finished trashing, starting serving table" ?id crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent has finished trashing, starting serving table")))
     )
   )
 
 )
 ; Se era un ordine di finish e non ho sporco a bordo ho finito di pulire e vado alla fase 6. Altrimenti se ho ancora sporco vado alla 2.
 (defrule strategy-return-phase2_finish
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   ?f1 <- (exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status finish))
@@ -489,6 +508,7 @@
     (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4.5:s"?current":"?id"] (FINISH) Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent has trash, return to Phase 2: agent trash")))
     )
   else
     (modify ?f1 (phase 6))
@@ -497,7 +517,7 @@
 
 ; L'agente ha caricato tutti i food o drink per quell'ordine o è arrivato alla capienza max trasportabile, possiamo andare alla fase 5, cioè cercare il piano per arrivare al tavolo
 (defrule strategy-go-phase5
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   ?f1 <- (exec-order (table-id ?id) (drink-order ?do) (food-order ?fo) (phase 4.5) (status ?a))
@@ -512,6 +532,8 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fo", drink: "?do") action "?a crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 5, a-star towards table %p1") (param1 ?id)))
+
   )
 )
 
@@ -554,7 +576,7 @@
 ;Eseguito il piano, il robot si trova vicino al tavolo.
 (defrule strategy-go-phase6
   (declare (salience 1))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rt ?ct) (result ok))
   ?f2<-(exec-order (table-id ?id) (phase 5) (drink-order ?do) (food-order ?fo) (status ?a))
@@ -564,6 +586,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Init Phase 6, Agent in front of table " ?id ", order (food: "?fo", drink: "?do") action ("?a")" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 6, Agent in front of table %p1") (param1 ?id)))
   )
 )
 
@@ -571,7 +594,7 @@
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
 (defrule strategy-re-execute-phase5
   (declare (salience 1))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   ?f2<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
@@ -585,6 +608,7 @@
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 5: Plane Failed. Wait and try again." crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 5: Plane Failed. Wait and try again")))
   )
 )
 
@@ -594,7 +618,7 @@
 (defrule strategy-no-astar-solution-in-phase5
   (declare (salience 20))
   (debug ?level)
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5))
   ?f2<-(astar-solution (value no))
   ?f3<-(K-agent)
@@ -608,6 +632,7 @@
     then
     (printout t " [DEBUG] [F5:s"?current":"?id"] A-Star not found solution to the table: "?id crlf)
     (printout t " [DEBUG] [F5:s"?current":"?id"] Wait and try again." crlf)
+    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "A-Star not found solution to the table. Wait and try again.")))
   )
 )
 ;
@@ -617,7 +642,7 @@
 ;Regola per scaricare il food al tavolo
 (defrule strategy-do-DeliveryFood
   (declare(salience 10))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   (exec-order (step ?s2) (table-id ?id) (phase 6) (status accepted) (food-order ?fo))
@@ -631,13 +656,14 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"-SERVE] Delivery Food" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Delivery Food")))
   )
 )
 
 ;Regola per scaricare i drink al tavolo
 (defrule strategy-do-DeliveryDrink
   (declare(salience 10))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
 
   (exec-order (step ?s2) (table-id ?id) (phase 6) (status accepted) (drink-order ?do))
@@ -651,13 +677,14 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"-SERVE] Delivery Drink" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Delivery Drink")))
   )
 )
 
 ;regola per pulire il tavolo se l'ordine era delayed o finish.
 (defrule strategy-do-CleanTable
   (declare(salience 10))
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
@@ -682,6 +709,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CleanTable" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "CleanTable")))
   )
 )
 
@@ -716,7 +744,7 @@
 
 ;Devo ancora consegnare della roba al tavolo. Devo ricercare il best-dispenser (FASE 2)
 (defrule strategy-return-phase7-to-2_accepted
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status accepted) (food-order ?fo) (drink-order ?do))
   ; ho scaricato tutta la roba
@@ -728,12 +756,13 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Order not completed, return to phase 2")))
   )
 )
 
 ;Devo ancora buttare lo sporco. Devo ricercare il cestino più vicino (FASE 2)
 (defrule strategy-return-phase7-to-2_delayed
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status delayed|finish))
   (K-agent (l_d_waste ?ldw) (l_f_waste ?lfw))
@@ -745,13 +774,14 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F7:s"?current":"?id"-CLEAN] CleanTable, sono pieno di trash, return to phase 2" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "CleanTable, sono pieno di trash, return to phase 2")))
   )
 )
 
 ;Ordine completato. Devo trovare il nuovo ordine da evadare.
 ;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
 (defrule strategy-order-completed
-  (status (step ?current))
+  (status (step ?current) (time ?time))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
 
@@ -763,5 +793,6 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
+  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Order at step %p1 of table: %p2 is completed") (param1 ?step) (param2 ?id)))
   )
 )
