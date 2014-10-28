@@ -4,3 +4,5 @@ INPUT c:/texlive/2014/texmf-dist/web2c/texmf.cnf
 INPUT c:/texlive/2014/texmf-var/web2c/pdftex/pdflatex.fmt
 INPUT c:/Users/Andrea/Documents/GitHub/NG_Cafe/Relazione/Torasso/sections/introduction.tex
 OUTPUT Output/introduction.log
+OUTPUT Output/introduction.pdf
+INPUT c:/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map

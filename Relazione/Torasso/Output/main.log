@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  23 OCT 2014 11:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  28 OCT 2014 21:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -402,14 +402,21 @@ File: pdftex.def 2011/05/27 v0.06d Graphics/color for pdfTeX
 ))
 \Gin@req@height=\dimen107
 \Gin@req@width=\dimen108
+) (c:/texlive/2014/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+\wrapoverhang=\dimen109
+\WF@size=\dimen110
+\c@WF@wrappedlines=\count99
+\WF@box=\box26
+\WF@everypar=\toks17
+Package: wrapfig 2003/01/31  v 3.6
 ) (c:/texlive/2014/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2014/09/25 3.9l The Babel package
 (c:/texlive/2014/texmf-dist/tex/generic/babel-english/english.ldf
 Language: english 2012/08/20 v3.3p English support from the babel system
 (c:/texlive/2014/texmf-dist/tex/generic/babel/babel.def
 File: babel.def 2014/09/25 3.9l Babel common definitions
-\babel@savecnt=\count99
-\U@D=\dimen109
+\babel@savecnt=\count100
+\U@D=\dimen111
 )
 \l@canadian = a dialect from \language\l@american 
 \l@australian = a dialect from \language\l@british 
@@ -418,50 +425,50 @@ File: babel.def 2014/09/25 3.9l Babel common definitions
 Package: subfiles 2012/05/23 Federico Garcia
 (c:/texlive/2014/texmf-dist/tex/latex/tools/verbatim.sty
 Package: verbatim 2003/08/22 v1.5q LaTeX2e package for verbatim enhancements
-\every@verbatim=\toks17
-\verbatim@line=\toks18
+\every@verbatim=\toks18
+\verbatim@line=\toks19
 \verbatim@in@stream=\read1
 )) (c:/texlive/2014/texmf-dist/tex/latex/blindtext/blindtext.sty
 Package: blindtext 2012/01/06 V2.0 blindtext-Package
 (c:/texlive/2014/texmf-dist/tex/latex/tools/xspace.sty
 Package: xspace 2009/10/20 v1.13 Space after command names (DPC,MH)
 )
-\c@blindtext=\count100
-\c@Blindtext=\count101
-\c@blind@countparstart=\count102
-\blind@countxx=\count103
-\blindtext@numBlindtext=\count104
-\blind@countyy=\count105
-\c@blindlist=\count106
-\c@blindlistlevel=\count107
-\c@blindlist@level=\count108
-\blind@listitem=\count109
-\c@blind@listcount=\count110
-\c@blind@levelcount=\count111
-\blind@mathformula=\count112
-\blind@Mathformula=\count113
-\c@blind@randomcount=\count114
-\c@blind@randommax=\count115
-\c@blind@pangramcount=\count116
-\c@blind@pangrammax=\count117
+\c@blindtext=\count101
+\c@Blindtext=\count102
+\c@blind@countparstart=\count103
+\blind@countxx=\count104
+\blindtext@numBlindtext=\count105
+\blind@countyy=\count106
+\c@blindlist=\count107
+\c@blindlistlevel=\count108
+\c@blindlist@level=\count109
+\blind@listitem=\count110
+\c@blind@listcount=\count111
+\c@blind@levelcount=\count112
+\blind@mathformula=\count113
+\blind@Mathformula=\count114
+\c@blind@randomcount=\count115
+\c@blind@randommax=\count116
+\c@blind@pangramcount=\count117
+\c@blind@pangrammax=\count118
 ) (c:/texlive/2014/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count118
-\lst@gtempboxa=\box26
-\lst@token=\toks19
-\lst@length=\count119
-\lst@currlwidth=\dimen110
-\lst@column=\count120
-\lst@pos=\count121
-\lst@lostspace=\dimen111
-\lst@width=\dimen112
-\lst@newlines=\count122
-\lst@lineno=\count123
-\lst@maxwidth=\dimen113
+\lst@mode=\count119
+\lst@gtempboxa=\box27
+\lst@token=\toks20
+\lst@length=\count120
+\lst@currlwidth=\dimen112
+\lst@column=\count121
+\lst@pos=\count122
+\lst@lostspace=\dimen113
+\lst@width=\dimen114
+\lst@newlines=\count123
+\lst@lineno=\count124
+\lst@maxwidth=\dimen115
 (c:/texlive/2014/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2014/09/06 1.5e (Carsten Heinz)
-\c@lstnumber=\count124
-\lst@skipnumbers=\count125
-\lst@framebox=\box27
+\c@lstnumber=\count125
+\lst@skipnumbers=\count126
+\lst@framebox=\box28
 ) (c:/texlive/2014/texmf-dist/tex/latex/listings/listings.cfg
 File: listings.cfg 2014/09/06 1.5e listings configuration
 ))
@@ -474,73 +481,73 @@ For additional information on amsmath, use the `?' option.
 Package: amstext 2000/06/29 v2.01
 (c:/texlive/2014/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0
-\@emptytoks=\toks20
-\ex@=\dimen114
+\@emptytoks=\toks21
+\ex@=\dimen116
 )) (c:/texlive/2014/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d
-\pmbraise@=\dimen115
+\pmbraise@=\dimen117
 ) (c:/texlive/2014/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 1999/12/14 v2.01 operator names
 )
-\inf@bad=\count126
+\inf@bad=\count127
 LaTeX Info: Redefining \frac on input line 210.
-\uproot@=\count127
-\leftroot@=\count128
+\uproot@=\count128
+\leftroot@=\count129
 LaTeX Info: Redefining \overline on input line 306.
-\classnum@=\count129
-\DOTSCASE@=\count130
+\classnum@=\count130
+\DOTSCASE@=\count131
 LaTeX Info: Redefining \ldots on input line 378.
 LaTeX Info: Redefining \dots on input line 381.
 LaTeX Info: Redefining \cdots on input line 466.
-\Mathstrutbox@=\box28
-\strutbox@=\box29
-\big@size=\dimen116
+\Mathstrutbox@=\box29
+\strutbox@=\box30
+\big@size=\dimen118
 LaTeX Font Info:    Redeclaring font encoding OML on input line 566.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 567.
-\macc@depth=\count131
-\c@MaxMatrixCols=\count132
+\macc@depth=\count132
+\c@MaxMatrixCols=\count133
 \dotsspace@=\muskip11
-\c@parentequation=\count133
-\dspbrk@lvl=\count134
-\tag@help=\toks21
-\row@=\count135
-\column@=\count136
-\maxfields@=\count137
-\andhelp@=\toks22
-\eqnshift@=\dimen117
-\alignsep@=\dimen118
-\tagshift@=\dimen119
-\tagwidth@=\dimen120
-\totwidth@=\dimen121
-\lineht@=\dimen122
-\@envbody=\toks23
+\c@parentequation=\count134
+\dspbrk@lvl=\count135
+\tag@help=\toks22
+\row@=\count136
+\column@=\count137
+\maxfields@=\count138
+\andhelp@=\toks23
+\eqnshift@=\dimen119
+\alignsep@=\dimen120
+\tagshift@=\dimen121
+\tagwidth@=\dimen122
+\totwidth@=\dimen123
+\lineht@=\dimen124
+\@envbody=\toks24
 \multlinegap=\skip45
 \multlinetaggap=\skip46
-\mathdisplay@stack=\toks24
+\mathdisplay@stack=\toks25
 LaTeX Info: Redefining \[ on input line 2665.
 LaTeX Info: Redefining \] on input line 2666.
 ) (./settings/tex-settings.tex) (Output/main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Try loading font information for T1+lmr on input line 76.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Try loading font information for T1+lmr on input line 77.
 (c:/texlive/2014/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-\AtBeginShipoutBox=\box30
+\AtBeginShipoutBox=\box31
 (c:/texlive/2014/texmf-dist/tex/latex/graphics/color.sty
 Package: color 2014/04/23 v1.1a Standard LaTeX Color (DPC)
 (c:/texlive/2014/texmf-dist/tex/latex/latexconfig/color.cfg
@@ -548,34 +555,34 @@ File: color.cfg 2007/01/18 v1.5 color configuration of teTeX/TeXLive
 )
 Package color Info: Driver file: pdftex.def on input line 137.
 )
-Package hyperref Info: Link coloring ON on input line 76.
+Package hyperref Info: Link coloring ON on input line 77.
 (c:/texlive/2014/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2012/10/27 v2.43 Cross-referencing by name of section
 (c:/texlive/2014/texmf-dist/tex/generic/oberdiek/gettitlestring.sty
 Package: gettitlestring 2010/12/03 v1.4 Cleanup title references (HO)
 )
-\c@section@level=\count138
+\c@section@level=\count139
 )
-LaTeX Info: Redefining \ref on input line 76.
-LaTeX Info: Redefining \pageref on input line 76.
-LaTeX Info: Redefining \nameref on input line 76.
+LaTeX Info: Redefining \ref on input line 77.
+LaTeX Info: Redefining \pageref on input line 77.
+LaTeX Info: Redefining \nameref on input line 77.
 (Output/main.out) (Output/main.out)
 \@outlinefile=\write3
 \openout3 = `main.out'.
 
 (c:/texlive/2014/texmf-dist/tex/context/base/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count139
-\scratchdimen=\dimen123
-\scratchbox=\box31
-\nofMPsegments=\count140
-\nofMParguments=\count141
-\everyMPshowfont=\toks25
-\MPscratchCnt=\count142
-\MPscratchDim=\dimen124
-\MPnumerator=\count143
-\makeMPintoPDFobject=\count144
-\everyMPtoPDFconversion=\toks26
+\scratchcounter=\count140
+\scratchdimen=\dimen125
+\scratchbox=\box32
+\nofMPsegments=\count141
+\nofMParguments=\count142
+\everyMPshowfont=\toks26
+\MPscratchCnt=\count143
+\MPscratchDim=\dimen126
+\MPnumerator=\count144
+\makeMPintoPDFobject=\count145
+\everyMPtoPDFconversion=\toks27
 ) (c:/texlive/2014/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
 (c:/texlive/2014/texmf-dist/tex/latex/oberdiek/grfext.sty
@@ -589,43 +596,43 @@ G,.JBIG2,.JB2,.eps]
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-\c@lstlisting=\count145
-LaTeX Font Info:    Try loading font information for OT1+lmr on input line 80.
+\c@lstlisting=\count146
+LaTeX Font Info:    Try loading font information for OT1+lmr on input line 81.
 (c:/texlive/2014/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OML+lmm on input line 80.
+LaTeX Font Info:    Try loading font information for OML+lmm on input line 81.
 (c:/texlive/2014/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 80.
+LaTeX Font Info:    Try loading font information for OMS+lmsy on input line 81.
 
 (c:/texlive/2014/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
-LaTeX Font Info:    Try loading font information for OMX+lmex on input line 80.
+LaTeX Font Info:    Try loading font information for OMX+lmex on input line 81.
 
 (c:/texlive/2014/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <24.88> on input line 80.
+(Font)              <24.88> on input line 81.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <20.74> on input line 80.
+(Font)              <20.74> on input line 81.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <17.28> on input line 80.
+(Font)              <17.28> on input line 81.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 80.
+(Font)              <12> on input line 81.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 80.
+(Font)              <8> on input line 81.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 80.
+(Font)              <6> on input line 81.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 80.
+(Font)              <10> on input line 81.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 80.
+(Font)              <7> on input line 81.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 80.
+(Font)              <5> on input line 81.
 [1
 
 
@@ -642,7 +649,7 @@ pdfTeX warning (ext4): destination with the same identifier (name{page.i}) has
 been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.95 \mainmatter
+l.96 \mainmatter
                  [1
 
 ] (./sections/introduction.tex
@@ -658,44 +665,51 @@ LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10.95> not available
 
 ] [2]
 Chapter 2.
-<images/schema-fifo-wait.png, id=96, 1251.67625pt x 2416.02625pt>
-File: images/schema-fifo-wait.png Graphic file (type png)
-<use images/schema-fifo-wait.png>
-Package pdftex.def Info: images/schema-fifo-wait.png used on input line 52.
-(pdftex.def)             Requested size: 360.0pt x 694.87865pt.
-
-Overfull \hbox (17.0pt too wide) in paragraph at lines 52--53
-[][] 
- []
-
 [3
 
-]
-Overfull \vbox (99.07838pt too high) has occurred while \output is active []
+] <images/schema-fifo-wait.png, id=94, 1251.67625pt x 2416.02625pt>
+File: images/schema-fifo-wait.png Graphic file (type png)
+<use images/schema-fifo-wait.png>
+Package pdftex.def Info: images/schema-fifo-wait.png used on input line 54.
+(pdftex.def)             Requested size: 360.0pt x 694.87865pt.
 
-[4 <./images/schema-fifo-wait.png>] [5] [6]
-Chapter 3.
+LaTeX Warning: Float too large for page by 124.80753pt on input line 57.
+
+<images/Problem1_fifo_wait.png, id=96, 304.13625pt x 174.6525pt>
+File: images/Problem1_fifo_wait.png Graphic file (type png)
+<use images/Problem1_fifo_wait.png>
+Package pdftex.def Info: images/Problem1_fifo_wait.png used on input line 77.
+(pdftex.def)             Requested size: 118.80066pt x 68.2208pt.
+[4] [5 <./images/schema-fifo-wait.png>] <images/Problem2_fifo_wait.png, id=108,
+ 174.6525pt x 146.79843pt>
+File: images/Problem2_fifo_wait.png Graphic file (type png)
+<use images/Problem2_fifo_wait.png>
+Package pdftex.def Info: images/Problem2_fifo_wait.png used on input line 85.
+(pdftex.def)             Requested size: 90.0pt x 75.64795pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 88--89
+
+ []
+
 )
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 108.
-[7
-
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 108.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 109.
+[6 <./images/Problem1_fifo_wait.png> <./images/Problem2_fifo_wait.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 109.
 (Output/main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 108.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 108.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 109.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 109.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: D7C5375F045F83D88310D106A0B3ECF9;446.
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 108.
+(rerunfilecheck)             Checksum: F20F9C41BD649BB4D01D26A9EFDB771C;406.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 109.
  ) 
 Here is how much of TeX's memory you used:
- 8518 strings out of 493107
- 119634 string characters out of 6138433
- 222413 words of memory out of 5000000
- 11804 multiletter control sequences out of 15000+600000
+ 8593 strings out of 493107
+ 120765 string characters out of 6138433
+ 223677 words of memory out of 5000000
+ 11874 multiletter control sequences out of 15000+600000
  85819 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 29i,7n,32p,1035b,1059s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 29i,7n,32p,682b,1059s stack positions out of 5000i,500n,10000p,200000b,80000s
 {c:/texlive/2014/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/texlive/2014/tex
 mf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}<c:/texlive/2014/texmf-dist/fonts/type
 1/public/lm/lmbx10.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmbx12
@@ -705,10 +719,10 @@ ts/type1/public/lm/lmr12.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/
 lmr17.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/texliv
 e/2014/texmf-dist/fonts/type1/public/lm/lmro10.pfb><c:/texlive/2014/texmf-dist/
 fonts/type1/public/lm/lmsy10.pfb>
-Output written on Output/main.pdf (9 pages, 351047 bytes).
+Output written on Output/main.pdf (8 pages, 481541 bytes).
 PDF statistics:
- 162 PDF objects out of 1000 (max. 8388607)
- 138 compressed objects within 2 object streams
- 36 named destinations out of 1000 (max. 500000)
- 70 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 157 PDF objects out of 1000 (max. 8388607)
+ 130 compressed objects within 2 object streams
+ 35 named destinations out of 1000 (max. 500000)
+ 72 words of extra memory for PDF output out of 10000 (max. 10000000)
 

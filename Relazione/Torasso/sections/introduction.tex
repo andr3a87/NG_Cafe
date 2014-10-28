@@ -6,7 +6,7 @@ Nel progetto sono stati affrontati alcuni dei vari problemi che riguardano l'int
 Per svolgere il progetto di IA-LAB sono state implementate 4 strategie in maniera incrementale:
 \begin{itemize}
   \item FIFO WAIT: la strategia usa la politica fifo come politica di scelta degli ordini. 
-  \item FIFO: Simile alla precendente, ma in caso di ostacolo che non permette di servire un ordine, l'ordine viene messo al fondo.
+  \item FIFO PRO: Simile alla precendente, ma in caso di ostacolo che non permette di servire un ordine, l'ordine viene messo al fondo.
   \item LOW PENALITY: strategia che si basa sulla penalità per effettuare la scelta dell'ordine.
   \item HARD: a differenza delle altre 3 strategia, questa permette di gestire più ordini in contemporanea. Come la precedente si basa sulle penalità.
 \end{itemize}
@@ -48,8 +48,13 @@ La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto se
   \item Ordine Delayed: un ordine di questo tipo verrà completato solo quando verranno consegnate al tavolo tutte le consumazioni richieste. Rispetto al caso precedente le consumazioni non potranno esser consengate fin quando il tavolo non verrà pulito e le consumazioni buttate nel cestino.
   \item Ordine Finish: un ordine di questo tipo verrà completato solo quanto verrà pulito il tavolo e il robot butterà lo sporco nei vari cestini.
 \end{itemize}
+\newpage
 
-\includegraphics[width=\textwidth]{schema-fifo-wait.png}
+\begin{figure}
+  \includegraphics[width=\textwidth]{schema-fifo-wait.png}
+  \caption{Schema Fifo Wait}
+  \label{fig:figure}
+\end{figure}
 
 Come possiamo vedere dallo schema abbiamo suddiviso la nostre strategia in 7 fasi:
 \begin{itemize}
@@ -65,8 +70,21 @@ Come possiamo vedere dallo schema abbiamo suddiviso la nostre strategia in 7 fas
 \end{itemize}
 
 \subsection{Vantaggi e Svantaggi}
-Vantaggio di questa strategia è sicuramente la semplicità e l'intuibilità con la quale il sistema funziona. L'idea di questa strategia, oltra alla politica di evasione degli ordini che può essere cambiata in qualsiasi momento andando solo a modificare la fase 1, è quella che il mondo è dinamico e lo è con una certa frequenza. L'assunzione dalla quale siamo partiti è che le persone si spostano e si spostano molto frequentemente. Da questo risulta evidente che se per arrivare in una determinata posizione incontro un ostacolo (una persona) la mossa più conveniente è quella di aspettare.
-Se prendiamo in considerazione le teorie di Rodney Brooks in cui afferma che un comportamento intelligente è attribuibile da un osservatore esterno che vede l'agente interagire con l'ambiente, allora in alcune circostanze il nostro agente potrebbe non dimostrare tale comportamento intelligente. Se una persona rimane, anche se per pochi step in una posizione lungo il percorso dell'agente, il nostro agente invece di aggirarla e dimostrare un comportamento intelligente continuerà a provare a muoversi lungo la sua direzione fin quando la persona non si sarà spostata. Questo comportamento porta anche a situazioni di deadlock. Essendo in un ambiente simulato anche le persone non hanno un comportamento intelligente, supponendo che una persona si vuole spostare in direzione sud e il robot in direzione nord si arriva in una situazione di stallo. Per ovviare a questa problematica abbiamo implementato la strategia FIFO.
+Vantaggio di questa strategia è sicuramente la semplicità e l'intuibilità con la quale il sistema funziona. L'idea di questa strategia, oltra alla politica di evasione degli ordini che può essere cambiata in qualsiasi momento andando solo a modificare la fase 1, è quella che il mondo è dinamico e lo è con una certa frequenza. 
 
-\chapter{Strategie}
-\section{Strategia FIFO}
+\begin{wrapfigure}{r}{0.33\textwidth} 
+    \centering
+    \includegraphics[width=0.33\textwidth]{Problem1_fifo_wait.png}
+\end{wrapfigure}
+
+L'assunzione dalla quale siamo partiti è che le persone si spostano e si spostano molto frequentemente. Da questo risulta evidente che se per arrivare in una determinata posizione incontro un ostacolo (una persona) la mossa più conveniente è quella di aspettare.
+Se prendiamo in considerazione le teorie di Rodney Brooks in cui afferma che un comportamento intelligente è attribuibile da un osservatore esterno che vede l'agente interagire con l'ambiente, allora in alcune circostanze il nostro agente potrebbe non dimostrare tale comportamento intelligente. Se una persona rimane, anche se per pochi step in una posizione lungo il percorso dell'agente, il nostro agente invece di aggirarla e dimostrare un comportamento intelligente continuerà a provare a muoversi lungo la sua direzione fin quando la persona non si sarà spostata. 
+
+\begin{wrapfigure}{l}{0.25\textwidth} 
+    \centering
+    \includegraphics[width=0.25\textwidth]{Problem2_fifo_wait.png}
+\end{wrapfigure}
+
+Questo comportamento porta anche a situazioni di deadlock. Essendo in un ambiente simulato anche le persone non hanno un comportamento intelligente, supponendo che una persona si vuole spostare in direzione sud e il robot in direzione nord si arriva in una situazione di stallo. Per ovviare a questa problematica abbiamo implementato la strategia FIFO PRO.\\
+
+\section{Strategia FIFO PRO}

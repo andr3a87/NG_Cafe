@@ -62,6 +62,8 @@ INPUT c:/texlive/2014/texmf-dist/tex/latex/latexconfig/graphics.cfg
 INPUT c:/texlive/2014/texmf-dist/tex/latex/latexconfig/graphics.cfg
 INPUT c:/texlive/2014/texmf-dist/tex/latex/pdftex-def/pdftex.def
 INPUT c:/texlive/2014/texmf-dist/tex/latex/pdftex-def/pdftex.def
+INPUT c:/texlive/2014/texmf-dist/tex/latex/wrapfig/wrapfig.sty
+INPUT c:/texlive/2014/texmf-dist/tex/latex/wrapfig/wrapfig.sty
 INPUT c:/texlive/2014/texmf-dist/tex/generic/babel/babel.sty
 INPUT c:/texlive/2014/texmf-dist/tex/generic/babel/babel.sty
 INPUT c:/texlive/2014/texmf-dist/tex/generic/babel-english/english.ldf
@@ -187,6 +189,12 @@ INPUT c:/texlive/2014/texmf-dist/fonts/tfm/public/lm/ec-lmro10.tfm
 INPUT images/schema-fifo-wait.png
 INPUT ./images/schema-fifo-wait.png
 INPUT ./images/schema-fifo-wait.png
+INPUT images/Problem1_fifo_wait.png
+INPUT ./images/Problem1_fifo_wait.png
+INPUT ./images/Problem1_fifo_wait.png
+INPUT images/Problem2_fifo_wait.png
+INPUT ./images/Problem2_fifo_wait.png
+INPUT ./images/Problem2_fifo_wait.png
 INPUT Output/main.aux
 INPUT Output/main.out
 INPUT Output/main.out
