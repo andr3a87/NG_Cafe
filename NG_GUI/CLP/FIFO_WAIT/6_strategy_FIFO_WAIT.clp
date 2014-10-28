@@ -51,7 +51,7 @@
 ;Ricerca dell'ordine da servire. La ricerca avviene sia sulle Inform che sulle Finish. Si ricerca l'ordine più vecchio non ancora servito.
 (defrule strategy-go-phase1
   (declare (salience 70))
-  (status (step ?current) )
+  (status (step ?current) (time ?t1) )
   (debug ?level)
   ?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
@@ -69,7 +69,7 @@
   (if (> ?level 0)
     then
       (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
-      (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Inizializza Fase 1 - target tavolo: %p1") (param1 ?sen)))
+      (assert (printGUI (time ?t1) (step ?current) (source "ENV") (verbosity 0) (text "Inizializza Fase 1 - target tavolo: %p1") (param1 ?sen)))
 
   )
 )
@@ -178,8 +178,8 @@
     then
     (printout t " [DEBUG] [F2:s"?current":"?id"] Dispenser/Basket Found: " ?c " in ("?rd1", "?cd1")"  crlf)
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Pianifica Astar verso dispenser " ?c " in ("?rd1", "?cd1")"  crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Dispenser/Basket Found in: %p1, %p2") (param1 ?rd1) (param2 ?cd1)))
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 3: Pianifica Astar verso dispenser")))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Dispenser/Basket Found in: %p1, %p2") (param1 ?rd1) (param2 ?cd1)))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Init Phase 3: Pianifica Astar verso dispenser")))
   )
 )
 
@@ -197,8 +197,8 @@
     then
     (printout t " [DEBUG] [F2:s"?current":"?id"] Agent hasn't space available. Useless found dispenser."  crlf)
     (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fo", drink: "?do")" crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent hasn't space available. Useless found dispenser.")))
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 5, a-star towards table %p1, order") (param1 ?id)))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Agent hasn't space available. Useless found dispenser.")))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Init Phase 5, a-star towards table %p1, order") (param1 ?id)))
   )
 )
 
@@ -265,7 +265,7 @@
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4:s"?current":"?id"] Init Phase 4 - Agent in front of best dispenser: "?c" in ("?rd","?cd")" crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 4 - Agent in front of best dispenser: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Init Phase 4 - Agent in front of best dispenser: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
   )
 )
 
@@ -288,7 +288,7 @@
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Plane Failed. Wait and try again go to: "?c" in ("?rd","?cd")" crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 3: Plane Failed. Wait and try again go to: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Init Phase 3: Plane Failed. Wait and try again go to: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
 
   )
 )
@@ -314,8 +314,8 @@
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] A-Star not found solution to the dispenser: "?c" in ("?rd","?cd")" crlf)
     (printout t " [DEBUG] [F3:s"?current":"?id"] Wait and try again." crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "A-Star not found solution to the dispenser: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Wait and try again.")))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "A-Star not found solution to the dispenser: %p1 in %p2,%p3") (param1 ?c) (param2 ?rd) (param3 ?cd)))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Wait and try again.")))
   )
 )
 ;
@@ -341,7 +341,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F4:s"?current":"?id"] Loading food in dipsenser FD: ("?rd","?cd")" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Loading food in dipsenser FD")))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Loading food in dipsenser FD")))
   )
 )
 
@@ -364,7 +364,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F4:s"?current":"?id"] Loading drink in dispenser DD: ("?rd","?cd")" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Loading drink in dispenser DD")))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Loading drink in dispenser DD")))
   )
 )
 
@@ -393,7 +393,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F4:s"?current":"?id"] EmptyFood in TrashBasket: ("?rfo","?cfo")" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "EmptyFood in TrashBasket: %p1 %p2") (param1 ?rfo) (param2 ?cfo))) 
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "EmptyFood in TrashBasket: %p1 %p2") (param1 ?rfo) (param2 ?cfo))) 
   )
 )
 
@@ -422,7 +422,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F4:s"?current":"?id"] Release drink in RecyclableBasket: ("?rfo","?cfo")" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Release drink in RecyclableBasket: %p1 %p2") (param1 ?rfo) (param2 ?cfo))) 
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Release drink in RecyclableBasket: %p1 %p2") (param1 ?rfo) (param2 ?cfo))) 
   )
 )
 
@@ -458,7 +458,7 @@
     (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has space available, return to Phase 2" crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent has space available, return to Phase 2"))) 
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Agent has space available, return to Phase 2"))) 
 
     )
 )
@@ -479,7 +479,7 @@
     (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent has trash, return to Phase 2: agent trash")))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Agent has trash, return to Phase 2: agent trash")))
     )
   else
     (modify ?f1 (phase 2) (status accepted))
@@ -488,7 +488,7 @@
     (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4.5:s"?current":"?id"] Agent has finished trashing, starting serving table" ?id crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent has finished trashing, starting serving table")))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Agent has finished trashing, starting serving table")))
     )
   )
 
@@ -508,7 +508,7 @@
     (if (> ?level 0)
     then
     (printout t " [DEBUG] [F4.5:s"?current":"?id"] (FINISH) Agent has trash, return to Phase 2: agent trash (food: "?lfw", drink: "?ldw")" crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Agent has trash, return to Phase 2: agent trash")))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Agent has trash, return to Phase 2: agent trash")))
     )
   else
     (modify ?f1 (phase 6))
@@ -532,7 +532,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F5:s"?current":"?id"] Init Phase 5, a-star towards table "?id", order (food: "?fo", drink: "?do") action "?a crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 5, a-star towards table %p1") (param1 ?id)))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Init Phase 5, a-star towards table %p1") (param1 ?id)))
 
   )
 )
@@ -586,7 +586,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Init Phase 6, Agent in front of table " ?id ", order (food: "?fo", drink: "?do") action ("?a")" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 6, Agent in front of table %p1") (param1 ?id)))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Init Phase 6, Agent in front of table %p1") (param1 ?id)))
   )
 )
 
@@ -608,7 +608,7 @@
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 5: Plane Failed. Wait and try again." crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Init Phase 5: Plane Failed. Wait and try again")))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Init Phase 5: Plane Failed. Wait and try again")))
   )
 )
 
@@ -632,7 +632,7 @@
     then
     (printout t " [DEBUG] [F5:s"?current":"?id"] A-Star not found solution to the table: "?id crlf)
     (printout t " [DEBUG] [F5:s"?current":"?id"] Wait and try again." crlf)
-    (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "A-Star not found solution to the table. Wait and try again.")))
+    (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "A-Star not found solution to the table. Wait and try again.")))
   )
 )
 ;
@@ -656,7 +656,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"-SERVE] Delivery Food" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Delivery Food")))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Delivery Food")))
   )
 )
 
@@ -677,7 +677,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"-SERVE] Delivery Drink" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Delivery Drink")))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Delivery Drink")))
   )
 )
 
@@ -709,7 +709,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"-CLEAN] CleanTable" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "CleanTable")))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "CleanTable")))
   )
 )
 
@@ -756,7 +756,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Order not completed, return to phase 2")))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Order not completed, return to phase 2")))
   )
 )
 
@@ -774,7 +774,7 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F7:s"?current":"?id"-CLEAN] CleanTable, sono pieno di trash, return to phase 2" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "CleanTable, sono pieno di trash, return to phase 2")))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "CleanTable, sono pieno di trash, return to phase 2")))
   )
 )
 
@@ -793,6 +793,6 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
-  (assert (printGUI (time ?time) (step ?current) (source "FIFO_WAIT") (verbosity 1) (text  "Order at step %p1 of table: %p2 is completed") (param1 ?step) (param2 ?id)))
+  (assert (printGUI (time ?time) (step ?current) (source "ENV") (verbosity 0) (text  "Order at step %p1 of table: %p2 is completed") (param1 ?step) (param2 ?id)))
   )
 )
