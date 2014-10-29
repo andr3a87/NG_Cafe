@@ -58,7 +58,7 @@ La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto se
 
 Come possiamo vedere dallo schema abbiamo suddiviso la nostre strategia in 7 fasi:
 \begin{itemize}
-  \item Fase 1: Nella prima fase viene individuato quale sarà l'ordine da servire. 
+  \item Fase 1: Nella prima fase viene individuato quale sarà l'ordine da servire. Ipotizzando di avere una coda in cui gli inserimenti vanno in coda e i prelievi dalla testa, l'ordine da evadere sarà l'ordine arrivato da più tempo cioè quello che ha un valore di step più basso.
   \item Fase 2: In questa fase si andrà ad individuare quale sarà il cestino o il dispenser presso il quale il nostro robot dovrà recarsi. La ricerca del cestino o del dispenser dipene dal tipo di ordine.
   \item Fase 3: In questa fase il robot arriverà alla destinazione prefissata. Per far ciò deve prima calcolare un piano con A* e poi eseguirlo. Il piano viene calcolato solo se non ne esiste già uno. In caso A* non trovi soluzione il robot esegue una wait e prova a ricalcolare A* fin quando non trova una soluzione.
   Quando il robot ha un piano per raggiungere la sua destinazione lo esegue. Nel caso in cui il piano fallisca il robot esegue una wait e prova a rieseguirlo.
@@ -88,3 +88,19 @@ Se prendiamo in considerazione le teorie di Rodney Brooks in cui afferma che un 
 Questo comportamento porta anche a situazioni di deadlock. Essendo in un ambiente simulato anche le persone non hanno un comportamento intelligente, supponendo che una persona si vuole spostare in direzione sud e il robot in direzione nord si arriva in una situazione di stallo. Per ovviare a questa problematica abbiamo implementato la strategia FIFO PRO.\\
 
 \section{Strategia FIFO PRO}
+La strategia FIFO PRO è un estensione della strategia FIFO WAIT per risolvere il "problema" riscontrato precedentemente. I concetti chiave che differenziano questa strategia dalla precendente sono 2:
+\begin{itemize}
+  \item ripianificazione nel caso un piano fallisca
+  \item possibilità di cambiare l'ordine da servire se ci accorgiamo che non è possibile completarlo.
+\end{itemize}
+
+Il primo punto comporta delle modifiche nello schema visto in precedenza nella fase 3 e nella fase 5, ovvero nelle fasi delle ricerca ed esecuzione del piano. La figura 2.2 ci mostra le modifiche.
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{Fase3-FIFO-PRO.png}
+  \caption{Fase 3 e 5 della strategia FIFO PRO}
+  \label{fig:figure}
+\end{figure}
+
+Più complicate le conseguenze del secondo punto, che sono strettamente legate alla pianificazione. La pianificazione non trova sempre una soluzione. Nel caso in cui astar non riesca a trovare un percorso per raggiungere la nostra destinazione non volendo più far aspettare il robot fino a quando la situazioni non si modifichi abbiamo deciso di cambiare l'ordine da servire. Questo comporta che questo ordine verrà messo al fondo della nostro coda di ordini da servire e sarà servito successivamente. Questo commporta alcuni problemi che hanno complicato la stratgia FIFO PRO rispetto la precedente, e che saranno comuni anche alle successive strategie.
+La strategia FIFO WAIT aveva un grosso vantaggio per come è stata progettata che è quello che ogni volta si serve un nuovo ordine sicuramente l'agente si trova in uno stato per iniziare a servirlo. Questo significa che l'agente non ha nè sporco nè consumazioni a bordo. Questa sicurezza non si ha nella strategia FIFO PRO. Supponiamo che un agente stia servendo un ordine finish e debba andare al cestino per liberarsi dallo sporco ma sfortunatamente il cestino non ha punti d'ingresso perchè occupati da persone, questo ordine verrà abbandonato e inserito al fondo e verrà recuperato il successivo ordine. Se il successivo ordine è un accepted non potrò subito avviare le operazioni per servirlo, ma dovrò sempre liberarmi dello sporco.

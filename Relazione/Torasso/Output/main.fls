@@ -195,6 +195,9 @@ INPUT ./images/Problem1_fifo_wait.png
 INPUT images/Problem2_fifo_wait.png
 INPUT ./images/Problem2_fifo_wait.png
 INPUT ./images/Problem2_fifo_wait.png
+INPUT images/Fase3-FIFO-PRO.png
+INPUT ./images/Fase3-FIFO-PRO.png
+INPUT ./images/Fase3-FIFO-PRO.png
 INPUT Output/main.aux
 INPUT Output/main.out
 INPUT Output/main.out
