@@ -28,9 +28,9 @@
         (K-cell (pos-r ?r) (pos-c ?c) (contains Table|DD|FD|TB|RB))
 =>
   (assert (end-astar (- ?r 1) ?c))
-        (assert (end-astar (+ ?r 1) ?c))
-        (assert (end-astar ?r (- ?c 1)))
-        (assert (end-astar ?r (+ ?c 1)))
+  (assert (end-astar (+ ?r 1) ?c))
+  (assert (end-astar ?r (- ?c 1)))
+  (assert (end-astar ?r (+ ?c 1)))
 )
 
 (defrule S0-goal-empty

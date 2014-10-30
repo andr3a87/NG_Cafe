@@ -1,8 +1,10 @@
 # Fdb version 3
-["pdflatex"] 1414573206 "C:\Users\Andrea\Documents\GitHub\NG_Cafe\Relazione\Torasso\sections\introduction.tex" "Output/introduction.pdf" "introduction" 1414573208
-  "C:\Users\Andrea\Documents\GitHub\NG_Cafe\Relazione\Torasso\sections\introduction.tex" 1414573204 7776 9368b5e457227d898dbe63ee4d17c691 ""
+["pdflatex"] 1414676070 "C:\Users\Andrea\Documents\GitHub\NG_Cafe\Relazione\Torasso\sections\introduction.tex" "Output/introduction.pdf" "introduction" 1414676071
+  "C:\Users\Andrea\Documents\GitHub\NG_Cafe\Relazione\Torasso\sections\introduction.tex" 1414676065 13189 f23d0cc59a880cf1a4e52b1a90f55a78 ""
   "Output/introduction.aux" 1413265152 9 a94a2480d3289e625eea47cd1b285758 ""
-  "c:/Users/Andrea/Documents/GitHub/NG_Cafe/Relazione/Torasso/sections/introduction.tex" 1414573204 7776 9368b5e457227d898dbe63ee4d17c691 ""
+  "c:/Users/Andrea/Documents/GitHub/NG_Cafe/Relazione/Torasso/sections/introduction.tex" 1414676065 13189 f23d0cc59a880cf1a4e52b1a90f55a78 ""
+  "c:/texlive/2014/texmf-dist/fonts/map/fontname/texfonts.map" 1412581449 3287 e6b82fe08f5336d4d5ebc73fb1152e87 ""
+  "c:/texlive/2014/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm" 1412580853 1328 c834bbb027764024c09d3d2bf908b5f0 ""
   "c:/texlive/2014/texmf-dist/web2c/texmf.cnf" 1412581813 31722 4f52421e59a4b9e910cf18e64c1f2b4a ""
   "c:/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1412583779 1579237 3ad3d2f54826b951cd64e943e1204d6a ""
   "c:/texlive/2014/texmf-var/web2c/pdftex/pdflatex.fmt" 1412583826 3838386 3bed1cbe76a2913bd3bfa1afb3117d78 ""

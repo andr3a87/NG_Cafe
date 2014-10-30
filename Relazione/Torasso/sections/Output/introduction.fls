@@ -6,3 +6,5 @@ INPUT c:/Users/Andrea/Documents/GitHub/NG_Cafe/Relazione/Torasso/sections/introd
 OUTPUT Output/introduction.log
 OUTPUT Output/introduction.pdf
 INPUT c:/texlive/2014/texmf-var/fonts/map/pdftex/updmap/pdftex.map
+INPUT c:/texlive/2014/texmf-dist/fonts/map/fontname/texfonts.map
+INPUT c:/texlive/2014/texmf-dist/fonts/tfm/public/cm/cmbx10.tfm

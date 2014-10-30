@@ -12,6 +12,7 @@ Per svolgere il progetto di IA-LAB sono state implementate 4 strategie in manier
 \end{itemize}
 
 Ogni strategia è stata suddivisa in fasi dove ogni fase si occupa di uno specifico sotto-problema. Questa suddivisione ci ha permesso sia uno sviluppo incrementale all'interno della stessa strategia, sia tra strategie diverse, dove è bastato andare a sviluppare in modo più articolato una fase oppure nell'inserire nuove fasi.
+Nelle prime due strategia come astrazione utilizzeremo il concetto di coda. Gli ordini verranno inseriti in coda e prelevati dalla testa, quindi prelevati in ordine crescente di step.
 
 \subsection{Astar}
 Tutte le strategia utilizzano il modulo Astar per pianificare dei piani che permettano al nostro robot di spostarsi da un punto A a un punto B. Il punto A è la posizione del robot al momento della pianificazione mentre il goal (il punto B) è dato dalla cella destinazione. La cella destinazione può essere un dispenser, un cestino o un tavolo. Il modulo astar calcolerà quali sono i 4 punti di accesso alla nostra destinazione e si fermerà non appena arriverà a uno di esso.
@@ -50,10 +51,16 @@ La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto se
 \end{itemize}
 \newpage
 
-\begin{figure}
-  \includegraphics[width=\textwidth]{schema-fifo-wait.png}
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{schema-fifo-wait1.png}
   \caption{Schema Fifo Wait}
-  \label{fig:figure}
+  \label{fig:figure1}
+\end{figure}
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{schema-fifo-wait2.png}
+  \caption{Schema Fifo Wait}
+  \label{fig:figure2}
 \end{figure}
 
 Come possiamo vedere dallo schema abbiamo suddiviso la nostre strategia in 7 fasi:
@@ -74,7 +81,7 @@ Vantaggio di questa strategia è sicuramente la semplicità e l'intuibilità con
 
 \begin{wrapfigure}{r}{0.33\textwidth} 
     \centering
-    \includegraphics[width=0.33\textwidth]{Problem1_fifo_wait.png}
+    \includegraphics[width=0.33\textwidth]{Problema1_fifo_wait}
 \end{wrapfigure}
 
 L'assunzione dalla quale siamo partiti è che le persone si spostano e si spostano molto frequentemente. Da questo risulta evidente che se per arrivare in una determinata posizione incontro un ostacolo (una persona) la mossa più conveniente è quella di aspettare.
@@ -82,10 +89,10 @@ Se prendiamo in considerazione le teorie di Rodney Brooks in cui afferma che un 
 
 \begin{wrapfigure}{l}{0.25\textwidth} 
     \centering
-    \includegraphics[width=0.25\textwidth]{Problem2_fifo_wait.png}
+    \includegraphics[width=0.25\textwidth]{Problema2_fifo_wait}
 \end{wrapfigure}
 
-Questo comportamento porta anche a situazioni di deadlock. Essendo in un ambiente simulato anche le persone non hanno un comportamento intelligente, supponendo che una persona si vuole spostare in direzione sud e il robot in direzione nord si arriva in una situazione di stallo. Per ovviare a questa problematica abbiamo implementato la strategia FIFO PRO.\\
+Questo comportamento porta anche a situazioni di deadlock. Essendo in un ambiente simulato anche le persone non hanno un comportamento intelligente, supponendo che una persona si vuole spostare in direzione sud e il robot in direzione nord si arriva in una situazione di stallo. Per ovviare a questa problematica abbiamo implementato la strategia FIFO PRO.
 
 \section{Strategia FIFO PRO}
 La strategia FIFO PRO è un estensione della strategia FIFO WAIT per risolvere il "problema" riscontrato precedentemente. I concetti chiave che differenziano questa strategia dalla precendente sono 2:
@@ -94,13 +101,50 @@ La strategia FIFO PRO è un estensione della strategia FIFO WAIT per risolvere i
   \item possibilità di cambiare l'ordine da servire se ci accorgiamo che non è possibile completarlo.
 \end{itemize}
 
-Il primo punto comporta delle modifiche nello schema visto in precedenza nella fase 3 e nella fase 5, ovvero nelle fasi delle ricerca ed esecuzione del piano. La figura 2.2 ci mostra le modifiche.
+Il primo punto comporta delle modifiche nello schema visto in precedenza nella fase 3 e nella fase 5, ovvero nelle fasi delle ricerca ed esecuzione del piano. La figura \ref{fig:figure3} ci mostra le modifiche.
 
-\begin{figure}
-  \includegraphics[width=\textwidth]{Fase3-FIFO-PRO.png}
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{Fase3-FIFO-PRO}
   \caption{Fase 3 e 5 della strategia FIFO PRO}
-  \label{fig:figure}
+  \label{fig:figure3}
 \end{figure}
 
-Più complicate le conseguenze del secondo punto, che sono strettamente legate alla pianificazione. La pianificazione non trova sempre una soluzione. Nel caso in cui astar non riesca a trovare un percorso per raggiungere la nostra destinazione non volendo più far aspettare il robot fino a quando la situazioni non si modifichi abbiamo deciso di cambiare l'ordine da servire. Questo comporta che questo ordine verrà messo al fondo della nostro coda di ordini da servire e sarà servito successivamente. Questo commporta alcuni problemi che hanno complicato la stratgia FIFO PRO rispetto la precedente, e che saranno comuni anche alle successive strategie.
-La strategia FIFO WAIT aveva un grosso vantaggio per come è stata progettata che è quello che ogni volta si serve un nuovo ordine sicuramente l'agente si trova in uno stato per iniziare a servirlo. Questo significa che l'agente non ha nè sporco nè consumazioni a bordo. Questa sicurezza non si ha nella strategia FIFO PRO. Supponiamo che un agente stia servendo un ordine finish e debba andare al cestino per liberarsi dallo sporco ma sfortunatamente il cestino non ha punti d'ingresso perchè occupati da persone, questo ordine verrà abbandonato e inserito al fondo e verrà recuperato il successivo ordine. Se il successivo ordine è un accepted non potrò subito avviare le operazioni per servirlo, ma dovrò sempre liberarmi dello sporco.
+\newpage
+\begin{wrapfigure}{r}{0.25\textwidth} 
+    \centering
+    \includegraphics[width=0.25\textwidth]{Problema1_fifo_pro}
+\end{wrapfigure}
+
+Più complicate le conseguenze del secondo punto, che sono strettamente legate alla pianificazione. La pianificazione non trova sempre una soluzione. Nel caso in cui astar non riesca a trovare un percorso per raggiungere la nostra destinazione cambiamo l'ordine da servire. Questo comporta che l'ordine corrente verrà messo al fondo della nostra coda ordini e sarà servito successivamente. Questo commporta alcuni problemi che hanno complicato la stratgia FIFO PRO rispetto la precedente, e che saranno comuni anche alle successive strategie. 
+
+La strategia FIFO WAIT aveva un grosso vantaggio: ogni volta che si serve un nuovo ordine sicuramente l'agente si trova nello stato adatto per iniziare a servirlo. 
+Questo significa che l'agente non ha nè sporco nè consumazioni a bordo. Questa sicurezza non si ha nella strategia FIFO PRO. Supponiamo che un agente stia servendo un ordine finish e debba andare al cestino per liberarsi dallo sporco ma sfortunatamente il cestino non ha punti d'ingresso perchè occupati da persone, questo ordine verrà abbandonato e inserito al fondo e verrà recuperato il successivo ordine. Se il successivo ordine è un accepted non potrò subito avviare le operazioni per servirlo, ma dovrò sempre liberarmi dello sporco.
+
+Nella fase 1 si ha un dispatcher che indica, a seconda dello stato dell'agente e dell'ordine, l'azione da compiere. La figura \ref{fig:figure4} mostra la fase 1 della strategia FIFO PRO.
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{FIFO_PRO_fase1-2}
+  \caption{Fase 1 e 2 della strategia FIFO PRO}
+  \label{fig:figure4}
+\end{figure}
+
+Rimescolando gli ordini può succedere che ordini accepted vengano completati in ordine diverso dal quale siano arrivati. Nella stategia FIFO WAIT si era sicuri che una volta caricate le consumazioni dai dispenser, quelle consumazioni sarebbero state consegnata al tavolo che le aveva richieste. Nella strategia FIFO PRO questo non avviene. Supponendo di aver caricato dai dispenser un tot di consumazioni e che il robot non riesca ad arrivare al tavolo, il successivo ordine di accepted che verrà prelevato dalla coda potrebbe non aver bisogno di tornare ai dispenser (o di tornarci parzialmente), in quanto il robot ha già a bordo le consumazioni dell'ordine precedente. Si è dovuto implementare un meccanismo che permetta di capire al robot se e quanto deve caricare dai dispenser.
+
+Altra piccola modifica avviene nella fase 6. Nella strategia FIFO WAIT gli ordini di tipo finish erano sicuramente eseguiti prima degli ordini di tipo delayed (questo comportava di andare a modificare l'ordine delayed in accepted una volta pulito il tavolo). Nella strategia FIFO PRO questo non è sempre vero, è possibile che un ordine finish venga rimesso al fondo della nostra coda e verrà eseguito un ordine di delayed (ovviamente ci riferiamo a ordini sullo stesso tavolo). In questo caso se l'ordine delayed riesce con successo a pulire il tavolo, il sistema dovrà settare come completata anche l'ordine finish.
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{FIFO_PRO_fase6}
+  \caption{Fase 6 della strategia FIFO PRO}
+  \label{fig:figure5}
+\end{figure}
+
+\subsection{Vantaggi e Svantaggi}
+Il sistema riesce dinamicamente a servire i vari ordini ripianificando i percorsi o cambiando gli ordini da servire. Obiettivo di questa strategia è rendere il sistema più robusto e flessibile. Utilizzando questa strategia rispetto alla precedente non è detto che si migliori l'efficienza del sistema.
+Anche utilizzando questa strategia il sistema potrebbe rimanere bloccato, si veda la figura \ref{fig:figure6}. Si potrebbe ulteriormente ottimizzarla andando a imporre un numero di fallimenti massimo per arrivare a una specifica posizione; arrivati a tale limite l'ordine viene rimpiazzato dal successivo.
+
+\begin{SCfigure}[]
+\centering
+\includegraphics[width=0.40\textwidth]{Problema1_fifo_pro}
+\caption{In questo esempio il robot vuole arrivare al TD e continuerà a spostarsi dalla cella (9,6) alla (7,4) e viceversa. Ricordiamo che il robot del mondo conosce solo lo stato delle 9 celle adiacenti a lui e le posizioni dei dispenser e dei tavoli. Quando si trova nella cella (7,4) non sa che nella (9,5) c'è una persona e quindi astar pianifica verso quella destinazione.}
+\label{fig:figure6}
+\end{SCfigure}

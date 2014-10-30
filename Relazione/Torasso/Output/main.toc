@@ -1,8 +1,9 @@
 \select@language {english}
 \contentsline {chapter}{\numberline {1}Introduzione}{1}{chapter.1}
 \contentsline {section}{\numberline {1.1}Strategie}{1}{section.1.1}
-\contentsline {subsection}{\numberline {1.1.1}Astar}{1}{subsection.1.1.1}
+\contentsline {subsection}{\numberline {1.1.1}Astar}{2}{subsection.1.1.1}
 \contentsline {chapter}{\numberline {2}Strategie}{3}{chapter.2}
 \contentsline {section}{\numberline {2.1}Strategia FIFO WAIT}{3}{section.2.1}
-\contentsline {subsection}{\numberline {2.1.1}Vantaggi e Svantaggi}{4}{subsection.2.1.1}
-\contentsline {section}{\numberline {2.2}Strategia FIFO PRO}{6}{section.2.2}
+\contentsline {subsection}{\numberline {2.1.1}Vantaggi e Svantaggi}{6}{subsection.2.1.1}
+\contentsline {section}{\numberline {2.2}Strategia FIFO PRO}{7}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}Vantaggi e Svantaggi}{9}{subsection.2.2.1}

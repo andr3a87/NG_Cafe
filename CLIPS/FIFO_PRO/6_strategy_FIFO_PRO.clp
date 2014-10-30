@@ -75,39 +75,38 @@
   (K-table (table-id ?id) (clean ?clean))
   (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
-  ; vado alla fase 2 se l'ordine è accettato, ovvero posso cercare già il dispenser più vicino
+  ; se l'ordine è accepted e non ho sporco posso servirlo
   (if (and(=(str-compare ?status "accepted") 0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 2))
   )
-   (if (and(=(str-compare ?status "accepted") 0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)))
+  ; se l'ordine è accepted e ho sporco non posso servirlo,inserisco questo ordine al fondo.
+  (if (and(=(str-compare ?status "accepted") 0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)))
   then
      (modify ?f1 (step ?s1) (phase 0))
   )
-  ; se l'ordine è delayed e il tavolo è sporco (ossia non l'ho ancora pulito), vado alla fase 5
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0))
+  ; se l'ordine è delayed, non ho cibo caricato e il tavolo è sporco vado a pulire il tavolo
+  (if (and (= (str-compare ?status "delayed") 0) (= ?lf 0) (= ?ld 0) (=(str-compare ?clean "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 5))
   )
-  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e non ho sporco a bordo modifico in accepted, così da gestirlo come un ordine normale.
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0) )
+  ; se l'ordine è delayed ma ho del cibo caricato inserisco questo ordine al fondo.
+  (if (and(= (str-compare ?status "delayed") 0) (or (> ?lf 0) (> ?ld 0)))
   then
-    (modify ?f1 (status accepted))
+    (modify ?f1 (step ?s1) (phase 0))
   )
-  ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) e ho sporco a bordo modifico vado alla fase 2 per andare al cestino.
-  (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)) )
+  ; se l'ordine è delayed il tavolo è gia pulito ma ho sporco a bordo vado al cestino
+  (if (and(= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)))
   then
-    (modify ?f1 (phase 2))
-  )
+    (modify ?f1 (table-id ?id) (phase 2))
+  ) 
   ; se ho ricevuto una finish e non ho cibo caricato vado a pulire il tavolo
   (if (and(= (str-compare ?status "finish") 0)  (= ?lf 0) (= ?ld 0) (=(str-compare ?clean "no")0) )
   then
     (modify ?f1 (table-id ?id) (phase 5))
   )
   ; se ho ricevuto una finish ma ho del cibo caricato inserisco questo ordine al fondo.
-  ; Questo caso accade se dovevo portare del cibo al tavolo, ma non ho trovato una piano per arrivarci e quell'ordine è stato spostato in fondo.
-  ; A questo punto il prox ordine da evadere è una finish, ma siccome non posso trasportate cibo e sporcizio sposto al fondo anche questo.
-  (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)) (=(str-compare ?clean "no")0) )
+  (if (and(= (str-compare ?status "finish") 0) (or (> ?lf 0) (> ?ld 0)))
   then
     (modify ?f1 (step ?s1) (phase 0))
   )
@@ -115,12 +114,6 @@
   (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)))
   then
     (modify ?f1 (table-id ?id) (phase 2))
-  ) 
-
-  ;l'ordine da servire è una finish ma il tavolo è già pulito e non ho sporco a bordo.
-  (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0))
-  then
-    (modify ?f1 (table-id ?id) (phase COMPLETED))
   ) 
 )
 
@@ -696,7 +689,8 @@
   (debug ?level)
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
-  (exec-order (table-id ?id) (phase 6) (status  delayed|finish))
+  (exec-order (table-id ?id) (phase 6) (status ?status))
+  (test(or(=(str-compare ?status "delayed")0) (=(str-compare ?status "finish")0)))
   ;controllo che l'agente posso operare sul tavolo.
   (or (and (test(= ?ra ?rt)) (test(= ?ca (+ ?ct 1))))
       (and (test(= ?ra ?rt)) (test(= ?ca (- ?ct 1))))
@@ -707,7 +701,14 @@
   (test (= (+ ?ld ?lf) 0))
 =>
   (assert (exec (step ?ks) (action CleanTable) (param1 ?rt) (param2 ?ct)))
-  (assert (canc-order-finish))
+  (if (=(str-compare ?status "finish")0)
+    then
+    (assert (complete-order ?status))
+  )
+  (if (=(str-compare ?status "delayed")0)
+    then
+    (assert (complete-order ?status))
+  )
   ;debug
   (if (> ?level 0)
   then
@@ -715,15 +716,25 @@
   )
 )
 
-;Regola che cancella gli ordini di finish precedenti all'ordine che sto servendo. Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato  
+;Regola che cancella gli ordini di finish successivi all'ordine che sto servendo. Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato  
 (defrule strategy-delete-order-finish
   (declare(salience 7))
-  ?f1<-(canc-order-finish)
+  ?f1<-(complete-order delayed)
   (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
-  ?f2<-(exec-order (table-id ?id) (step ?step&:(<= ?step ?s)) (status finish) (phase 0))
+  ?f2<-(exec-order (table-id ?id) (step ?step&:(> ?step ?s)) (status finish) (phase 0))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
+)
+
+(defrule strategy-set-as-accepted-next-delayed-orders
+  (declare(salience 7))
+  ?f1<-(complete-order finish)
+  (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
+=>
+  (retract ?f1)
+  (modify ?f2 (status accepted))
 )
 
 ;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
