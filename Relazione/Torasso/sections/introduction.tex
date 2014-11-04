@@ -150,3 +150,8 @@ Anche utilizzando questa strategia il sistema potrebbe rimanere bloccato, si ved
 \end{SCfigure}
 
 \section{Strategia LOW PENALITY}
+La strategia LOW PENALITY si differenzia dalla precedente soprattutto per la Fase 1, ovvero per la ricerca dell'ordine da evadere. Si abbandona la politica FIFO per individuare e servire l'ordine che a ogni step porterebbe una penalità maggiore. Ogni qual volta arriva un ordine, viene calcolata la relativa penalità. Quando bisogna scegliere un ordine si sceglie quello con penalità maggiore. L' obiettivo è quello di minimizzare la penalità.
+Altra differenza con le precedenti strategia sta nella gestione dell'ordine accepted. Nelle precedenti strategie l'ordine viene evaso completamente. In questa strategia si vuole minimizzare le penalità, quindi se un ordine ha richiesto 3 food e 3 drink, l'agente consegnerà le consumazioni secondo la sua massima capienza. Consegnate le consumazioni l'ordine o è stato completato o viene rimesso negli ordini da evadere aggiornando le consumazioni (e le penalità) in base a quelle consegnate.
+
+\subsection{Vantaggi e Svantaggi}
+Obiettivo di questa strategia è quella di minimizzare le penalità rispetto alle strategia precedenti. Vedremo nella sezione Analisi Strategia se i risultati sono stati raggiunti. Gli svantaggi i medesimi della strategia FIFO PRO.
