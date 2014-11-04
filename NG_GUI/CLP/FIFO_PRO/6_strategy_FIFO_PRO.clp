@@ -118,10 +118,10 @@
   ) 
 
   ;l'ordine da servire è una finish ma il tavolo è già pulito e non ho sporco a bordo.
-  (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0))
-  then
-    (modify ?f1 (table-id ?id) (phase COMPLETED))
-  ) 
+  ;(if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0))
+  ;then
+  ;  (modify ?f1 (table-id ?id) (phase COMPLETED))
+  ;) 
 )
 
 ;
