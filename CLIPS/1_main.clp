@@ -113,7 +113,7 @@
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "../initmap/InitMapAndre.txt")
+  (load-facts "../initmap/InitMapAndre2.txt")
   (assert (create-map)
   (create-initial-setting)
   (create-history))

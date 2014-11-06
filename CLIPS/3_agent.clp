@@ -59,6 +59,7 @@
   (slot drink-order)
   (slot food-order)
   (slot phase)
+  (slot clean) ;indica che il tavolo è stato pulito, ma la spazzatura non buttata. Solo per gli ordini finish e delat
   (slot fail)
   (slot penality)
   (slot check-finish (default no))
