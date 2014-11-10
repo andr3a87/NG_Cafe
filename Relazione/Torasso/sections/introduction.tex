@@ -132,6 +132,8 @@ Rimescolando gli ordini può succedere che ordini accepted vengano completati in
 
 Altra piccola modifica avviene nella fase 6. Nella strategia FIFO WAIT gli ordini di tipo finish erano sicuramente eseguiti prima degli ordini di tipo delayed (questo comportava di andare a modificare l'ordine delayed in accepted una volta pulito il tavolo). Nella strategia FIFO PRO questo non è sempre vero, è possibile che un ordine finish venga rimesso al fondo della nostra coda e verrà eseguito un ordine di delayed (ovviamente ci riferiamo a ordini sullo stesso tavolo). In questo caso se l'ordine delayed riesce con successo a pulire il tavolo, il sistema dovrà settare come completata anche l'ordine finish.
 
+Nella fase 7 inoltre quando il robot svuota l'immondizia bisogna andare a settare a completato tutti gli ordini finish che sono stati rimessi in coda perchè il dispenser era occupato.
+
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{FIFO_PRO_fase6}
   \caption{Fase 6 della strategia FIFO PRO}
@@ -151,7 +153,75 @@ Anche utilizzando questa strategia il sistema potrebbe rimanere bloccato, si ved
 
 \section{Strategia LOW PENALITY}
 La strategia LOW PENALITY si differenzia dalla precedente soprattutto per la Fase 1, ovvero per la ricerca dell'ordine da evadere. Si abbandona la politica FIFO per individuare e servire l'ordine che a ogni step porterebbe una penalità maggiore. Ogni qual volta arriva un ordine, viene calcolata la relativa penalità. Quando bisogna scegliere un ordine si sceglie quello con penalità maggiore. L' obiettivo è quello di minimizzare la penalità.
-Altra differenza con le precedenti strategia sta nella gestione dell'ordine accepted. Nelle precedenti strategie l'ordine viene evaso completamente. In questa strategia si vuole minimizzare le penalità, quindi se un ordine ha richiesto 3 food e 3 drink, l'agente consegnerà le consumazioni secondo la sua massima capienza. Consegnate le consumazioni l'ordine o è stato completato o viene rimesso negli ordini da evadere aggiornando le consumazioni (e le penalità) in base a quelle consegnate.
+Altra differenza con le precedenti strategia sta nella gestione dell'ordine accepted. Nelle precedenti strategie l'ordine viene evaso completamente. In questa strategia si vuole minimizzare le penalità, quindi se un ordine ha richiesto 3 food e 3 drink, l'agente consegnerà le consumazioni secondo la sua massima capienza. Consegnate le consumazioni l'ordine o è stato completato o viene rimesso negli ordini da evadere aggiornando le consumazioni (e le penalità) in base a quelle già consegnate.
 
 \subsection{Vantaggi e Svantaggi}
-Obiettivo di questa strategia è quella di minimizzare le penalità rispetto alle strategia precedenti. Vedremo nella sezione Analisi Strategia se i risultati sono stati raggiunti. Gli svantaggi i medesimi della strategia FIFO PRO.
+Obiettivo di questa strategia è quella di minimizzare le penalità rispetto alle strategia precedenti. Vedremo nella sezione Analisi Strategia se i risultati sono stati raggiunti. Gli svantaggi sono i medesimi della strategia FIFO PRO.
+
+\section{Strategia HARD}
+La strategia HARD è la più complessa e permette di servire più tavoli in contemporanea. In comune con la strategia precedente ha la ripianificazione nel caso il piano calcolato fallisca, e il cambio dell'ordine corrente per un altro nel caso non si riesca a trovare un piano per arrivare a destinazione.
+Iniziamo a vedere il meccanismo con il quale viene scelto l'ordine da evadere (FASE 1).
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{HARD_fase1}
+  \caption{Fase 1 della strategia HARD}
+  \label{fig:figure7}
+\end{figure}
+
+\begin{equation}
+\label{eqn:ordine}
+Ordine=\max(x1,x2+x3).
+\end{equation}
+\[
+x1=\sum_{k=1}^n Ordine_\textup{accepted,k}(pen).
+\]\[
+x2=\sum_{k=1}^n Ordine_\textup{delayed,k}(pen).
+\]\[
+x3=\sum_{k=1}^n Ordine_\textup{finish,k}(pen).
+\]
+
+Dalla formula \eqref{eqn:ordine} si deduce qual'è l'insieme di ordini che a ogni istante di tempo introducono più penalità nel sistema. Una volta individuato questo insieme si cerca al suo interno l'ordine con penalità maggiore. Tale ordine verrà servito.
+In alcuni casi il robot prima di servire tale ordine deve compiere delle altre operazion:  
+\begin{itemize}
+  \item l'ordine da evadere è una finish o delayed ma ho delle consumazioni a bordo, il robot deve consegnare le consumazioni che ha prima di servire l'ordine finish o delayed. Di conseguenza bisogna cercare uno o più ordini accepted. L'idea che sta alla base della ricerca in questo caso è quella di trovare l' ordine o gli ordini che minimizzino il numero di consegne. Se il robot si trova in una situazione di 1drink e 1food preferirà consegnare le consumazioni a un singolo tavolo invece che a due diversi.
+  \item l'ordine da evadere è un accepted ma il robot ha sporco a bordo, il sistema forza il robot a recarsi ai cestini.
+\end{itemize}
+
+La fase 2 e 3 sono quasi identiche alle precedenti. La fase 2 viene esegita solo nel caso di ordini accepted, quindi si ricercherà solo il dispenser più vicino al robot. 
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{HARD_fase2}
+  \caption{Fase 2 della strategia HARD}
+  \label{fig:figure8}
+\end{figure}
+
+Nella fase 4, ovvero il caricamento dai dispenser delle consumazioni, abbiamo introdotto la possibilità di caricare le consumazioni per più ordini. Quando il robot arriva a un dispenser carica le consumazioni per l'ordine corrente. Se ha ancora spazio a disposizione e vi sono conumazioni di altri ordini da poter caricare vengono caricate fino al raggiungimento della capacità massima. 
+La fase 4.5 è molto più semplice delle precedenti. Il fatto di trattare e gestire la pulizia dei tavoli nel modulo EMPTY TRASH ha reso meno complicate alcune fasi.
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{HARD_fase4_45}
+  \caption{Fase 4 e 4.5 della strategia HARD}
+  \label{fig:figure9}
+\end{figure}
+
+La fase 5 ovvero la ricerca e l'esecuzione del piano per arrivare al tavolo rimane immutata, e non la descriviamo nuovamente.
+
+
+Nella fase 6 si consegnano le consumazioni al tavolo se era un ordine di accepted o si pulisce il tavolo se era un ordine di finish o delayed. 
+Nel primo caso potrebbe capitare che l'ordine non risulti completamente evaso, e come nella strategia LOW PENALITY, quest'ordine torna nella lista di ordini da evadere aggiornando le consumazioni da portare in base a quelle già consegnate.
+Nel caso sia un ordine di finish oltre a pulire il tavolo l'ordine viene impostato come completato, cosa che non accadeva nelle altre strategie.
+Nel caso sia un ordine di delayed l'ordine viene impostato ad accepted e torna nella lista di ordini da evadere. In entrambi i casi il robot ha dello sporco a bordo, ma sarà la fase 1 della strategia che indicherà al robot di andare ai cestini.
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{HARD_fase6-7}
+  \caption{Fase 6 e 7 della strategia HARD}
+  \label{fig:figure10}
+\end{figure}
+
+\subsection{Modulo EMPTY TRASH}
+Questo modulo si occupa di liberare dallo sporco il robot. A differenza delle altre strategia, che ogni volta che si puliva un tavolo si cercava anche di liberarsi dello sporco, in questa la pulizia avviene soltanto in un caso (vedi \ref{fig:figure7}):
+\begin{itemize}
+\item l'ordine da evadere è un accepted ma il robot ha sporco a bordo, il sistema forza il robot a recarsi ai cestini.
+\end{itemize}
+
+\subsection{Checkfinish}

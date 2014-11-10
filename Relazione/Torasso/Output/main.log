@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  30 OCT 2014 14:43
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  10 NOV 2014 11:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -720,35 +720,35 @@ LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10.95> not available
 Chapter 2.
 [3
 
-] <images/schema-fifo-wait1.png, id=100, 1251.67625pt x 1401.235pt>
+] <images/schema-fifo-wait1.png, id=130, 1251.67625pt x 1401.235pt>
 File: images/schema-fifo-wait1.png Graphic file (type png)
 <use images/schema-fifo-wait1.png>
 Package pdftex.def Info: images/schema-fifo-wait1.png used on input line 55.
 (pdftex.def)             Requested size: 360.0pt x 403.0123pt.
-<images/schema-fifo-wait2.png, id=102, 569.2467pt x 469.755pt>
+<images/schema-fifo-wait2.png, id=132, 569.2467pt x 469.755pt>
 File: images/schema-fifo-wait2.png Graphic file (type png)
 <use images/schema-fifo-wait2.png>
 Package pdftex.def Info: images/schema-fifo-wait2.png used on input line 61.
 (pdftex.def)             Requested size: 360.0pt x 297.08691pt.
 [4 <./images/schema-fifo-wait1.png>] [5 <./images/schema-fifo-wait2.png>] <imag
-es/Problema1_fifo_wait.png, id=117, 304.13625pt x 174.6525pt>
+es/Problema1_fifo_wait.png, id=148, 304.13625pt x 174.6525pt>
 File: images/Problema1_fifo_wait.png Graphic file (type png)
 <use images/Problema1_fifo_wait.png>
 Package pdftex.def Info: images/Problema1_fifo_wait.png used on input line 84.
 (pdftex.def)             Requested size: 118.80066pt x 68.2208pt.
-[6 <./images/Problema1_fifo_wait.png>] <images/Problema2_fifo_wait.png, id=124,
+[6 <./images/Problema1_fifo_wait.png>] <images/Problema2_fifo_wait.png, id=155,
  174.6525pt x 146.79843pt>
 File: images/Problema2_fifo_wait.png Graphic file (type png)
 <use images/Problema2_fifo_wait.png>
 Package pdftex.def Info: images/Problema2_fifo_wait.png used on input line 92.
 (pdftex.def)             Requested size: 90.0pt x 75.64795pt.
-<images/Fase3-FIFO-PRO.png, id=126, 919.435pt x 372.39125pt>
+<images/Fase3-FIFO-PRO.png, id=157, 1167.36125pt x 488.82625pt>
 File: images/Fase3-FIFO-PRO.png Graphic file (type png)
 <use images/Fase3-FIFO-PRO.png>
 Package pdftex.def Info: images/Fase3-FIFO-PRO.png used on input line 107.
-(pdftex.def)             Requested size: 360.0pt x 145.81158pt.
+(pdftex.def)             Requested size: 360.0pt x 150.74393pt.
 [7 <./images/Problema2_fifo_wait.png> <./images/Fase3-FIFO-PRO.png>] <images/Pr
-oblema1_fifo_pro.png, id=135, 324.21124pt x 211.79124pt>
+oblema1_fifo_pro.png, id=166, 324.21124pt x 211.79124pt>
 File: images/Problema1_fifo_pro.png Graphic file (type png)
 <use images/Problema1_fifo_pro.png>
 Package pdftex.def Info: images/Problema1_fifo_pro.png used on input line 115.
@@ -759,55 +759,81 @@ Overfull \hbox (4.02359pt too wide) in paragraph at lines 123--124
 ello stato dell'agente
  []
 
-<images/FIFO_PRO_fase1-2.png, id=137, 1143.27126pt x 765.86125pt>
+<images/FIFO_PRO_fase1-2.png, id=168, 1143.27126pt x 765.86125pt>
 File: images/FIFO_PRO_fase1-2.png Graphic file (type png)
 <use images/FIFO_PRO_fase1-2.png>
 Package pdftex.def Info: images/FIFO_PRO_fase1-2.png used on input line 126.
 (pdftex.def)             Requested size: 360.0pt x 241.15408pt.
 [8 <./images/Problema1_fifo_pro.png> <./images/FIFO_PRO_fase1-2.png>] <images/F
-IFO_PRO_fase6.png, id=146, 1044.90375pt x 545.03625pt>
+IFO_PRO_fase6.png, id=177, 1044.90375pt x 545.03625pt>
 File: images/FIFO_PRO_fase6.png Graphic file (type png)
 <use images/FIFO_PRO_fase6.png>
-Package pdftex.def Info: images/FIFO_PRO_fase6.png used on input line 136.
+Package pdftex.def Info: images/FIFO_PRO_fase6.png used on input line 138.
 (pdftex.def)             Requested size: 360.0pt x 187.77989pt.
 [9 <./images/FIFO_PRO_fase6.png>]
 File: images/Problema1_fifo_pro.png Graphic file (type png)
 <use images/Problema1_fifo_pro.png>
-Package pdftex.def Info: images/Problema1_fifo_pro.png used on input line 147.
+Package pdftex.def Info: images/Problema1_fifo_pro.png used on input line 149.
 (pdftex.def)             Requested size: 143.9978pt x 94.06744pt.
-)
+[10] <images/HARD_fase1.png, id=190, 592.614pt x 435.87843pt>
+File: images/HARD_fase1.png Graphic file (type png)
+<use images/HARD_fase1.png>
+Package pdftex.def Info: images/HARD_fase1.png used on input line 166.
+(pdftex.def)             Requested size: 360.0pt x 264.7947pt.
+[11 <./images/HARD_fase1.png>] <images/HARD_fase2.png, id=205, 1111.15125pt x 3
+68.37625pt>
+File: images/HARD_fase2.png Graphic file (type png)
+<use images/HARD_fase2.png>
+Package pdftex.def Info: images/HARD_fase2.png used on input line 193.
+(pdftex.def)             Requested size: 360.0pt x 119.34987pt.
+<images/HARD_fase4_45.png, id=206, 1096.095pt x 549.05125pt>
+File: images/HARD_fase4_45.png Graphic file (type png)
+<use images/HARD_fase4_45.png>
+Package pdftex.def Info: images/HARD_fase4_45.png used on input line 202.
+(pdftex.def)             Requested size: 360.0pt x 180.33293pt.
+[12 <./images/HARD_fase2.png>] <images/HARD_fase6-7.png, id=213, 1052.93375pt x
+ 613.29124pt>
+File: images/HARD_fase6-7.png Graphic file (type png)
+<use images/HARD_fase6-7.png>
+Package pdftex.def Info: images/HARD_fase6-7.png used on input line 216.
+(pdftex.def)             Requested size: 360.0pt x 209.68602pt.
+[13 <./images/HARD_fase4_45.png> <./images/HARD_fase6-7.png>])
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 112.
-[10]
+[14]
 Package atveryend Info: Empty hook `AfterLastShipout' on input line 112.
 (Output/main.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 112.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 112.
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 9C24E75C5FCAB99AC5120BD58083AB1D;479.
+(rerunfilecheck)             Checksum: 18CC9E9E4E7A8DB597C2948D6782E313;819.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 112.
  ) 
 Here is how much of TeX's memory you used:
- 9837 strings out of 493107
- 143221 string characters out of 6138433
- 243243 words of memory out of 5000000
- 13079 multiletter control sequences out of 15000+600000
- 88811 words of font info for 63 fonts, out of 8000000 for 9000
+ 9883 strings out of 493107
+ 144058 string characters out of 6138433
+ 243553 words of memory out of 5000000
+ 13106 multiletter control sequences out of 15000+600000
+ 91799 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  36i,9n,47p,897b,1057s stack positions out of 5000i,500n,10000p,200000b,80000s
-{c:/texlive/2014/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{c:/texlive/2014/tex
-mf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}<c:/texlive/2014/texmf-dist/fonts/type
-1/public/lm/lmbx10.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmbx12
-.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb><c:/texlive/
-2014/texmf-dist/fonts/type1/public/lm/lmr10.pfb><c:/texlive/2014/texmf-dist/fon
-ts/type1/public/lm/lmr12.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/
-lmr17.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmr7.pfb><c:/texliv
-e/2014/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/texlive/2014/texmf-dist/fo
-nts/type1/public/lm/lmro10.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/l
-m/lmsy10.pfb>
-Output written on Output/main.pdf (12 pages, 797706 bytes).
+{c:/texlive/2014/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/texlive/2014/tex
+mf-dist/fonts/enc/dvips/lm/lm-mathex.enc}{c:/texlive/2014/texmf-dist/fonts/enc/
+dvips/lm/lm-mathit.enc}{c:/texlive/2014/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc
+}{c:/texlive/2014/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}<c:/texlive/2014/
+texmf-dist/fonts/type1/public/lm/lmbx10.pfb><c:/texlive/2014/texmf-dist/fonts/t
+ype1/public/lm/lmbx12.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmc
+sc10.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/texli
+ve/2014/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/texlive/2014/texmf-dist
+/fonts/type1/public/lm/lmmi8.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public
+/lm/lmr10.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/t
+exlive/2014/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/texlive/2014/texmf-d
+ist/fonts/type1/public/lm/lmr7.pfb><c:/texlive/2014/texmf-dist/fonts/type1/publ
+ic/lm/lmr8.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmro10.pfb><c:
+/texlive/2014/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
+Output written on Output/main.pdf (16 pages, 967204 bytes).
 PDF statistics:
- 208 PDF objects out of 1000 (max. 8388607)
- 166 compressed objects within 2 object streams
- 48 named destinations out of 1000 (max. 500000)
- 105 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 293 PDF objects out of 1000 (max. 8388607)
+ 235 compressed objects within 3 object streams
+ 62 named destinations out of 1000 (max. 500000)
+ 165 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -123,7 +123,7 @@
   (focus CLEAN-TABLE-DISTANCE)
 )
 
-;Se non sto facendo nulla prima della wait provo a effettuare una checkfinish su un tavolo che aveva oridinato.
+;Se non sto facendo nulla prima della wait provo a
 (defrule strategy-empty-trash
   (declare (salience 135))
   (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
@@ -131,7 +131,6 @@
   (assert (go-to-basket (phase 1)))
   (focus EMPTY-TRASH)
 )
-
 
 ;
 ; FASE 1 della Strategia: Ricerca di un tavolo da servire.
@@ -837,7 +836,7 @@
   (modify ?f3 (pen =(- ?pen 3)))
 )
 
-;Regola che imposta a COMPLETE gli ordini delayed successivi alla finish. (in questo caso sto servendo una finish)
+;Regola che imposta a Accepted gli ordini delayed successivi alla finish. (in questo caso sto servendo una finish)
 (defrule strategy-set-as-accepted-next-delayed-orders
   (declare(salience 7))
   ?f1<-(complete-order finish)
