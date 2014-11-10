@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  10 NOV 2014 11:12
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014/W32TeX) (preloaded format=pdflatex 2014.10.6)  10 NOV 2014 12:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -669,23 +669,11 @@ LaTeX Font Info:    Try loading font information for OMX+lmex on input line 84.
 File: omxlmex.fd 2009/10/30 v1.6 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <24.88> on input line 84.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <20.74> on input line 84.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <17.28> on input line 84.
-LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <12> on input line 84.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <8> on input line 84.
 LaTeX Font Info:    External font `lmex10' loaded for size
 (Font)              <6> on input line 84.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 84.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 84.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 84.
 [1
 
 
@@ -720,35 +708,35 @@ LaTeX Font Info:    Font shape `OMS/lmr/m/n' in size <10.95> not available
 Chapter 2.
 [3
 
-] <images/schema-fifo-wait1.png, id=130, 1251.67625pt x 1401.235pt>
+] <images/schema-fifo-wait1.png, id=128, 1251.67625pt x 1401.235pt>
 File: images/schema-fifo-wait1.png Graphic file (type png)
 <use images/schema-fifo-wait1.png>
 Package pdftex.def Info: images/schema-fifo-wait1.png used on input line 55.
 (pdftex.def)             Requested size: 360.0pt x 403.0123pt.
-<images/schema-fifo-wait2.png, id=132, 569.2467pt x 469.755pt>
+<images/schema-fifo-wait2.png, id=130, 569.2467pt x 469.755pt>
 File: images/schema-fifo-wait2.png Graphic file (type png)
 <use images/schema-fifo-wait2.png>
 Package pdftex.def Info: images/schema-fifo-wait2.png used on input line 61.
 (pdftex.def)             Requested size: 360.0pt x 297.08691pt.
 [4 <./images/schema-fifo-wait1.png>] [5 <./images/schema-fifo-wait2.png>] <imag
-es/Problema1_fifo_wait.png, id=148, 304.13625pt x 174.6525pt>
+es/Problema1_fifo_wait.png, id=146, 304.13625pt x 174.6525pt>
 File: images/Problema1_fifo_wait.png Graphic file (type png)
 <use images/Problema1_fifo_wait.png>
 Package pdftex.def Info: images/Problema1_fifo_wait.png used on input line 84.
 (pdftex.def)             Requested size: 118.80066pt x 68.2208pt.
-[6 <./images/Problema1_fifo_wait.png>] <images/Problema2_fifo_wait.png, id=155,
+[6 <./images/Problema1_fifo_wait.png>] <images/Problema2_fifo_wait.png, id=153,
  174.6525pt x 146.79843pt>
 File: images/Problema2_fifo_wait.png Graphic file (type png)
 <use images/Problema2_fifo_wait.png>
 Package pdftex.def Info: images/Problema2_fifo_wait.png used on input line 92.
 (pdftex.def)             Requested size: 90.0pt x 75.64795pt.
-<images/Fase3-FIFO-PRO.png, id=157, 1167.36125pt x 488.82625pt>
+<images/Fase3-FIFO-PRO.png, id=155, 1167.36125pt x 488.82625pt>
 File: images/Fase3-FIFO-PRO.png Graphic file (type png)
 <use images/Fase3-FIFO-PRO.png>
 Package pdftex.def Info: images/Fase3-FIFO-PRO.png used on input line 107.
 (pdftex.def)             Requested size: 360.0pt x 150.74393pt.
 [7 <./images/Problema2_fifo_wait.png> <./images/Fase3-FIFO-PRO.png>] <images/Pr
-oblema1_fifo_pro.png, id=166, 324.21124pt x 211.79124pt>
+oblema1_fifo_pro.png, id=164, 324.21124pt x 211.79124pt>
 File: images/Problema1_fifo_pro.png Graphic file (type png)
 <use images/Problema1_fifo_pro.png>
 Package pdftex.def Info: images/Problema1_fifo_pro.png used on input line 115.
@@ -759,13 +747,13 @@ Overfull \hbox (4.02359pt too wide) in paragraph at lines 123--124
 ello stato dell'agente
  []
 
-<images/FIFO_PRO_fase1-2.png, id=168, 1143.27126pt x 765.86125pt>
+<images/FIFO_PRO_fase1-2.png, id=166, 1143.27126pt x 765.86125pt>
 File: images/FIFO_PRO_fase1-2.png Graphic file (type png)
 <use images/FIFO_PRO_fase1-2.png>
 Package pdftex.def Info: images/FIFO_PRO_fase1-2.png used on input line 126.
 (pdftex.def)             Requested size: 360.0pt x 241.15408pt.
 [8 <./images/Problema1_fifo_pro.png> <./images/FIFO_PRO_fase1-2.png>] <images/F
-IFO_PRO_fase6.png, id=177, 1044.90375pt x 545.03625pt>
+IFO_PRO_fase6.png, id=175, 1044.90375pt x 545.03625pt>
 File: images/FIFO_PRO_fase6.png Graphic file (type png)
 <use images/FIFO_PRO_fase6.png>
 Package pdftex.def Info: images/FIFO_PRO_fase6.png used on input line 138.
@@ -775,23 +763,23 @@ File: images/Problema1_fifo_pro.png Graphic file (type png)
 <use images/Problema1_fifo_pro.png>
 Package pdftex.def Info: images/Problema1_fifo_pro.png used on input line 149.
 (pdftex.def)             Requested size: 143.9978pt x 94.06744pt.
-[10] <images/HARD_fase1.png, id=190, 592.614pt x 435.87843pt>
+[10] <images/HARD_fase1.png, id=188, 592.614pt x 435.87843pt>
 File: images/HARD_fase1.png Graphic file (type png)
 <use images/HARD_fase1.png>
 Package pdftex.def Info: images/HARD_fase1.png used on input line 166.
 (pdftex.def)             Requested size: 360.0pt x 264.7947pt.
-[11 <./images/HARD_fase1.png>] <images/HARD_fase2.png, id=205, 1111.15125pt x 3
+[11 <./images/HARD_fase1.png>] <images/HARD_fase2.png, id=203, 1111.15125pt x 3
 68.37625pt>
 File: images/HARD_fase2.png Graphic file (type png)
 <use images/HARD_fase2.png>
 Package pdftex.def Info: images/HARD_fase2.png used on input line 193.
 (pdftex.def)             Requested size: 360.0pt x 119.34987pt.
-<images/HARD_fase4_45.png, id=206, 1096.095pt x 549.05125pt>
+<images/HARD_fase4_45.png, id=204, 1096.095pt x 549.05125pt>
 File: images/HARD_fase4_45.png Graphic file (type png)
 <use images/HARD_fase4_45.png>
 Package pdftex.def Info: images/HARD_fase4_45.png used on input line 202.
 (pdftex.def)             Requested size: 360.0pt x 180.33293pt.
-[12 <./images/HARD_fase2.png>] <images/HARD_fase6-7.png, id=213, 1052.93375pt x
+[12 <./images/HARD_fase2.png>] <images/HARD_fase6-7.png, id=211, 1052.93375pt x
  613.29124pt>
 File: images/HARD_fase6-7.png Graphic file (type png)
 <use images/HARD_fase6-7.png>
@@ -809,11 +797,11 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 112.
  ) 
 Here is how much of TeX's memory you used:
- 9883 strings out of 493107
- 144058 string characters out of 6138433
- 243553 words of memory out of 5000000
- 13106 multiletter control sequences out of 15000+600000
- 91799 words of font info for 64 fonts, out of 8000000 for 9000
+ 9849 strings out of 493107
+ 143602 string characters out of 6138433
+ 243548 words of memory out of 5000000
+ 13080 multiletter control sequences out of 15000+600000
+ 64159 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  36i,9n,47p,897b,1057s stack positions out of 5000i,500n,10000p,200000b,80000s
 {c:/texlive/2014/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{c:/texlive/2014/tex
@@ -826,14 +814,13 @@ sc10.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmex10.pfb><c:/texli
 ve/2014/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><c:/texlive/2014/texmf-dist
 /fonts/type1/public/lm/lmmi8.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public
 /lm/lmr10.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmr12.pfb><c:/t
-exlive/2014/texmf-dist/fonts/type1/public/lm/lmr17.pfb><c:/texlive/2014/texmf-d
-ist/fonts/type1/public/lm/lmr7.pfb><c:/texlive/2014/texmf-dist/fonts/type1/publ
-ic/lm/lmr8.pfb><c:/texlive/2014/texmf-dist/fonts/type1/public/lm/lmro10.pfb><c:
-/texlive/2014/texmf-dist/fonts/type1/public/lm/lmsy10.pfb>
-Output written on Output/main.pdf (16 pages, 967204 bytes).
+exlive/2014/texmf-dist/fonts/type1/public/lm/lmr8.pfb><c:/texlive/2014/texmf-di
+st/fonts/type1/public/lm/lmro10.pfb><c:/texlive/2014/texmf-dist/fonts/type1/pub
+lic/lm/lmsy10.pfb>
+Output written on Output/main.pdf (16 pages, 935483 bytes).
 PDF statistics:
- 293 PDF objects out of 1000 (max. 8388607)
- 235 compressed objects within 3 object streams
+ 285 PDF objects out of 1000 (max. 8388607)
+ 229 compressed objects within 3 object streams
  62 named destinations out of 1000 (max. 500000)
  165 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -292,7 +292,6 @@
 )
 
 ; Una volta scaricato rimuovo il fatto best-dispenser.
-; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule et-clean-best-dispenser
         (declare (salience 60))
         ?f1<-(go-to-basket (phase 3))

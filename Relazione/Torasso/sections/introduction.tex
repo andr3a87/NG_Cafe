@@ -219,9 +219,29 @@ Nel caso sia un ordine di delayed l'ordine viene impostato ad accepted e torna n
 \end{figure}
 
 \subsection{Modulo EMPTY TRASH}
-Questo modulo si occupa di liberare dallo sporco il robot. A differenza delle altre strategia, che ogni volta che si puliva un tavolo si cercava anche di liberarsi dello sporco, in questa la pulizia avviene soltanto in un caso (vedi \ref{fig:figure7}):
+Questo modulo si occupa di liberare dallo sporco il robot. A differenza delle altre strategia, che ogni volta che si puliva un tavolo si cercava anche di liberarsi dello sporco, in questa la pulizia avviene soltanto nei seguenti casi (vedi \ref{fig:figure7}):
 \begin{itemize}
-\item l'ordine da evadere è un accepted ma il robot ha sporco a bordo, il sistema forza il robot a recarsi ai cestini.
+  \item l'ordine da evadere è un accepted ma il robot ha sporco a bordo, il sistema forza il robot a recarsi ai cestini.
+  \item il robot non ha ordini da completare, prima di fare delle wait prova a liberarsi dello sporco se ne ha.
 \end{itemize}
 
+Anche questo modulo è stato suddiviso in 4 fasi:
+\begin{itemize}
+  \item FASE 0: si individuano quali sono i cestini servibili.
+  \item FASE 1: si individua il cestino più vicino (equivalente alla fase 2 delle strategia HARD)
+  \item FASE 2: si pianifica e si esegue il piano per arrivare al cestino (equivalente alla fase 3/5 delle strategia HARD)
+  \item FASE ND: insieme di azioni da eseguire nel caso A* non trovi una soluzione.
+  \item FASE 3: il robot scarica l'immondizia nel cestino
+  \item FASE 4: si ritorna alla strategia HARD dove verrà eseguita la FASE 1. Se il robot non ha più sporcizia è pronto per servire ordini accepted altrimente rieseguirà il modulo EMPTY TRASH.
+\end{itemize}
+
+Si è dovuto gestire il caso in cui A* fallisca. Una prima soluzione in caso A* fallisca poteva esser quella di aspettare fin quando il basket diventava accessibile, ma risulta essere una soluzione troppo costosa. Il robot potrebbe compiere delle operazioni invece che aspettare. Le azioni che abbiamo individuato sono le seguenti:
+\begin{itemize}
+  \item la ricerca di un altro cestino se esiste
+  \item la ricerca di un altro ordine da servire. Questo significa tornare alla strategia HARD e forzare il robot a evadere un ordine finish o delayed (sono gli unici ordini su cui possiamo operare anche se il robot ha lo sporco).
+  \item effettuare delle checkfinish. Se non vi sono ordini finish possiamo cercare se vi sono degli ordini accepted le cui consumazioni sono state consumate e quindi è possibile effettuare un operazione di pulizia del tavolo.
+\end{itemize}
+
+
 \subsection{Checkfinish}
+\subsection{Vantaggi e Svantaggi}
