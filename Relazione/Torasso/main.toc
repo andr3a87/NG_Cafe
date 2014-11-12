@@ -6,6 +6,10 @@
 \contentsline {section}{\numberline {2.1}Strategia FIFO WAIT}{3}{section.2.1}
 \contentsline {subsection}{\numberline {2.1.1}Vantaggi e Svantaggi}{6}{subsection.2.1.1}
 \contentsline {section}{\numberline {2.2}Strategia FIFO PRO}{7}{section.2.2}
-\contentsline {subsection}{\numberline {2.2.1}Vantaggi e Svantaggi}{9}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.1}Vantaggi e Svantaggi}{10}{subsection.2.2.1}
 \contentsline {section}{\numberline {2.3}Strategia LOW PENALITY}{10}{section.2.3}
 \contentsline {subsection}{\numberline {2.3.1}Vantaggi e Svantaggi}{10}{subsection.2.3.1}
+\contentsline {section}{\numberline {2.4}Strategia HARD}{11}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}Modulo EMPTY TRASH}{14}{subsection.2.4.1}
+\contentsline {subsection}{\numberline {2.4.2}Checkfinish}{15}{subsection.2.4.2}
+\contentsline {subsection}{\numberline {2.4.3}Vantaggi e Svantaggi}{15}{subsection.2.4.3}
