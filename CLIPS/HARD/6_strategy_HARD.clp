@@ -882,7 +882,7 @@
 
 ;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
 (defrule go-phase7
-  (declare(salience 5))
+  (declare(salience 4))
   (debug ?level)
   (status (step ?current))
   ?f3<-(exec-order (table-id ?id) (phase 6))
