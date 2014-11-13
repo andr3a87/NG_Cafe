@@ -777,7 +777,7 @@
   )
 )
 
-;regola per controllare se le consumazioni al tavolo sono state consumate.
+;regola per controllare se le consumazioni al tavolo sono state consumate e che non si già arrivato un ordine di cleantable.
 (defrule strategy-do-CheckFinish
   (declare(salience 10))
   (status (step ?current))
@@ -785,6 +785,7 @@
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
   (exec-order (table-id ?id) (phase 6) (status  check-finish))
+  (not(exec-order (table-id ?id) (phase 0) (status finish)))
   ; controlla che l'agente sia scarico
   (test (= (+ ?ld ?lf) 0))
 =>
@@ -866,11 +867,12 @@
 )
 
 ; aggiorno lo status finish a completed perché ho appena pulito il tavolo (ho appena servito un ordine di tipo finish)
+; Attenzione nel caso sia una check-finish questa regola non deve esser considerata (per questo aggiungiamo origin-status)
 (defrule strategy-complete-current-order-finish
   (declare(salience 5))
   ?f1<-(update-current-order-table-cleaned)
   ?f2<-(qty-order-sum (type finish) (pen ?pen) (qty-fo ?sfo) (qty-do ?sdo))
-  ?f3<-(exec-order (table-id ?id) (phase 6) (status finish))
+  ?f3<-(exec-order (table-id ?id) (phase 6) (status finish) (origin-status finish))
 =>
   (retract ?f1)
   (modify ?f2 (pen =(- ?pen 3)))
