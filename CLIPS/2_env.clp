@@ -173,7 +173,7 @@
 
 =>
 
-    (load-facts "../m10a_hdefault/history.txt")
+    (load-facts "../historyMappe20x20/initMap_history_lotOrder.clp")
     (retract ?f1)
 )
 

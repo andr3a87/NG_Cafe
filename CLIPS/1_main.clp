@@ -24,7 +24,7 @@
 (defmodule MAIN (export ?ALL))
 ;// DEFTEMPLATE
 (deftemplate exec
-  (slot step) 	;// l'environment incrementa il passo
+  (slot step)   ;// l'environment incrementa il passo
   (slot action  (allowed-values Forward Turnright Turnleft Wait
                                 LoadDrink LoadFood DeliveryFood DeliveryDrink
                                 CleanTable EmptyFood Release CheckFinish Inform)
@@ -42,16 +42,16 @@
            (slot  drink-order)
            (slot food-order))
 
-(deftemplate status (slot step) (slot time) (slot result))	;//struttura interna
+(deftemplate status (slot step) (slot time) (slot result))      ;//struttura interna
 
-(deftemplate perc-vision	;// la percezione di visione avviene dopo ogni azione, fornisce informazioni sullo stato del sistema
+(deftemplate perc-vision        ;// la percezione di visione avviene dopo ogni azione, fornisce informazioni sullo stato del sistema
 
-	(slot step)
+        (slot step)
     (slot time)
-	(slot pos-r)	;// informazioni sulla posizione del robot (riga)
-	(slot pos-c)	;// (colonna)
-	(slot direction)	;// orientamento del robot
-	;// percezioni sulle celle adiacenti al robot: (il robot é nella 5 e punta sempre verso la 2):
+        (slot pos-r)    ;// informazioni sulla posizione del robot (riga)
+        (slot pos-c)    ;// (colonna)
+        (slot direction)        ;// orientamento del robot
+        ;// percezioni sulle celle adiacenti al robot: (il robot é nella 5 e punta sempre verso la 2):
 
 
     (slot perc1  (allowed-values  Wall Person  Empty Parking Table Seat TrashBasket
@@ -74,10 +74,10 @@
                                                       RecyclableBasket DrinkDispenser FoodDispenser))
 )
 
-(deftemplate perc-bump  	;// percezione di urto contro persone o ostacoli
+(deftemplate perc-bump          ;// percezione di urto contro persone o ostacoli
     (slot step)
     (slot time)
-    (slot pos-r)	;// la posizione in cui si trova (la stessa in cui era prima dell'urto)
+    (slot pos-r)        ;// la posizione in cui si trova (la stessa in cui era prima dell'urto)
     (slot pos-c)
     (slot direction)
     (slot bump (allowed-values no yes)) ;//restituisce yes se sbatte
@@ -105,7 +105,7 @@
 (deftemplate prior-cell  (slot pos-r) (slot pos-c)
                          (slot contains (allowed-values Zero Wall Person Empty Parking Table Seat TB RB DD FD)))
 (deffacts init
-	(create)
+        (create)
 )
 
 ;; regola per inizializzazione
@@ -113,7 +113,7 @@
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "../m10a_hdefault/InitMap.txt")
+  (load-facts "../historyMappe20x20/initMap.clp")
   (assert (create-map)
   (create-initial-setting)
   (create-history))
@@ -125,10 +125,10 @@
 (defrule go-on-agent
   (declare (salience 20))
   (maxduration ?d)
-  (status (step ?t&:(< ?t ?d)))	;// controllo sul tempo
+  (status (step ?t&:(< ?t ?d))) ;// controllo sul tempo
 =>
-  ;	(printout t crlf)
-  (focus AGENT)	;// passa il focus all'agente, che dopo un'azione lo ripassa al main.
+  ;     (printout t crlf)
+  (focus AGENT) ;// passa il focus all'agente, che dopo un'azione lo ripassa al main.
 )
 
 
@@ -136,12 +136,12 @@
 ;// SI PASSA AL MODULO ENV DOPO CHE AGENTE HA DECISO AZIONE DA FARE
 
 (defrule go-on-env
-	(declare (salience 21))
-    ?f1<-	(status (step ?t))
-	(exec (step ?t)) 	;// azione da eseguire al al passo T, viene simulata dall'environment
+        (declare (salience 21))
+    ?f1<-       (status (step ?t))
+        (exec (step ?t))        ;// azione da eseguire al al passo T, viene simulata dall'environment
 =>
-;	(printout t crlf)
-	(focus ENV)
+;       (printout t crlf)
+        (focus ENV)
 )
 
 
@@ -149,13 +149,13 @@
 ;// quando finisce il tempo l'esecuzione si interrompe e vengono stampate le penalitá
 
 (defrule game-over
-	(declare (salience 10))
-	(maxduration ?d)
-	(status (step ?d))
-	(penalty ?p)
+        (declare (salience 10))
+        (maxduration ?d)
+        (status (step ?d))
+        (penalty ?p)
 =>
-	(printout t crlf " TIME OVER - Penalità accumulate: " ?p crlf crlf)
-	(halt)
+        (printout t crlf " TIME OVER - Penalità accumulate: " ?p crlf crlf)
+        (halt)
 )
 
 ; Per le stampe (interpretabili da CLIPSJNI)
