@@ -19,6 +19,9 @@ public abstract class ClipsModel extends Observable implements Runnable {
     protected ClipsCore core;
     private int executionMode;
     private final Thread t;
+    
+        public String strategy_folder;
+        public String env_folder;    
 
     /**costruttore del modello.
      * 
@@ -192,6 +195,10 @@ public abstract class ClipsModel extends Observable implements Runnable {
          * @param envsFolder_name Nome della cartella in CLP che contiene tutti i file relativi all'environment (envs/envFolder_name)
      */
     public void startCore(String strategyFolder_name, String envsFolder_name) {
+        
+                    strategy_folder = strategyFolder_name;
+            env_folder = envsFolder_name;
+            
             try {
                 /*inizializza l'ambiente clips caricando i vari file*/
                 core = new ClipsCore(strategyFolder_name, envsFolder_name); 

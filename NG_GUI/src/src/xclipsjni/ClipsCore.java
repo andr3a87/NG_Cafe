@@ -20,7 +20,6 @@ public class ClipsCore {
 
 	private Environment clips;
 	private RouterDialog router;
-
 	/**
          * Costruisce una nuova istanza di CLIPS, prelevando dalla cartella CPL/nome_strategia tutti i file .cpl oppure .txt.
          * Il nome_strategia è dato dalla variabile strategyFolder_name (che viene settata a seconda di quanto selezionato nella GUI).

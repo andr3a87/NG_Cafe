@@ -22,7 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import xclipsjni.ClipsView;
 import xclipsjni.ControlPanel;
-
+import java.io.PrintWriter;
 
 /**
  * L'implementazione della classe ClipsView specifica per il progetto Monitor
@@ -140,10 +140,17 @@ public class MonitorView extends ClipsView implements Observer {
         } else if (model.getTime() == model.getMaxDuration()) {
             advise = "Maxduration has been reached.\n";
         } else {
-            advise = "The agent says DONE.\n";
+            advise = "DONE.\n";
         }
         advise = advise + "Penalties: " + score;
-        JOptionPane.showMessageDialog(mapPanel, advise, "Termine Esecuzione", JOptionPane.INFORMATION_MESSAGE);
+        outputFrame.write(advise);
+        try {
+        PrintWriter writer = new PrintWriter("penalties.txt", "UTF-8");
+        writer.println("[map: "+ model.env_folder +"] [strategy: " + model.strategy_folder +"] \t penality: "+ score);
+        writer.close();        
+        }
+        catch(Exception e) {}
+        //JOptionPane.showMessageDialog(mapPanel, advise, "Termine Esecuzione", JOptionPane.INFORMATION_MESSAGE);
     }
 
     /**
