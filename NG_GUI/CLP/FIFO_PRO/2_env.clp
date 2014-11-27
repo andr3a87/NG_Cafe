@@ -1,180 +1,112 @@
 ;// _______________________________________________________________________________________________________________________
-
 ;// ENV
-
-;// ???????????????????????????????????????????????????????????????????????????????????????????????????????????????????????
-
-
+;// _______________________________________________________________________________________________________________________
 
 (defmodule ENV (import MAIN ?ALL))
 
-
-
-
-
+;// _______________________________________________________________________________________________________________________
 ;// DEFTEMPLATE
+;// _______________________________________________________________________________________________________________________
 
-
-
-
-(deftemplate cell  (slot pos-r) (slot pos-c)
-                   (slot contains (allowed-values Wall Person  Empty Parking Table Seat TrashBasket
-                                                      RecyclableBasket DrinkDispenser FoodDispenser)))
-
-
+(deftemplate cell
+  (slot pos-r)
+  (slot pos-c)
+  (slot contains
+    (allowed-values Wall Person  Empty Parking Table Seat TrashBasket RecyclableBasket DrinkDispenser FoodDispenser)
+  )
+)
 
 (deftemplate agentstatus
-
   (slot step)
-        (slot time)
-
+  (slot time)
   (slot pos-r)
-
   (slot pos-c)
-
   (slot direction)
-
   (slot l-drink)
-        (slot l-food)
-        (slot l_d_waste)
-        (slot l_f_waste)
-
+  (slot l-food)
+  (slot l_d_waste)
+  (slot l_f_waste)
 )
-
-
-
-
 
 (deftemplate tablestatus
-
   (slot step)
-        (slot time)
-
+  (slot time)
   (slot table-id)
-
   (slot clean (allowed-values yes no))
-
   (slot l-drink)
-        (slot l-food))
-
-
-(deftemplate orderstatus  ;// tiente traccia delle ordinazioni
-
-  (slot step)
-        (slot time)     ;// tempo corrente
-
-  (slot arrivaltime)  ;// momento in cui ? arrivata l'ordinazione
-
-  (slot requested-by) ;// tavolo richiedente
-
-  (slot drink-order)
-        (slot food-order)
-        (slot drink-deliv)
-        (slot food-deliv)
-        (slot answer (allowed-values pending accepted delayed rejected))
-
+  (slot l-food)
 )
 
-
+;// tiente traccia delle ordinazioni
+(deftemplate orderstatus
+  (slot step)
+  (slot time)         ;// tempo corrente
+  (slot arrivaltime)  ;// momento in cui ? arrivata l'ordinazione
+  (slot requested-by) ;// tavolo richiedente
+  (slot drink-order)
+  (slot food-order)
+  (slot drink-deliv)
+  (slot food-deliv)
+  (slot answer (allowed-values pending accepted delayed rejected))
+)
 
 (deftemplate cleanstatus
-
   (slot step)
-        (slot time)
-
+  (slot time)
   (slot arrivaltime)
-
   (slot requested-by) ;// tavolo coinvolto nella richiesta
-        (slot source)           ;// agent se agent ha fatto checkfinish positiva, altrimenti il tavolo
-
+  (slot source)       ;// agent se agent ha fatto checkfinish positiva, altrimenti il tavolo
 )
 
 
-
-(deftemplate personstatus   ;// informazioni sulla posizione delle persone
-
+;// informazioni sulla posizione delle persone
+(deftemplate personstatus
   (slot step)
-        (slot time)
-
+  (slot time)
   (slot ident)
-
   (slot pos-r)
-
   (slot pos-c)
-
   (slot activity)   ;// activity seated se cliente seduto, stand se in piedi, oppure path
-        (slot move)
-
+  (slot move)
 )
 
 
-
-(deftemplate personmove   ;// modella i movimenti delle persone. l'environment deve tenere conto dell'interazione di tanti agenti. Il mondo cambia sia per le azioni del robot, si per le azioni degli operatori. Il modulo environment deve gestire le interazioni.
-
+;// modella i movimenti delle persone. l'environment deve tenere conto dell'interazione di tanti agenti. Il mondo cambia sia per le azioni del robot, si per le azioni degli operatori. Il modulo environment deve gestire le interazioni.
+(deftemplate personmove
   (slot step)
-
   (slot ident)
-
   (slot path-id)
-
 )
 
-
-
-(deftemplate event      ;// gli eventi sono le richieste dei tavoli: ordini e finish
-
+;// gli eventi sono le richieste dei tavoli: ordini e finish
+(deftemplate event
   (slot step)
-
   (slot type (allowed-values request finish))
-
   (slot source)
-
   (slot food)
-        (slot drink)
-
+  (slot drink)
 )
 
-
-
-
-
+;// _______________________________________________________________________________________________________________________
 ;// DEFRULE
-
+;// _______________________________________________________________________________________________________________________
 
 
 ;//imposta il valore iniziale di ciascuna cella
-
 (defrule creation1
-
-     (declare (salience 25))
-
-     (create-map)
-     (prior-cell (pos-r ?r) (pos-c ?c) (contains ?x))
-
+  (declare (salience 25))
+  (create-map)
+  (prior-cell (pos-r ?r) (pos-c ?c) (contains ?x))
 =>
-
-     (assert (cell (pos-r ?r) (pos-c ?c) (contains ?x)))
-
-
-
+  (assert (cell (pos-r ?r) (pos-c ?c) (contains ?x)))
 )
 
-
-
-
-
-
-
 (defrule creation2
-
   (declare (salience 24))
-
-?f1<- (create-history)
-
+  ?f1<- (create-history)
 =>
-
-    (load-facts "history.txt")
-    (retract ?f1)
+  (load-facts "history.txt")
+  (retract ?f1)
 )
 
 (defrule creation3
@@ -386,132 +318,98 @@
 )
 
 
-;// __________________________________________________________________________________________
-
+;// _______________________________________________________________________________________________________________________
 ;// REGOLE PER GESTIONE EVENTI
+;// _______________________________________________________________________________________________________________________
 
-;// ??????????????????????????????????????????????????????????????????????????????????????????
-
-;//
-
-
-
+; Richiesta Ordine - Tavolo clean
 (defrule neworder1
-
   (declare (salience 200))
-
   (status (step ?i) (time ?t))
-
 ?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
-
   (tablestatus (step ?i) (table-id ?tb) (clean yes))
-        (not (orderstatus (step ?i) (requested-by ?tb)))
-
+  (not (orderstatus (step ?i) (requested-by ?tb)))
 =>
-
   (assert
-
     (orderstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb)
                              (drink-order ?nd) (food-order ?nf)
                              (drink-deliv 0) (food-deliv 0)
                              (answer pending))
-
-
     (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type order)
                               (drink-order ?nd) (food-order ?nf))
-
   )
 
   (retract ?f1)
-
-  (printout t crlf " ENVIRONMENT:" crlf)
-
-  (printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
-
-  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders %p2 food e %p3 drinks.") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
+  ;(printout t crlf " ENVIRONMENT:" crlf)
+  ;(printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
+  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
 
-
+; Richiesta Ordine - Table non clean
 (defrule neworder2
-
   (declare (salience 200))
-
   (status (step ?i) (time ?t))
-
 ?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
-
   (tablestatus (step ?i) (table-id ?tb) (clean no))
-        (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))
-
+  (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))
 =>
-
   (assert
-
     (orderstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb)
                              (drink-order ?nd) (food-order ?nf)
                              (drink-deliv 0) (food-deliv 0)
                              (answer pending))
-
-
     (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type order)
                               (drink-order ?nd) (food-order ?nf))
-
   )
 
   (retract ?f1)
-
-  (printout t crlf " ENVIRONMENT:" crlf)
-
-  (printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
-  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders %p2 food e %p3 drinks.") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
+;  (printout t crlf " ENVIRONMENT:" crlf)
+;  (printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
+  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is not clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
 
-
-
-
+; evento finish
 (defrule newfinish
-
   (declare (salience 200))
-
   (status (step ?i) (time ?t))
-
-?f1<- (event (step ?i) (type finish) (source ?tb))
-
+  ?f1<- (event (step ?i) (type finish) (source ?tb))
   (tablestatus (step ?i) (table-id ?tb) (clean no))
-        (not (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))) ;non c'? gi? stato un finish
-
-        (not (orderstatus (step ?i) (time ?t) (requested-by ?tb)))   ;l'ordine ? stato completato
-    =>
-
+  (not (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb)))  ;non c'é già stata un finish
+  (not (orderstatus (step ?i) (time ?t) (requested-by ?tb)))                      ;l'ordine é stato completato
+=>
   (assert
-
     (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
                 (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
-
   )
-
   (retract ?f1)
+  ;(printout t crlf " ENVIRONMENT:" crlf)
+  ;(printout t " - " ?tb " declares finish " crlf)
+  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text "%p1 declares finish.") (param1 ?tb)))
+)
 
-  (printout t crlf " ENVIRONMENT:" crlf)
-
-  (printout t " - " ?tb " declares finish " crlf)
-  (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 declares finish.") (param1 ?tb)))
-
+; aggiunta da noi affinché si possano vedere le finish non correttamenete dichiarate nella history
+(defrule newfinish_deleted
+  (declare (salience 200))
+  (status (step ?i) (time ?t))
+  ?f1<- (event (step ?i) (type finish) (source ?tb))
+  (tablestatus (step ?i) (table-id ?tb) (clean yes))
+=>
+  (assert
+    (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
+                (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
+  )
+  (retract ?f1)
+  ;(printout t crlf " ENVIRONMENT:" crlf)
+  ;(printout t " - " ?tb " declares finish " crlf)
+  (assert (printGUI (time ?t) (step ?i) (source "ERRORS") (verbosity 0) (text "%p1 declares finish but %p1 is not served.") (param1 ?tb)))
 )
 
 ;// __________________________________________________________________________________________
-
 ;// GENERA EVOLUZIONE TEMPORALE
-
-;// ??????????????????????????????????????????????????????????????????????????????????????????
-
-
+;// __________________________________________________________________________________________
 
 ;// per ogni istante di tempo che intercorre fra l'informazione di finish di un tavolo  e
 ;//  pulitura (clean) del tavolo,  l'agente prende 3 penalit?
-
-
-
 
 (defrule CleanEvolution1
 
@@ -1025,35 +923,27 @@
 
   (retract ?f4)
 
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "msg-order-delayed-KO1: agent ha sent _delayed_ inform to table but it should be accepted %p1 -- penalty %p2 + 500000") (param1 ?tb) (param2 ?p)))
 )
 
 ;// l'agente ha inviato inform che l'ordine ? rejected (e non va bene dovrebbe essere accepted)
 (defrule msg-order-rejected-KO1
-
   (declare (salience 20))
-
-?f1<- (status (step ?i) (time ?t))
-
+  ?f1<- (status (step ?i) (time ?t))
   (exec (step ?i) (action Inform) (param1 ?tb) (param2 ?request) (param3 rejected))
-
-?f2<- (orderstatus (step ?i) (time ?t) (requested-by ?tb) (arrivaltime ?request) (answer pending))
-
-?f3<- (agentstatus (step ?i) (time ?t))
-
+  ?f2<- (orderstatus (step ?i) (time ?t) (requested-by ?tb) (arrivaltime ?request) (answer pending))
+  ?f3<- (agentstatus (step ?i) (time ?t))
   (tablestatus (step ?i) (time ?t) (table-id ?tb) (clean yes))
-?f4<-   (penalty ?p)
-
+  ?f4<-   (penalty ?p)
 =>
-
   (modify ?f1 (time (+ ?t 1)) (step (+ ?i 1)))
-
   (modify ?f2 (time (+ ?t 1)) (step (+ ?i 1)) (answer rejected))
-
   (modify ?f3 (time (+ ?t 1)) (step (+ ?i 1)))
         (assert (penalty (+ ?p 5000000)))
 
   (retract ?f4)
 
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "msg-order-rejected-KO1: agent ha sent _rejected_ inform to table %p1 but it should be accepted -- penalty %p2 + 5000000") (param1 ?tb) (param2 ?p)))
 )
 
 ;// l'agente ha inviato inform che l'ordine ? rejected (e non va bene dovrebbe essere delayed)
@@ -1083,12 +973,11 @@
 
   (retract ?f4)
 
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "msg-order-rejected-KO2: agent ha sent _rejected_ inform to table %p1 but it should be delayed") (param1 ?tb)))
 )
 
 
 ;// l'agente invia un'inform  per un servizio che non ? pi? pending
-
-
 
 
 (defrule msg-mng-KO1
@@ -1113,7 +1002,7 @@
         (assert (penalty (+ ?p 10000)))
         (retract ?f4)
 
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "msg-mng-KO1") (param1 ?tb)))
 
 )
 
@@ -1143,6 +1032,8 @@
   (assert (penalty (+ ?p 500000)))
 
   (retract ?f4)
+
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "msg-mng-KO2") (param1 ?tb)))
 
 )
 
@@ -1239,6 +1130,7 @@
                 (penalty (+ ?p 10000)))
         (retract ?f4)
 
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_useless-1") (param1 ?tb)))
 )
 
 ;// operazione non serve, il tavolo ? gia pulito
@@ -1266,7 +1158,7 @@
   (assert (perc-finish (step (+ ?i 1)) (time (+ ?t 40)) (finish yes))
                 (penalty (+ ?p 10000)))
         (retract ?f4)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_useless-2") (param1 ?tb)))
 )
 
 
@@ -1299,6 +1191,7 @@
   (assert (perc-finish (step (+ ?i 1)) (time (+ ?t 40)) (finish no))
                 (penalty (+ ?p 100000)))
         (retract ?f4)
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_useless-3") (param1 ?tb)))
 
 )
 
@@ -1329,7 +1222,7 @@
   (assert (perc-finish (step (+ ?i 1)) (time (+ ?t 40)) (finish no))
                 (penalty (+ ?p 100000)))
         (retract ?f4)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_useless-4") (param1 ?tb)))
 )
 
 
@@ -1360,7 +1253,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_KO_1") ))
 )
 
 ;// L'azione di CheckFinish fallisce perch? la posizione indicata non
@@ -1385,7 +1278,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_KO_2") ))
 )
 
 ;// __________________________________________________________________________________________
@@ -1531,7 +1424,8 @@
                     (l-drink 0) (l-food 0) (clean yes))
 
   (assert (penalty (+ ?p 500000)))
-        (retract ?f5)
+  (retract ?f5)
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_1") ))
 )
 
 ;// azione inutile di cleantable perch? il tavolo ? gi? pulito
@@ -1561,7 +1455,8 @@
   (modify ?f3 (step (+ ?i 1)) (time (+ ?t 30)))
 
   (assert (penalty (+ ?p 10000)))
-        (retract ?f5)
+  (retract ?f5)
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_2 - table %p1 is clean") ))
 )
 
 
@@ -1592,7 +1487,8 @@
   (modify ?f1 (step (+ ?i 1)) (time (+ ?t 30)))
 
   (assert (penalty (+ ?p  500000)))
-        (retract ?f5)
+  (retract ?f5)
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_3") ))
 
 )
 
@@ -1620,6 +1516,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_4") ))
 
 )
 
@@ -1645,7 +1542,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_5") ))
 )
 
 ;// __________________________________________________________________________________________
@@ -1704,7 +1601,7 @@
 
         (assert (penalty (+ ?p  10000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO1") ))
 )
 
 
@@ -1731,7 +1628,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO2") ))
 )
 
 ;// Operazione fallisce perch? la cella indicata non ? un TrashBasket
@@ -1755,6 +1652,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO3") ))
 
 )
 
@@ -1814,6 +1712,7 @@
 
         (assert (penalty (+ ?p  10000)))
         (retract ?f5)
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO1") ))
 
 )
 
@@ -1840,7 +1739,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO2") ))
 )
 
 ;// Operazione fallisce perch? la cella indicata non ? un RecyclableBasket
@@ -1864,7 +1763,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO3") ))
 )
 
 
@@ -1945,7 +1844,7 @@
 
         (assert (penalty (+ ?p  100000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO1") ))
 )
 
 ;// Operazione fallisce perch? l'agente ? gi? carico di immondizia
@@ -1974,7 +1873,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO2") ))
 )
 
 
@@ -2001,7 +1900,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO3") ))
 )
 
 ;// Operazione fallisce perch? la cella indicata non ? un FoodDispenser
@@ -2027,7 +1926,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO4") ))
 )
 
 
@@ -2090,7 +1989,7 @@
 
         (assert (penalty (+ ?p  100000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO1") ))
 )
 
 ;// Operazione fallisce perch? l'agente ? gi? carico di immondizia
@@ -2119,7 +2018,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO2") ))
 )
 
 
@@ -2146,7 +2045,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO3") ))
 )
 
 ;// Operazione fallisce perch? la cella indicata non ? un drinkDispenser
@@ -2172,7 +2071,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO4") ))
 )
 
 
@@ -2255,7 +2154,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-food_WRONG_2") ))
 )
 
 
@@ -2284,7 +2183,7 @@
 
   (assert (penalty (+ ?p  100000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-food_WRONG_3") ))
 )
 
 ;// __________________________________________________________________________________________
@@ -2369,7 +2268,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-drink_WRONG_2") ))
 )
 
 
@@ -2399,7 +2298,7 @@
 
   (assert (penalty (+ ?p  100000)))
         (retract ?f5)
-
+(assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-drink_WRONG_3") ))
 )
 
 ;// L'azione di delivery-food o delivery-drink fallisce perch? l'agente non ? accanto ad un tavolo
@@ -2426,7 +2325,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery_WRONG_4: l'azione di delivery-food o delivery-drink fallisce perché non è accanto ad un tavolo") ))
 )
 
 ;// L'azione di delivery-food o o delivery-drink fallisce perch? la posizione indicata non
@@ -2451,7 +2350,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery_WRONG_5") ))
 )
 
 (defrule order-completed
@@ -2553,7 +2452,7 @@
 ; (printout t " ENVIRONMENT:" crlf)
 
 ; (printout t " - penalit? +10000000 (Forward-north-bump): " (+ ?p 10000000) crlf)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-north-bump") ))
 )
 
 
@@ -2614,10 +2513,9 @@
 
   (assert (penalty (+ ?p 10000000)))
 
-; (printout t " ENVIRONMENT:" crlf)
-
-; (printout t " - penalit? +10000000 (forward-south-bump): " (+ ?p 10000000) crlf)
-
+  ; (printout t " ENVIRONMENT:" crlf)
+  ; (printout t " - penalit? +10000000 (forward-south-bump): " (+ ?p 10000000) crlf)
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-south-bump") ))
 )
 
 
@@ -2681,7 +2579,7 @@
 ; (printout t " ENVIRONMENT:" crlf)
 
 ; (printout t " - penalit? +10000000 (forward-west-bump): " (+ ?p 10000000) crlf)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-west-bump") ))
 )
 
 
@@ -2745,7 +2643,7 @@
 ; (printout t " ENVIRONMENT:" crlf)
 
 ; (printout t " - penalit? +10000000 (forward-east-bump): " (+ ?p 10000000) crlf)
-
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-east-bump") ))
 )
 
 
