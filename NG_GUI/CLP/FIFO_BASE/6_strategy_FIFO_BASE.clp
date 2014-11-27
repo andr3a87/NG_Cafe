@@ -70,13 +70,13 @@
     then
       (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
   )
-  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "Agent went in phase 1: table %p1, time-order: %p2, status: %p3") (param1 ?sen) (param2 ?t) (param3 ?status)))
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "NEW ORDER (phase 1): table %p1, time-order: %p2, status: %p3") (param1 ?sen) (param2 ?t) (param3 ?status)))
 )
 
 ;Trovato l'ordine eseguo la fase di competenza
 (defrule strategy-complete-phase1
   (declare (salience 70))
-  (status (step ?s1))
+  (status (step ?s1) (time ?t))
   ?f1 <- (exec-order (step ?s2) (drink-order ?do) (food-order ?fo) (table-id ?id) (status ?status)  (phase 1) )
   (K-table (table-id ?id) (clean ?clean))
   (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
@@ -85,11 +85,17 @@
   (if (=(str-compare ?status "accepted") 0)
   then
     (modify ?f1 (table-id ?id) (phase 2))
+    (assert
+      (printGUI (time ?t) (step ?s1) (source "PLANNER") (verbosity 1) (text  "Agent to phase 2 (table %p1) (look for disp) (s: %p2)") (param1 ?id) (param2 ?status))
+    )
   )
   ; se l'ordine è delayed e il tavolo è sporco (ossia non l'ho ancora pulito), vado alla fase 5
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 5))
+    (assert
+      (printGUI (time ?t) (step ?s1) (source "PLANNER") (verbosity 1) (text  "Agent to phase 5 (table %p1) (not clean or delayed) (s: %p2) ") (param1 ?id) (param2 ?status))
+    )
   )
   ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) modifico in accepted, così da gestirlo come un ordine normale.
   ;(if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
@@ -100,6 +106,9 @@
   (if (= (str-compare ?status "finish") 0)
   then
     (modify ?f1 (table-id ?id) (phase 5))
+    (assert
+      (printGUI (time ?t) (step ?s1) (source "PLANNER") (verbosity 1) (text  "Agent to phase 5 (table %p1) (cleaning the table) (s: %p2 ") (param1 ?id) (param2 ?status))
+    )
   )
 )
 
@@ -752,7 +761,7 @@
 ;Ordine completato. Devo trovare il nuovo ordine da evadare.
 ;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
 (defrule strategy-order-completed
-  (status (step ?current))
+  (status (time ?t) (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
 
@@ -761,8 +770,9 @@
   (modify ?f1 (phase COMPLETED))
 
   ;debug
-  (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
-  )
+  ;(if (> ?level 0)
+  ;then
+  ;(printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
+  ;)
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "ORDER COMPLETED (phase 7): table %p1") (param1 ?id) ))
 )

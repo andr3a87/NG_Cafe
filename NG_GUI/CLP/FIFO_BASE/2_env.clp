@@ -1253,7 +1253,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_KO_1") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_KO_1") ))
 )
 
 ;// L'azione di CheckFinish fallisce perch? la posizione indicata non
@@ -1278,7 +1278,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_KO_2") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CheckFinish_KO_2") ))
 )
 
 ;// __________________________________________________________________________________________
@@ -1425,7 +1425,7 @@
 
   (assert (penalty (+ ?p 500000)))
   (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_1") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_1") ))
 )
 
 ;// azione inutile di cleantable perch? il tavolo ? gi? pulito
@@ -1456,7 +1456,7 @@
 
   (assert (penalty (+ ?p 10000)))
   (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_2 - table %p1 is clean") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_2 - table %p1 is clean") ))
 )
 
 
@@ -1488,7 +1488,7 @@
 
   (assert (penalty (+ ?p  500000)))
   (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_3") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_3") ))
 
 )
 
@@ -1516,7 +1516,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_4") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_4") ))
 
 )
 
@@ -1542,7 +1542,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_5") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "CleanTable_K0_5") ))
 )
 
 ;// __________________________________________________________________________________________
@@ -1601,7 +1601,7 @@
 
         (assert (penalty (+ ?p  10000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO1") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO1") ))
 )
 
 
@@ -1628,7 +1628,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO2") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO2") ))
 )
 
 ;// Operazione fallisce perch? la cella indicata non ? un TrashBasket
@@ -1652,7 +1652,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO3") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "EmptyFood_KO3") ))
 
 )
 
@@ -1712,7 +1712,7 @@
 
         (assert (penalty (+ ?p  10000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO1") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO1") ))
 
 )
 
@@ -1739,7 +1739,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO2") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO2") ))
 )
 
 ;// Operazione fallisce perch? la cella indicata non ? un RecyclableBasket
@@ -1763,7 +1763,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO3") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "Release_KO3") ))
 )
 
 
@@ -1844,7 +1844,7 @@
 
         (assert (penalty (+ ?p  100000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO1") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO1") ))
 )
 
 ;// Operazione fallisce perch? l'agente ? gi? carico di immondizia
@@ -1873,7 +1873,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO2") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO2") ))
 )
 
 
@@ -1900,7 +1900,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO3") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO3") ))
 )
 
 ;// Operazione fallisce perch? la cella indicata non ? un FoodDispenser
@@ -1926,7 +1926,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO4") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-food_KO4") ))
 )
 
 
@@ -1989,7 +1989,7 @@
 
         (assert (penalty (+ ?p  100000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO1") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO1") ))
 )
 
 ;// Operazione fallisce perch? l'agente ? gi? carico di immondizia
@@ -2018,7 +2018,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO2") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO2") ))
 )
 
 
@@ -2045,7 +2045,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO3") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO3") ))
 )
 
 ;// Operazione fallisce perch? la cella indicata non ? un drinkDispenser
@@ -2071,7 +2071,7 @@
 
         (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO4") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "load-drink_KO4") ))
 )
 
 
@@ -2154,7 +2154,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-food_WRONG_2") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-food_WRONG_2") ))
 )
 
 
@@ -2183,7 +2183,7 @@
 
   (assert (penalty (+ ?p  100000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-food_WRONG_3") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-food_WRONG_3") ))
 )
 
 ;// __________________________________________________________________________________________
@@ -2268,7 +2268,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-drink_WRONG_2") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-drink_WRONG_2") ))
 )
 
 
@@ -2298,7 +2298,7 @@
 
   (assert (penalty (+ ?p  100000)))
         (retract ?f5)
-(assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-drink_WRONG_3") (param1 ?tb)))
+(assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery-drink_WRONG_3") ))
 )
 
 ;// L'azione di delivery-food o delivery-drink fallisce perch? l'agente non ? accanto ad un tavolo
@@ -2325,7 +2325,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery_WRONG_4: l'azione di delivery-food o delivery-drink fallisce perché non è accanto ad un tavolo") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery_WRONG_4: l'azione di delivery-food o delivery-drink fallisce perché non è accanto ad un tavolo") ))
 )
 
 ;// L'azione di delivery-food o o delivery-drink fallisce perch? la posizione indicata non
@@ -2350,7 +2350,7 @@
 
   (assert (penalty (+ ?p  500000)))
         (retract ?f5)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery_WRONG_5") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "delivery_WRONG_5") ))
 )
 
 (defrule order-completed
@@ -2452,7 +2452,7 @@
 ; (printout t " ENVIRONMENT:" crlf)
 
 ; (printout t " - penalit? +10000000 (Forward-north-bump): " (+ ?p 10000000) crlf)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-north-bump") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-north-bump") ))
 )
 
 
@@ -2515,7 +2515,7 @@
 
   ; (printout t " ENVIRONMENT:" crlf)
   ; (printout t " - penalit? +10000000 (forward-south-bump): " (+ ?p 10000000) crlf)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-south-bump") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-south-bump") ))
 )
 
 
@@ -2579,7 +2579,7 @@
 ; (printout t " ENVIRONMENT:" crlf)
 
 ; (printout t " - penalit? +10000000 (forward-west-bump): " (+ ?p 10000000) crlf)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-west-bump") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-west-bump") ))
 )
 
 
@@ -2643,7 +2643,7 @@
 ; (printout t " ENVIRONMENT:" crlf)
 
 ; (printout t " - penalit? +10000000 (forward-east-bump): " (+ ?p 10000000) crlf)
-  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-east-bump") (param1 ?tb)))
+  (assert (printGUI (time ?t) (step ?i) (source "BIGERROR") (verbosity 0) (text  "forward-east-bump") ))
 )
 
 
