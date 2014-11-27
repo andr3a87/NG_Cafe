@@ -48,7 +48,7 @@ public class PrintOutWindow extends javax.swing.JFrame {
         sources.put("PLANNER", Color.darkGray);
         sources.put("ENV", Color.decode("#32CD32"));
         sources.put("ERRORS", Color.decode("#F79E39"));
-        sources.put("ERRORS", Color.decode("#F95D75"));
+        sources.put("BIGERROR", Color.decode("#F95D75"));
         
         table = new Hashtable<>();
         table.put(0, new JLabel("Low"));
