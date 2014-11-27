@@ -36,9 +36,9 @@
 (event (step 17) (type request) (source T4) (food 0) (drink 2))
 (event (step 30) (type request) (source T5) (food 1) (drink 1))
 (event (step 31) (type finish) (source T1))
-(event (step 100) (type finish) (source T2))
+(event (step 130) (type finish) (source T2))
 (event (step 115) (type request) (source T2) (food 1) (drink 1))
-(event (step 120) (type finish) (source T4))
+(event (step 145) (type finish) (source T4))
 (event (step 121) (type finish) (source T3))
 
 (personmove (step 31) (ident C1) (path-id P1))
