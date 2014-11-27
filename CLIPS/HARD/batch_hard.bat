@@ -44,7 +44,7 @@
 (set-break delivery_WRONG_5)
 
 (load "../3_agent.clp")
-
+(assert (stop-at-step 127))
 (load "4_percept_HARD.clp")
 (load "../5_exec-plane.clp")
 (load "6_strategy_HARD.clp")
@@ -62,5 +62,5 @@
 
 (reset)
 (run 257)
-(assert(stop-at-step 137))
+
 (run 12000000)
