@@ -70,7 +70,7 @@
     then
       (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
   )
-  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "NEW ORDER (phase 1): table %p1, time-order: %p2, status: %p3") (param1 ?sen) (param2 ?t) (param3 ?status)))
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "NEW ORDER (phase 1): (%p1,%p2)") (param1 ?sen) (param2 ?status)))
 )
 
 ;Trovato l'ordine eseguo la fase di competenza
@@ -86,7 +86,7 @@
   then
     (modify ?f1 (table-id ?id) (phase 2))
     (assert
-      (printGUI (time ?t) (step ?s1) (source "PLANNER") (verbosity 1) (text  "Agent to phase 2 (table %p1) (look for disp) (s: %p2)") (param1 ?id) (param2 ?status))
+      (printGUI (time ?t) (step ?s1) (source "PLANNER") (verbosity 1) (text  "PHASE 1>2 (%p1,%p2) (look for disp)") (param1 ?id) (param2 ?status))
     )
   )
   ; se l'ordine è delayed e il tavolo è sporco (ossia non l'ho ancora pulito), vado alla fase 5
@@ -726,7 +726,7 @@
 
 ;Devo ancora consegnare della roba al tavolo. Devo ricercare il best-dispenser (FASE 2)
 (defrule strategy-return-phase7-to-2_accepted
-  (status (step ?current))
+  (status (time ?t) (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status accepted) (food-order ?fo) (drink-order ?do))
   ; ho scaricato tutta la roba
@@ -739,11 +739,13 @@
   then
   (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
   )
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text "PHASE 7>2: (%p1,serving) Served table. Order not completed, going back to the dispenser") (param1 ?id) )
+  )
 )
 
 ;Devo ancora buttare lo sporco. Devo ricercare il cestino più vicino (FASE 2)
 (defrule strategy-return-phase7-to-2_delayed
-  (status (step ?current))
+  (status (time ?t) (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status delayed|finish))
   (K-agent (l_d_waste ?ldw) (l_f_waste ?lfw))
@@ -755,6 +757,8 @@
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F7:s"?current":"?id"-CLEAN] CleanTable, sono pieno di trash, return to phase 2" crlf)
+  )
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text "PHASE 7>2: (%p1,cleaning) full of trash, going to empty waste") (param1 ?id) )
   )
 )
 
@@ -770,9 +774,10 @@
   (modify ?f1 (phase COMPLETED))
 
   ;debug
-  ;(if (> ?level 0)
-  ;then
-  ;(printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
-  ;)
-  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "ORDER COMPLETED (phase 7): table %p1") (param1 ?id) ))
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
+  )
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "ORDER COMPLETED (phase 7): table %p1") (param1 ?id) )
+  )
 )
