@@ -173,7 +173,7 @@
 
 =>
 
-    (load-facts "../historyMappe20x20/initMap_history_simple.clp")
+    (load-facts "../m20a/initMap_history_Peeps.clp")
     (retract ?f1)
 )
 

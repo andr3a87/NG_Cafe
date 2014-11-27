@@ -113,7 +113,7 @@
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "../historyMappe20x20/initMap.clp")
+  (load-facts "../m20a/initMap.clp")
   (assert (create-map)
   (create-initial-setting)
   (create-history))
