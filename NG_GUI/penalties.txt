@@ -1,0 +1,1 @@
+[map: m10a_hdefault] [strategy: FIFO_BASE] 	 penality: 8043
