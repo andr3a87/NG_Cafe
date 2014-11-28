@@ -23,6 +23,7 @@ import javax.swing.JPanel;
 import xclipsjni.ClipsView;
 import xclipsjni.ControlPanel;
 import java.io.PrintWriter;
+import java.io.FileOutputStream;
 
 /**
  * L'implementazione della classe ClipsView specifica per il progetto Monitor
@@ -145,8 +146,8 @@ public class MonitorView extends ClipsView implements Observer {
         advise = advise + "Penalties: " + score;
         outputFrame.write(advise);
         try {
-        PrintWriter writer = new PrintWriter("penalties.txt", "UTF-8");
-        writer.println("[map: "+ model.env_folder +"] [strategy: " + model.strategy_folder +"] \t penality: "+ score);
+        PrintWriter writer = new PrintWriter(new FileOutputStream(new File("penalties.txt"), true /* append = true */)); 
+        writer.println(model.env_folder +"\t" + model.strategy_folder +"\t"+ score);
         writer.close();        
         }
         catch(Exception e) {}
