@@ -173,7 +173,7 @@
 
 =>
 
-    (load-facts "../m20a/initMap_history_Peeps.clp")
+    (load-facts "../m20a_hhard/history.txt")
     (retract ?f1)
 )
 
