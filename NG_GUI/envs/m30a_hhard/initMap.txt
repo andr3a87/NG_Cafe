@@ -1,4 +1,4 @@
-(maxduration 3000)
+(maxduration 1000)
 
 (initial_agentposition (pos-r 2) (pos-c 7) (direction south))
 (Table (table-id T1) (pos-r 10) (pos-c 2))

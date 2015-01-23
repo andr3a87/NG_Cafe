@@ -556,261 +556,147 @@
 ;// __________________________________________________________________________________________
 
 ;// GENERA MOVIMENTI PERSONE
-
 ;// ??????????????????????????????????????????????????????????????????????????????????????????
-
 ;// Persona ferma non arriva comando di muoversi
 
 (defrule MovePerson1
-
   (declare (salience 9))
-
   (status (step ?i) (time ?t))
-
-?f1<- (personstatus (step =(- ?i 1)) (ident ?id) (activity seated|stand))
-
+  ?f1<- (personstatus (step =(- ?i 1)) (ident ?id) (activity seated|stand))
   (not (personmove (step ?i) (ident ?id)))
-
 =>
-
   (modify ?f1 (time ?t) (step ?i))
-
 )
-
-
 
 ;//;//Persona ferma ma arriva comando di muoversi
 
 (defrule MovePerson2
-
-   (declare (salience 10))
-
-        (status (step ?i) (time ?t))
-
- ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (activity seated|stand))
-
- ?f2 <- (personmove (step  ?i) (ident ?id) (path-id ?m))
-
-        => (modify  ?f1 (time ?t) (step ?i) (activity ?m) (move 0))
-
-           ;(retract ?f2)
-
+  (declare (salience 10))
+  (status (step ?i) (time ?t))
+  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (activity seated|stand))
+  ?f2 <- (personmove (step  ?i) (ident ?id) (path-id ?m))
+  => 
+  (modify  ?f1 (time ?t) (step ?i) (activity ?m) (move 0))
+  ;(retract ?f2)
 )
 
-
-
-
 ;// La cella in cui deve  andare la persona ? libera. Persona si muove.
-
 ;// La cella di partenza ? un seat in cui si trovava l'operatore
 
 (defrule MovePerson3
-
-   (declare (salience 10))
-
-        (status (step ?i) (time ?t))
-
- ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y)
-
-                      (activity ?m&~seated&~stand) (move ?s))
-
-        (cell (pos-r ?x) (pos-c ?y) (contains Seat))
-
- ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
-
-        (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
-
- ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Empty))
-
-        => (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
-
-           (modify ?f2 (contains Person))
-
-           ;(retract ?f3)
-
+  (declare (salience 10))
+  (status (step ?i) (time ?t))
+  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s)) 
+  (cell (pos-r ?x) (pos-c ?y) (contains Seat))
+  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
+  (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
+  ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Empty))
+  => 
+  (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
+  (modify ?f2 (contains Person))
+  ;(retract ?f3)
 )
 
 ;// La cella in cui deve  andare la persona ? libera. Persona si muove.
-
 ;// La cella di partenza ? occupata da cliente (Person) , per cui dopo lo spostamento
-
 ;// del cliente la cella di partenza diventa libera e quella di arrivo contiene person
 
 (defrule MovePerson4
-
-   (declare (salience 10))
-
-        (status (step ?i) (time ?t))
-
- ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y)
-
-                      (activity ?m&~seated|~stand) (move ?s))
-
- ?f4 <- (cell (pos-r ?x) (pos-c ?y) (contains Person))
-
- ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
-
-        (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
-
- ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Empty))
-
-        => (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
-
-           (modify ?f2 (contains Person))
-
-           (modify ?f4 (contains Empty))
-
-           ;(retract ?f3)
+  (declare (salience 10))
+  (status (step ?i) (time ?t))
+  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated|~stand) (move ?s))
+  ?f4 <- (cell (pos-r ?x) (pos-c ?y) (contains Person))
+  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c) 
+  (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
+  ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Empty))
+  => 
+  (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
+  (modify ?f2 (contains Person))
+  (modify ?f4 (contains Empty))
+  ;(retract ?f3)
 )
-
-
-
 
 ;// La cella in cui deve andare il cliente ? un seat e il seat non ? occupata da altra persona.
 ;// La cella di partenza diventa libera, e l'attivita del cliente diventa seated
 
- (defrule MovePerson5
-
-   (declare (salience 10))
-
-        (status (step ?i) (time ?t))
-
- ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y)
-
-                       (activity ?m&~seated&~stand) (move ?s))
-
- ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
-
-        (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
-
- ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat))
-        (not (personstatus (step =(- ?i 1)) (pos-r ?r) (pos-c ?c)
-
-                       (activity seated)))
-
- ?f4 <- (cell (pos-r ?x) (pos-c ?y) (contains Person))
-
-        => (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (activity seated) (move NA))
-
-           (modify ?f4 (contains Empty))
-
-           ;(retract ?f3)
+(defrule MovePerson5
+  (declare (salience 10))
+  (status (step ?i) (time ?t))
+  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s))
+  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c) 
+  (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
+  ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat)) 
+  (not (personstatus (step =(- ?i 1)) (pos-r ?r) (pos-c ?c) (activity seated)))
+  ?f4 <- (cell (pos-r ?x) (pos-c ?y) (contains Person))
+  => 
+  (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (activity seated) (move NA))
+  (modify ?f4 (contains Empty))
+  ;(retract ?f3)
 )
-
 
 ;// La cella in cui deve  andare la persona ? occupata dal robot. Persona non si muove
 
 (defrule MovePerson_wait1
-
   (declare (salience 10))
-
   (status (step ?i) (time ?t))
-
-?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
-
+  ?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
   (move-path ?m =(+ ?s 1) ?id ?r ?c)
-
   (agentstatus (step ?i) (time ?t) (pos-r ?r) (pos-c ?c))
-
-?f2<- (penalty ?p)
-
+  ?f2<- (penalty ?p)
 =>
-
   (modify  ?f1 (time ?t) (step ?i))
-
   (assert (penalty (+ ?p (* (- ?t ?tt) 20))))
-
   (retract ?f2)
-
 ; (printout t " - penalit? aumentate" ?id " attende che il robot si sposti)" crlf)
 
 )
 
 
-
-
 ;// La cella in cui deve  andare la persona non ? libera (ma non ? occupata da robot). Persona non si muove
 
 (defrule MovePerson_wait2
-
   (declare (salience 10))
-
   (status (step ?i) (time ?t))
-
-?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
-
+  ?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
   (move-path ?m =(+ ?s 1) ?id ?r ?c)
-        (cell (pos-r ?r) (pos-c ?c) (contains ~Empty&~Seat))
-
+  (cell (pos-r ?r) (pos-c ?c) (contains ~Empty&~Seat))
   (not (agentstatus (step ?i) (time ?t) (pos-r ?r) (pos-c ?c)))
 =>
-
   (modify  ?f1 (time ?t) (step ?i))
-
-
-
 )
 
 ;// La cella in cui deve andare il cliente ? un seat ma il seat ? occupata da altra persona.
 ;// il cliente resta fermo
 
- (defrule MovePerson_wait3
-
-   (declare (salience 10))
-
-        (status (step ?i) (time ?t))
-
- ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y)
-
-                       (activity ?m&~seated&~stand) (move ?s))
-
- ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
-
-        (not (agentstatus (time ?i) (pos-r ?r) (pos-c ?c)))
-
- ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat))
-        (personstatus (step =(- ?i 1)) (pos-r ?r) (pos-c ?c)
-
-                       (activity seated))
-
-        => (modify  ?f1  (step ?i) (time ?t))
-
-           )
+(defrule MovePerson_wait3
+  (declare (salience 10))
+  (status (step ?i) (time ?t))
+  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y)
+  (activity ?m&~seated&~stand) (move ?s))
+  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
+  (not (agentstatus (time ?i) (pos-r ?r) (pos-c ?c)))
+  ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat))
+  (personstatus (step =(- ?i 1)) (pos-r ?r) (pos-c ?c)
+  (activity seated))
+  => 
+  (modify  ?f1  (step ?i) (time ?t))
+)
 
 ;//La serie di mosse ? stata esaurita, la persona rimane ferma dove si trova
-
-;  (defrule MovePerson_end
-; 
-;    (declare (salience 9))
-; 
-;         (status (step ?i) (time ?t))
-; 
-; ?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
-; 
-;   (not (move-path ?m =(+ ?s 1) ?id ?r ?c))
-; 
-;         => (modify  ?f1  (time ?t) (step ?i) (activity stand) (move NA))
-; 
-;         )
-
-
-
-
-
-
-
-
-
-
+(defrule MovePerson_end
+  (declare (salience 9))
+  (status (step ?i) (time ?t))
+  ?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
+  (not (move-path ?m =(+ ?s 1) ?id ?r ?c))
+  => 
+  (modify  ?f1  (time ?t) (step ?i) (activity stand) (move NA))
+)
 
 
 
 ;// __________________________________________________________________________________________
-
 ;// REGOLE PER GESTIONE INFORM (in caso di request) DALL'AGENTE
-
 ;// ??????????????????????????????????????????????????????????????????????????????????????????
-
 ;//
 
 ;// l'agente ha inviato inform che l'ordine ? accettato (e va bene)
