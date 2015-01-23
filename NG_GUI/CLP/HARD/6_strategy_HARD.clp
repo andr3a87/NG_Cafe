@@ -205,7 +205,8 @@
   (qty-order-sum (type delayed) (pen ?pen2))
   (qty-order-sum (type finish) (pen ?pen3))
   (test(< ?pen1 (+ ?pen2 ?pen3)))
-  (K-agent (l-drink ?ld&:(> ?ld 0)) (l-food ?lf&:(> ?lf 0)) (l_d_waste no) (l_f_waste no))
+  (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste no) (l_f_waste no))
+  (test(or (> ?ld 0) (> ?lf 0)))
 =>
   (assert (force-delivery (min 1000)))
 )

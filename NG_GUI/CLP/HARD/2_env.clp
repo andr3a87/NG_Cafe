@@ -593,7 +593,7 @@
 
         => (modify  ?f1 (time ?t) (step ?i) (activity ?m) (move 0))
 
-           (retract ?f2)
+           ;(retract ?f2)
 
 )
 
@@ -626,7 +626,7 @@
 
            (modify ?f2 (contains Person))
 
-           (retract ?f3)
+           ;(retract ?f3)
 
 )
 
@@ -660,7 +660,8 @@
 
            (modify ?f4 (contains Empty))
 
-           (retract ?f3))
+           ;(retract ?f3)
+)
 
 
 
@@ -693,7 +694,8 @@
 
            (modify ?f4 (contains Empty))
 
-           (retract ?f3))
+           ;(retract ?f3)
+)
 
 
 ;// La cella in cui deve  andare la persona ? occupata dal robot. Persona non si muove
@@ -777,19 +779,19 @@
 
 ;//La serie di mosse ? stata esaurita, la persona rimane ferma dove si trova
 
- (defrule MovePerson_end
-
-   (declare (salience 9))
-
-        (status (step ?i) (time ?t))
-
-?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
-
-  (not (move-path ?m =(+ ?s 1) ?id ?r ?c))
-
-        => (modify  ?f1  (time ?t) (step ?i) (activity stand) (move NA))
-
-        )
+;  (defrule MovePerson_end
+; 
+;    (declare (salience 9))
+; 
+;         (status (step ?i) (time ?t))
+; 
+; ?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
+; 
+;   (not (move-path ?m =(+ ?s 1) ?id ?r ?c))
+; 
+;         => (modify  ?f1  (time ?t) (step ?i) (activity stand) (move NA))
+; 
+;         )
 
 
 
