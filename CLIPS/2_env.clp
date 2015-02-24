@@ -105,7 +105,7 @@
   (declare (salience 24))
   ?f1<- (create-history)
 =>
-  (load-facts "../m20a_hcheckf/history.txt")
+  (load-facts "../m30a_hcheckf/history.txt")
   (retract ?f1)
 )
 
@@ -379,7 +379,7 @@
 =>
   (assert
     (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
-                (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
+    (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
   )
   (retract ?f1)
   ;(printout t crlf " ENVIRONMENT:" crlf)
@@ -394,10 +394,10 @@
   ?f1<- (event (step ?i) (type finish) (source ?tb))
   (tablestatus (step ?i) (table-id ?tb) (clean yes))
 =>
-  (assert
-    (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
-                (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
-  )
+  ;(assert
+  ;  (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
+  ;              (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
+  ;)
   (retract ?f1)
   ;(printout t crlf " ENVIRONMENT:" crlf)
   ;(printout t " - " ?tb " declares finish " crlf)

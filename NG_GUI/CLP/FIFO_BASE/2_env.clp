@@ -394,10 +394,10 @@
   ?f1<- (event (step ?i) (type finish) (source ?tb))
   (tablestatus (step ?i) (table-id ?tb) (clean yes))
 =>
-  (assert
-    (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
-                (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
-  )
+  ;(assert
+  ;  (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
+  ;              (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
+  ;)
   (retract ?f1)
   ;(printout t crlf " ENVIRONMENT:" crlf)
   ;(printout t " - " ?tb " declares finish " crlf)
