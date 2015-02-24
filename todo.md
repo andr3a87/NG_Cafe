@@ -1,16 +1,5 @@
 # Todo NG_Cafè
 
-
-### Strategie
-
-* Strategy-FIFO
-* Strategy-FIFO-WAIT
-* Strategy-LOW-PENALITY
-
-## Interfaccia
-* segnalare le azioni del bot sul log (PRINTGUI)
-* maxduration = step
-
 ## Dimensioni su cui effettuare i test
 * w: strategia, [FIFO, FIFO-PRO, LOW-PENALITY, HARD]
 * x: id mappa
@@ -21,6 +10,7 @@
   * dimensione della mappa [10,20,30]
   * numero di tavoli
   * posizione dei tavoli
+
 * HISTORY: facciamo variare ordini e persone ad hoc (ossia creiamo n history per ogni mappa specifica)
   * varianti della history: frequenza di movimento e quantità di persone
   * numero di ordini, contemporaneità di ordini aperti e distanza dai dispenser
@@ -35,3 +25,8 @@ Dominio
 
 m10a,m20a,m30a [10x10,20x20,30x30]
 hdefault, hsimple, hhard, hperson1, hperson2, hcheckf
+
+
+#COSA MANCA?
+	* Mappe 10x10
+	* Grafici Relazione CLIPS

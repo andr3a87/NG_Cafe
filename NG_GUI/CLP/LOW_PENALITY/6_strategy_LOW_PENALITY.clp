@@ -56,7 +56,7 @@
   ;?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
   ?f2<-(exec-order (step ?s) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (action Inform|Finish) (phase 0)))
+  (not (exec-order (step ?s1&:(< ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (action Inform|Finish) (phase 0)))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -81,7 +81,7 @@
   (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
   ; se l'ordine è accepted e non ho sporco posso servirlo
-  (if (and(=(str-compare ?status "accepted") 0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0))
+  (if (and(=(str-compare ?origin-statuss "accepted") 0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 2))
   )

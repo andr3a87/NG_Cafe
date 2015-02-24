@@ -113,7 +113,7 @@
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "../m30a_prova/initMap.txt")
+  (load-facts "../m20a_hcheckf/initMap.txt")
   (assert (create-map)
   (create-initial-setting)
   (create-history))

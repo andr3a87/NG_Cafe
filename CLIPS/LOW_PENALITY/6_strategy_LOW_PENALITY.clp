@@ -56,7 +56,7 @@
   ;?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
   ?f2<-(exec-order (step ?s) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (action Inform|Finish) (phase 0)))
+  (not (exec-order (step ?s1&:(< ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (action Inform|Finish) (phase 0)))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7

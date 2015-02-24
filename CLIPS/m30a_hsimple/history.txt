@@ -333,7 +333,7 @@
 (event (step 205) (type request) (source T31) (food 1) (drink 1))
 (event (step 250) (type request) (source T39) (food 1) (drink 2))
 (event (step 253) (type request) (source T6) (food 0) (drink 2))
-(event (step 262) (type request) (source T25) (food 1) (drink 0))
+(event (step 262) (type request) (source T25) (food 2) (drink 0))
 
 (personmove (step 12) (ident C8) (path-id P1))
 
