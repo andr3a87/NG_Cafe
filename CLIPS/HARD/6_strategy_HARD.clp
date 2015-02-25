@@ -401,10 +401,9 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
-  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (plane-exist ?pid))
-  (modify ?f1 (+ ?nr 1))
+  (assert (add-counter-n-replane))
   (printout t " [INFO] [F3:s"?current":"?id"] Exist a plane for go to the dispenser." crlf)
 )
 
@@ -415,10 +414,9 @@
   (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (not (plane-exist ?))
-  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
-  (modify ?f1 (- ?nr 1))
+  (assert (less-counter-n-replane))
   (printout t " [INFO] [F3:s"?current":"?id"] Not exist a valid plane. Run Astar to: "?rd ","?cd crlf)
 )
 
@@ -622,10 +620,9 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
-  ?f1 <- (counter-not-replane ?nr)
 =>
+  (assert (add-counter-n-replane))
   (assert (plane-exist ?pid))
-  (modify ?f1 (+ ?nr 1))
   (printout t " [INFO] [F5:s"?current":"?id"] Exist a plane for go to the table." crlf)
 )
 
@@ -635,11 +632,10 @@
   (status (step ?current))
   (exec-order (table-id ?id) (phase 5) )
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
-  (not (plane-exist ?))?f1 <- (counter-not-replane ?nr)
-  ?f1 <- (counter-not-replane ?nr)
+  (not (plane-exist ?))
 =>
+  (assert (less-counter-n-replane))
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
-  (modify ?f1 (- ?nr 1))
   (printout t " [INFO] [F5:s"?current":"?id"] Run Astar to: "?rt ","?ct crlf)
 )
 
@@ -949,6 +945,28 @@
 =>
   (focus EMPTY-TRASH)
 )
+
+
+
+(defrule update-counter-add
+  (declare (salience 150))
+  ?f1 <- (add-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(+ ?nr 1)))
+  (retract ?f1)
+)
+
+(defrule update-counter-less
+  (declare (salience 150))
+  ?f1 <- (less-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(- ?nr 1)))
+  (retract ?f1)
+)
+
+
 
 (defmodule SET-PLANE-AT-OK (import AGENT ?ALL) (export ?ALL))
 

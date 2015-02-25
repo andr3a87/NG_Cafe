@@ -104,16 +104,21 @@
 
 (deftemplate prior-cell  (slot pos-r) (slot pos-c)
                          (slot contains (allowed-values Zero Wall Person Empty Parking Table Seat TB RB DD FD)))
+(deftemplate counter-non-replane (slot count))
+(deftemplate counter-order-non-performed (slot count))
 (deffacts init
         (create)
-)
+        (counter-non-replane (count 0))
+        (counter-order-non-performed (count 0))
+) 
+
 
 ;; regola per inizializzazione
 ;; legge anche initial map (prior cell), initial agent status e durata simulazione (in numero di passi)
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "../m20a_hperson2/initMap.txt")
+  (load-facts "../m30a_hperson1/initMap.txt")
   (assert (create-map)
   (create-initial-setting)
   (create-history))
@@ -154,10 +159,13 @@
         (maxduration ?d)
         (status (step ?d))
         (penalty ?p)
-        (counter-not-replane ?nr)
+        (counter-non-replane (count ?nr))
+        (counter-order-non-performed (count ?nc))
 =>
-        (printout t crlf " TIME OVER - Penalità accumulate: " ?p crlf crlf)
+        (printout t crlf " TIME OVER - Penalita' accumulate: " ?p crlf crlf)
         (printout t crlf " TIME OVER - Number of not replane: " ?nr crlf crlf)
+        (printout t crlf " TIME OVER - Number of order not performed: " ?nc crlf crlf)
+
         (halt)
 )
 

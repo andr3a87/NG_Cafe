@@ -229,10 +229,9 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
-  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (plane-exist ?pid))
-  (modify ?f1 (+ ?nr 1))
+  (assert (add-counter-n-replane))
 )
 
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
@@ -243,7 +242,7 @@
   (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
-  (modify ?f1 (- ?nr 1))
+  (assert (less-counter-n-replane))
 )
 
 ;Se il piano esiste allo lo eseguo.
@@ -539,10 +538,9 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
-  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (plane-exist ?pid))
-  (modify ?f1 (+ ?nr 1))
+  (assert (add-counter-n-replane))
 )
 
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
@@ -551,10 +549,9 @@
   (exec-order (table-id ?id) (phase 5) )
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (not (plane-exist))
-  ?f1 <- (counter-not-replane ?nr)
 =>
+  (assert (less-counter-n-replane))
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
-  (modify ?f1 (- ?nr 1))
 )
 
 ;Se il piano esiste allo lo eseguo.
@@ -743,8 +740,8 @@
 
   ;debug
   (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
+    then
+    (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
   )
   (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text "PHASE 7>2: (%p1,serving) Served table. Order not completed, going back to the dispenser") (param1 ?id) )
   )
@@ -787,4 +784,24 @@
   )
   (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "ORDER COMPLETED (phase 7): table %p1") (param1 ?id) )
   )
+)
+
+
+
+(defrule update-counter-add
+  (declare (salience 150))
+  ?f1 <- (add-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(+ ?nr 1)))
+  (retract ?f1)
+)
+
+(defrule update-counter-less
+  (declare (salience 150))
+  ?f1 <- (less-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(- ?nr 1)))
+  (retract ?f1)
 )

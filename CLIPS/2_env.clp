@@ -105,7 +105,7 @@
   (declare (salience 24))
   ?f1<- (create-history)
 =>
-  (load-facts "../m20a_hperson2/history.txt")
+  (load-facts "../m30a_hperson1/history.txt")
   (retract ?f1)
 )
 
@@ -393,12 +393,14 @@
   (status (step ?i) (time ?t))
   ?f1<- (event (step ?i) (type finish) (source ?tb))
   (tablestatus (step ?i) (table-id ?tb) (clean yes))
+  ?f2<-(counter-order-non-performed (count ?nc))
 =>
   ;(assert
   ;  (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
   ;              (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
   ;)
   (retract ?f1)
+  (modify ?f2 (count =(+ ?nc 1)))
   ;(printout t crlf " ENVIRONMENT:" crlf)
   ;(printout t " - " ?tb " declares finish " crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ERRORS") (verbosity 0) (text "%p1 declares finish but %p1 is not served.") (param1 ?tb)))
