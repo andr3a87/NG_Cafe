@@ -105,7 +105,7 @@
   (declare (salience 24))
   ?f1<- (create-history)
 =>
-  (load-facts "../m30a_hcheckf/history.txt")
+  (load-facts "../m20a_hperson2/history.txt")
   (retract ?f1)
 )
 
@@ -584,7 +584,7 @@
 ;// La cella di partenza ? un seat in cui si trovava l'operatore
 
 (defrule MovePerson3
-  (declare (salience 10)
+  (declare (salience 10)) 
   (status (step ?i) (time ?t))
   ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s)) 
   (cell (pos-r ?x) (pos-c ?y) (contains Seat))

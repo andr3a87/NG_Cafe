@@ -113,7 +113,7 @@
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "../m30a_hcheckf/initMap.txt")
+  (load-facts "../m20a_hperson2/initMap.txt")
   (assert (create-map)
   (create-initial-setting)
   (create-history))
@@ -154,8 +154,10 @@
         (maxduration ?d)
         (status (step ?d))
         (penalty ?p)
+        (counter-not-replane ?nr)
 =>
         (printout t crlf " TIME OVER - Penalità accumulate: " ?p crlf crlf)
+        (printout t crlf " TIME OVER - Number of not replane: " ?nr crlf crlf)
         (halt)
 )
 

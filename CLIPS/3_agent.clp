@@ -89,6 +89,7 @@
   (next-plane-id 1)
   (best-pen 0)
   (debug 2)
+  (counter-not-replane 0)
 )
 
 

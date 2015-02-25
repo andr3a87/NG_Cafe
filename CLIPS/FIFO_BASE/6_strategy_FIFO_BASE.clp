@@ -229,8 +229,10 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
+  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (plane-exist ?pid))
+  (modify ?f1 (+ ?nr 1))
 )
 
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
@@ -241,6 +243,7 @@
   (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+  (modify ?f1 (- ?nr 1))
 )
 
 ;Se il piano esiste allo lo eseguo.
@@ -536,8 +539,10 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
+  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (plane-exist ?pid))
+  (modify ?f1 (+ ?nr 1))
 )
 
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
@@ -546,8 +551,10 @@
   (exec-order (table-id ?id) (phase 5) )
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (not (plane-exist))
+  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
+  (modify ?f1 (- ?nr 1))
 )
 
 ;Se il piano esiste allo lo eseguo.

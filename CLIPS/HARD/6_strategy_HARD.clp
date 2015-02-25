@@ -401,10 +401,13 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
+  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (plane-exist ?pid))
+  (modify ?f1 (+ ?nr 1))
   (printout t " [INFO] [F3:s"?current":"?id"] Exist a plane for go to the dispenser." crlf)
 )
+
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-3
   (declare (salience 1))
@@ -412,8 +415,10 @@
   (exec-order (table-id ?id) (phase 3) )
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (not (plane-exist ?))
+  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+  (modify ?f1 (- ?nr 1))
   (printout t " [INFO] [F3:s"?current":"?id"] Not exist a valid plane. Run Astar to: "?rd ","?cd crlf)
 )
 
@@ -617,8 +622,10 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
+  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (plane-exist ?pid))
+  (modify ?f1 (+ ?nr 1))
   (printout t " [INFO] [F5:s"?current":"?id"] Exist a plane for go to the table." crlf)
 )
 
@@ -628,9 +635,11 @@
   (status (step ?current))
   (exec-order (table-id ?id) (phase 5) )
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
-  (not (plane-exist ?))
+  (not (plane-exist ?))?f1 <- (counter-not-replane ?nr)
+  ?f1 <- (counter-not-replane ?nr)
 =>
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
+  (modify ?f1 (- ?nr 1))
   (printout t " [INFO] [F5:s"?current":"?id"] Run Astar to: "?rt ","?ct crlf)
 )
 
