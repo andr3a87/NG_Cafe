@@ -53,8 +53,9 @@
   (status (step ?current) )
   (debug ?level)
   ?f1 <- (last-intention (step ?last) (time ?time))
-  ?f2<-(exec-order (step ?next&:(and (>= ?next ?last) (< ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
-  (not (exec-order (step ?lol&:(and (<= ?lol ?next) (> ?lol ?last) (< ?lol ?current))) (time-order ?t1&:(and(< ?t1 ?t) (neq ?t ?t1)))  (action Inform|Finish) (phase 0)))
+  ?f2<-(exec-order (step ?next&:(and (>= ?next ?last) (<= ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
+  ;(not (exec-order (step ?lol&:(and (<= ?lol ?next) (> ?lol ?last) (< ?lol ?current))) (time-order ?t1&:(and(< ?t1 ?t) (neq ?t ?t1)))  (action Inform|Finish) (phase 0)))
+  (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish)))
   (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
   (modify ?f1 (step ?next) (time ?t))

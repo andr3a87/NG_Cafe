@@ -60,10 +60,10 @@
         "order-not-performed":4
       },
       "hperson1":{
-        "penalty":0,
+        "penalty":29627,
         "number-plane-reused":0,
-        "number-order":0,
-        "order-not-performed":0
+        "number-order":15,
+        "order-not-performed":4
       },
       "hperson2":{
         "penalty":0,
