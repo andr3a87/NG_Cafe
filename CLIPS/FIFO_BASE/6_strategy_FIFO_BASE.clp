@@ -23,7 +23,7 @@
   (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0)))
 )
 
-;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
+;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish.
 ;Inform con strategy-return-phase6-to-2_delayed
 (defrule answer-msg-order2
   (declare (salience 150))
@@ -35,7 +35,7 @@
   (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0)))
 )
 
-;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
+;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco.
 (defrule answer-msg-order3
   (declare (salience 150))
   (status (step ?current))
@@ -70,25 +70,32 @@
     then
       (printout t " [DEBUG] [F0:s"?current":"-1"] Inizializza Fase 1 - target tavolo: " ?sen crlf)
   )
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "NEW ORDER (phase 1): (%p1,%p2)") (param1 ?sen) (param2 ?status)))
 )
 
 ;Trovato l'ordine eseguo la fase di competenza
 (defrule strategy-complete-phase1
   (declare (salience 70))
-  (status (step ?s1))
+  (status (step ?s1) (time ?t))
   ?f1 <- (exec-order (step ?s2) (drink-order ?do) (food-order ?fo) (table-id ?id) (status ?status)  (phase 1) )
   (K-table (table-id ?id) (clean ?clean))
   (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
   ; vado alla fase 2 se l'ordine è accettato, ovvero posso cercare già il dispenser più vicino
-  (if (=(str-compare ?status "accepted") 0) 
+  (if (=(str-compare ?status "accepted") 0)
   then
     (modify ?f1 (table-id ?id) (phase 2))
+    (assert
+      (printGUI (time ?t) (step ?s1) (source "PLANNER") (verbosity 1) (text  "PHASE 1>2 (%p1,%p2) (look for disp)") (param1 ?id) (param2 ?status))
+    )
   )
   ; se l'ordine è delayed e il tavolo è sporco (ossia non l'ho ancora pulito), vado alla fase 5
   (if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 5))
+    (assert
+      (printGUI (time ?t) (step ?s1) (source "PLANNER") (verbosity 1) (text  "Agent to phase 5 (table %p1) (not clean or delayed) (s: %p2) ") (param1 ?id) (param2 ?status))
+    )
   )
   ; se l'ordine è delayed e il tavolo è pulito (ossia l'ho già pulito) modifico in accepted, così da gestirlo come un ordine normale.
   ;(if (and (= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0))
@@ -96,9 +103,12 @@
   ;  (modify ?f1 (status accepted))
   ;)
   ; se ho ricevuto una finish vado a pulire il tavolo.
-  (if (= (str-compare ?status "finish") 0)  
+  (if (= (str-compare ?status "finish") 0)
   then
     (modify ?f1 (table-id ?id) (phase 5))
+    (assert
+      (printGUI (time ?t) (step ?s1) (source "PLANNER") (verbosity 1) (text  "Agent to phase 5 (table %p1) (cleaning the table) (s: %p2 ") (param1 ?id) (param2 ?status))
+    )
   )
 )
 
@@ -124,7 +134,7 @@
         (assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
 )
 
-;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser 
+;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser
 (defrule distance-manhattan-do
   (declare (salience 70))
   (exec-order (drink-order ?do) (table-id ?id) (phase 2) (status accepted))
@@ -164,7 +174,7 @@
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 2))
-  (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d)) 
+  (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d))
   (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
   (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
@@ -262,7 +272,7 @@
   )
 )
 
-;Piano fallito, il robot aspetta e prova a rieseguire il piano. 
+;Piano fallito, il robot aspetta e prova a rieseguire il piano.
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto.
 (defrule strategy-re-execute-phase3
   (declare (salience 20))
@@ -325,7 +335,7 @@
   (test (> ?fo ?lf))
 =>
   (assert (exec (step ?ks) (action LoadFood) (param1 ?rd) (param2 ?cd)))
-        
+
   ;debug
   (if (> ?level 0)
   then
@@ -347,7 +357,7 @@
   (test (> ?do ?ld))
 =>
   (assert (exec (step ?ks) (action LoadDrink) (param1 ?rd) (param2 ?cd)))
-        
+
   ;debug
   (if (> ?level 0)
   then
@@ -367,7 +377,7 @@
   (exec-order (step ?s2) (table-id ?id) (phase 4))
   (strategy-best-dispenser (pos-dispenser ?rfo ?cfo) (type TB))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l_f_waste yes))
- 
+
   (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
       (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
       (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
@@ -411,14 +421,14 @@
   )
 )
 
-; Una volta caricato o scaricato rimuovo il fatto best-dispenser. 
+; Una volta caricato o scaricato rimuovo il fatto best-dispenser.
 (defrule strategy-clean-best-dispenser
         (declare (salience 60))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
         ?f2 <- (strategy-best-dispenser)
         ;(K-agent (l-food ?lf) (l-drink ?ld))
         ;(test (or (=(- ?fo ?lf)0) (=(- ?do ?ld)0) (= (+ ?lf ?ld)4) ))
-=>  
+=>
         (retract ?f2)
         (modify ?f1 (phase 4.5))
 )
@@ -580,7 +590,7 @@
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
   (modify ?f3)
   (assert (exec (step ?current) (action Wait)))
-  
+
   ;debug
   (if (> ?level 0)
     then
@@ -677,7 +687,7 @@
     then
     (assert (complete-order ?status))
   )
-  
+
   ;debug
   (if (> ?level 0)
   then
@@ -716,7 +726,7 @@
 
 ;Devo ancora consegnare della roba al tavolo. Devo ricercare il best-dispenser (FASE 2)
 (defrule strategy-return-phase7-to-2_accepted
-  (status (step ?current))
+  (status (time ?t) (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status accepted) (food-order ?fo) (drink-order ?do))
   ; ho scaricato tutta la roba
@@ -729,15 +739,17 @@
   then
   (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
   )
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text "PHASE 7>2: (%p1,serving) Served table. Order not completed, going back to the dispenser") (param1 ?id) )
+  )
 )
 
 ;Devo ancora buttare lo sporco. Devo ricercare il cestino più vicino (FASE 2)
 (defrule strategy-return-phase7-to-2_delayed
-  (status (step ?current))
+  (status (time ?t) (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status delayed|finish))
   (K-agent (l_d_waste ?ldw) (l_f_waste ?lfw))
-  (test (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))) 
+  (test (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0)))
 =>
   (modify ?f1 (phase 2))
 
@@ -746,22 +758,26 @@
   then
   (printout t " [DEBUG] [F7:s"?current":"?id"-CLEAN] CleanTable, sono pieno di trash, return to phase 2" crlf)
   )
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text "PHASE 7>2: (%p1,cleaning) full of trash, going to empty waste") (param1 ?id) )
+  )
 )
 
 ;Ordine completato. Devo trovare il nuovo ordine da evadare.
 ;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
 (defrule strategy-order-completed
-  (status (step ?current))
+  (status (time ?t) (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
 
   ;(K-agent (l-drink 0) (l-food 0))
-=> 
+=>
   (modify ?f1 (phase COMPLETED))
 
   ;debug
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
+  )
+  (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "ORDER COMPLETED (phase 7): table %p1") (param1 ?id) )
   )
 )

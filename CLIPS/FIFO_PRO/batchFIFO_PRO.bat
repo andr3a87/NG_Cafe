@@ -42,15 +42,12 @@
 (set-break delivery-drink_WRONG_3)
 (set-break delivery_WRONG_4)
 (set-break delivery_WRONG_5)
-
 (load "../3_agent.clp")
-
 (load "4_percept.clp")
 (load "../5_exec-plane.clp")
 (load "6_strategy_FIFO_PRO.clp")
 (load "../7_a_star.clp")
 (load "../8_clean-plane.clp")
-
 (reset)
 (run 257)
 ;(assert(stop-at-step 48))
