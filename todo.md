@@ -1,10 +1,16 @@
 # Todo NG_Cafè
 
 ## Dimensioni su cui effettuare i test
-* w: strategia, [FIFO, FIFO-PRO, LOW-PENALITY, HARD]
-* x: id mappa
-* y: id history
+* x: strategia, [FIFO, FIFO-PRO, LOW-PENALITY, HARD]
+* y: id history [6history per ogni mappa]
 * z: penalità
+* w: id mappa [dimensione mappa]
+
+## Dimensioni su cui effettuare i test
+* x: strategia, [FIFO, FIFO-PRO, LOW-PENALITY, HARD]
+* y: id history [6history per ogni mappa]
+* z: penalità media per ogni ordine
+* w: id mappa [dimensione mappa]
 
 * MAPPA: m mappe, di dimensione differente, con un diverso numero di tavoli
   * dimensione della mappa [10,20,30]

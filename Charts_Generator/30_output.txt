@@ -1,0 +1,14 @@
+//struttura per ogni mappa:
+//colonne: fifo_base;fifo_pro;low_penality;hard;n_ordini;n_di_piani_riutilizzati
+//righe: hdefault;hsimple;hhard;hperson1;hperson2;hcheckf;
+
+
+//MAPPA 30x30
+
+12361:12131:10625:9505:9:0
+19817:16499:13521:13545:20:0
+54575:54498:58055:75715:20:0
+31303:31856:27850:33327:15:0
+0:0:0:0:0:0:0
+6000:4834:4824:5429:12:0
+
