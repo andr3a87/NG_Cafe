@@ -40,8 +40,6 @@ applicabile(ovest,pos(R,C)) :-
         C1 is C-1,
         \+ occupata(pos(R,C1)).
 
-/** Applica se non è dimostrabile occupata()*/
-
 applicabile(nord,pos(R,C)) :-
         R>1,
         R1 is R-1,
@@ -52,23 +50,27 @@ trasforma(ovest,pos(R,C),pos(R,C1)) :- C1 is C-1.
 trasforma(sud,pos(R,C),pos(R1,C)) :- R1 is R+1.
 trasforma(nord,pos(R,C),pos(R1,C)) :- R1 is R-1.
 
-ric_prof_cc_lim(S,_,_,[]) :- finale(S),!.
-ric_prof_cc_lim(S,D,Visitati,[Az|Resto]) :-
-    D>0,
-    applicabile(Az,S),
-    trasforma(Az,S,Nuovo_S),
-    \+ member(Nuovo_S,Visitati),
-    D1 is D-1,
-    ric_prof_cc_lim(Nuovo_S,D1,[S|Visitati],Resto).
 
-ric_prof_cc_id(I,D,Ris) :- ric_prof_cc_lim(I,D,[],Ris).
-ric_prof_cc_id(I,D,Ris) :-
-    D1 is D+1,
-    ric_prof_cc_id(I,D1,Ris).
+ric_amp([nodo(S,LISTA_AZ)|_],LISTA_AZ):- finale(S).
+ric_amp([nodo(S,LISTA_AZ)|RESTO],SOL):-
+        espandi(nodo(S,LISTA_AZ),LISTA_SUCC),
+        append(RESTO,LISTA_SUCC,CODA),
+        ric_amp(CODA,SOL).
 
-prof_lim(D) :- iniziale(I),ric_prof_cc_lim(I,D,[],Ris),write(Ris).
-prof_id :- 
-           iniziale(I),
-           time(ric_prof_cc_id(I,1,Ris)),
-           write(Ris),
-           write('\n').
+
+espandi(nodo(S,LISTA_AZ),LISTA_SUCC):-
+        findall(AZ,applicabile(AZ,S),AZIONI),
+
+        successori(nodo(S,LISTA_AZ),AZIONI,LISTA_SUCC).
+        
+successori(_,[],[]).
+successori(nodo(S,LISTA_AZ),[AZ|RESTO],[nodo(NUOVO_S,NUOVA_LISTA_AZ)|ALTRI]):-
+        trasforma(AZ,S,NUOVO_S),
+        append(LISTA_AZ,[AZ],NUOVA_LISTA_AZ),
+        successori(nodo(S,LISTA_AZ),RESTO,ALTRI).
+        
+
+ampiezza:- iniziale(S),
+        ric_amp([nodo(S,[])],SOL), write(SOL).
+
+

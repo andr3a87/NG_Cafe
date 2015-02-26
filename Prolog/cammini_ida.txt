@@ -1,0 +1,109 @@
+num_col(10).
+num_righe(10).
+
+occupata(pos(2,5)).
+occupata(pos(3,5)).
+occupata(pos(4,5)).
+occupata(pos(5,5)).
+occupata(pos(6,5)).
+occupata(pos(7,5)).
+occupata(pos(7,1)).
+occupata(pos(7,2)).
+occupata(pos(7,3)).
+occupata(pos(7,4)).
+occupata(pos(5,7)).
+occupata(pos(6,7)).
+occupata(pos(7,7)).
+occupata(pos(8,7)).
+occupata(pos(4,7)).
+occupata(pos(4,8)).
+occupata(pos(4,9)).
+occupata(pos(4,10)).
+
+iniziale(pos(4,2)).
+
+finale(pos(7,9)).
+
+h-val(0).
+f-val(0).
+g-val(0).
+
+soglia(99999) /**Devo ancora capire bene l'utilità di questo valore*/
+
+
+applicabile(est,pos(R,C)) :-
+	num_col(NC), C<NC,
+	C1 is C+1,
+	\+ occupata(pos(R,C1)).
+
+applicabile(sud,pos(R,C)) :-
+	num_righe(NR), R<NR,
+	R1 is R+1,
+	\+ occupata(pos(R1,C)).
+
+applicabile(ovest,pos(R,C)) :-
+	C>1,
+	C1 is C-1,
+	\+ occupata(pos(R,C1)).
+
+
+applicabile(nord,pos(R,C)) :-
+	R>1,
+	R1 is R-1,
+	\+ occupata(pos(R1,C)).
+
+trasforma(est,pos(R,C),pos(R,C1)) :- C1 is C+1.
+trasforma(ovest,pos(R,C),pos(R,C1)) :- C1 is C-1.
+trasforma(sud,pos(R,C),pos(R1,C)) :- R1 is R+1.
+trasforma(nord,pos(R,C),pos(R1,C)) :- R1 is R-1.
+
+calcolo_euristica(pos(R,C),pos(R1,C1) :-
+	X is R - R1,
+	Y is C - C1,
+	abs(X, Xabs),
+	abs(Y, Yabs),
+	H is X + Y,
+	\+ h-val(H),
+	G is G + 1,
+	\+ g-val(G),
+	F is G + H,
+	\+ f-val(F).
+
+
+
+ric_prof_lim(S,_,_,[]) :- finale(s),!. /**Ale mette il controllo F<=D io provo senza*/
+ric_prof_lim(S,Depth,Visitati,[Az|Resto]) :-
+	f_val(F),
+	g_val(G),
+	finale(Goal),
+	soglia(Sog),
+	F =< Depth,
+		 
+		 applicabile(Az,S),
+		 trasforma(Az,S,Nuovo_S),
+		 \+ member(Nuovo_S,Visitati),
+		 calcola_euristica(S,Goal),
+		ric_prof_lim(Nuovo_S,Depth,[S|Visitati],Resto)
+	Fcost > Depth,
+		
+		Sog =< F, ! /**Devo capire il perchè di questo cut*/
+		; /**E anche il significato di questo ; random li in mezzo*/
+		retract(soglia(Sog)), ! /**Idem quest'altro cut*/
+		assert(soglia(F).
+
+
+ric_idastar(I,Ris,Depth) :- ric_prof_lim(I,Depth,[],Ris).
+/**sta regola devo ancora capirla bene. Quando la ricerca in profondità fallisce riporta la soglia al valore originale*/
+ric_idastar(I,Ris,_) :- 
+	soglia(Sog),
+	retract(soglia(Sog)),
+	assert(soglia(99999)),
+	ric_idastar(I,Ris,Sog).
+
+idastar :- 
+	iniziale(S),
+	finale(Goal),
+	calcolo_euristica(S,Goal),
+	f_val(D),
+	ric_idastar(S,Ris,D),/**Passo solo la Depth*/
+	write(Ris).

@@ -3,6 +3,8 @@
 % Specifica delle azioni mediante precondizioni ed effetti alla STRIPS
 % Gli stati sono rappresentati con insiemi ordinati
 
+:- use_module(library(statistics)).
+
 block(a).
 block(b).
 block(c).
@@ -129,5 +131,6 @@ idastar :-
         iniziale(S),
         calcolo_euristica(S,0),
         f_val(D),
-        ric_idastar(S,Ris,D,0),
-        write(Ris).
+        time(ric_idastar(S,Ris,D,0)),
+        write(Ris),
+        write('\n').

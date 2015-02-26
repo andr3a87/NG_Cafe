@@ -1,7 +1,7 @@
 % stato: [at(Stazione), Location]
-% Location può essere in(NomeLinea, Dir) o
-%  'ground' se l'agente non è su nessun treno
-% Dir può esere 0 o 1
+% Location puÃ² essere in(NomeLinea, Dir) o
+%  'ground' se l'agente non Ã¨ su nessun treno
+% Dir puÃ² esere 0 o 1
 
 
 % Azioni:
@@ -9,7 +9,6 @@
 %  scendi(Stazione)
 %  vai(Linea, Dir, StazionePartenza, StazioneArrivo)
 
-:- use_module(library(statistics)).
 :-dynamic(f_val/1). f_val(0).
 :-dynamic(h_val/1). h_val(0).
 
@@ -89,15 +88,15 @@ iniziale([at('Bayswater'),ground]).
 
 finale([at('Covent Garden'),ground]).
 
-calcolo_euristica([at(Stazione1),_],[at(Stazione2),_]) :-
+calcolo_euristica([at(Stazione1),_],[at(Stazione2),_], G) :-
         stazione(Stazione1, R, C),
         stazione(Stazione2, R1, C1),
-        X is (R - R1)^2,
-        Y is (C - C1)^2,
+        X is R*625 - R1*625,
+        Y is C*625 - C1*625,
         abs(X, Xabs),
         abs(Y, Yabs),
         H is Xabs + Yabs,
-        F is sqrt(H),
+        F is G + H,
         retract(f_val(_)),
         assert(f_val(F)),
         retract(h_val(_)),
@@ -122,22 +121,16 @@ best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-
         trasforma(Az, S, Nuovo_S),
         append(Lista_Az, [Az], Nuova_lista_az),
         best_node(nodo(Fcost, Gcost, S, Lista_Az), R_az, Old_children),
-        calcola_G(Az, Gcost, G1),
-        calcolo_euristica(Nuovo_S, Goal),
+        G1 is Gcost + 1,
+        calcolo_euristica(Nuovo_S, Goal, G1),
         f_val(F),
         ord_add_element(Old_children, nodo(F, G1, Nuovo_S, Nuova_lista_az), Lista_children).
-        
-calcola_G(sali(_,_), Gcost, G1) :-
-        G1 is Gcost + 10.
-        
-calcola_G(scendi(_), Gcost, G1) :-
-        G1 is Gcost + 10.
-        
-calcola_G(vai(_,_,_,_), Gcost, G1) :-
-        G1 is Gcost + 5.
 
 astar :-
+        get_time(T1),
         iniziale(S),
-        time(ric_astar([nodo(0, 0, S, [])], [], Ris)),
+        ric_astar([nodo(0, 0, S, [])], [], Ris),
         write(Ris),
-        write('\n').
+        get_time(T2),
+        DeltaT is T2- T1,
+        write('time: '), write(DeltaT), write('  ms.\n'), nl.

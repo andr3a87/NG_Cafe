@@ -91,12 +91,12 @@ calcola_h([_|Resto_Ok],H) :-
         assert(h_val(H)).
 
 ric_astar([nodo(_,_, S, Lista_Az)|_],_, Lista_Az) :- finale(S), !.
-ric_astar([nodo(Fcost, Gcost, S, Lista_Az)| R_lista_open], Closed, Lista_Az) :-
+ric_astar([nodo(Fcost, Gcost, S, Lista_Az)| R_lista_open], Closed, Lista_Ris) :-
         member(S, Closed) ->
-                ric_astar(R_lista_open, Closed, Lista_Az);
+                ric_astar(R_lista_open, Closed, Lista_Ris);
         open_node(nodo(Fcost, Gcost, S, Lista_Az), Lista_children),
         ord_union(Lista_children, R_lista_open, Nuova_open),
-        ric_astar(Nuova_open,[S|Closed],Lista_Az).
+        ric_astar(Nuova_open,[S|Closed],Lista_Ris).
 
 open_node(nodo(Fcost, Gcost, S, Lista_Az), Lista_childern) :-
         findall(Az, applicabile(Az,S), Az_applicabili),
@@ -116,5 +116,6 @@ astar :-
         iniziale(S),
         calcolo_euristica(S, 0),
         f_val(Fcost),
-        ric_astar([nodo(Fcost, 0, S, [])], [], Ris),
-        write(Ris).
+        time(ric_astar([nodo(Fcost, 0, S, [])], [], Ris)),
+        write(Ris),
+        write('\n').

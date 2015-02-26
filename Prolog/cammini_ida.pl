@@ -111,5 +111,5 @@ idastar :-
         finale(Goal),
         calcolo_euristica(S,Goal,0),
         f_val(D),
-        ric_idastar(S,Ris,D,0),
+        time(ric_idastar(S,Ris,D,0)),
         write(Ris).

@@ -3,6 +3,8 @@
 % Specifica delle azioni mediante precondizioni ed effetti alla STRIPS
 % Gli stati sono rappresentati con insiemi ordinati
 
+:- use_module(library(statistics)).
+
 block(a).
 block(b).
 block(c).
@@ -86,4 +88,8 @@ ric_prof_cc_id(I,D,Ris) :-
     ric_prof_cc_id(I,D1,Ris).
 
 prof_lim(D) :- iniziale(I),ric_prof_cc_lim(I,D,[],Ris),write(Ris).
-prof_id :- iniziale(I),ric_prof_cc_id(I,1,Ris),write(Ris).
+prof_id :-
+        iniziale(I),
+        time(ric_prof_cc_id(I,1,Ris)),
+        write(Ris),
+        write('\n').
