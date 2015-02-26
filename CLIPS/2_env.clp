@@ -105,7 +105,7 @@
   (declare (salience 24))
   ?f1<- (create-history)
 =>
-  (load-facts "../m20a_hcheckf/history.txt")
+  (load-facts "../m30a_hperson2/history.txt")
   (retract ?f1)
 )
 
@@ -663,8 +663,20 @@
   (move-path ?m =(+ ?s 1) ?id ?r ?c)
   (cell (pos-r ?r) (pos-c ?c) (contains ~Empty&~Seat))
   (not (agentstatus (step ?i) (time ?t) (pos-r ?r) (pos-c ?c)))
+  (not (personstatus (ident ?id) (pos-r ?r) (pos-c ?c)))
 =>
   (modify  ?f1 (time ?t) (step ?i))
+
+)
+
+;// La cella in cui deve  andare la persona è la stessa su cui è già
+(defrule MovePerson_wait2_bis
+  (declare (salience 10))
+  (status (step ?i) (time ?t))
+  ?f1<-(personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (pos-r ?r) (pos-c ?c) (activity ?m&~seated&~stand) (move ?s))
+  (move-path ?m =(+ ?s 1) ?id ?r ?c)
+=>
+  (modify ?f1 (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
 )
 
 ;// La cella in cui deve andare il cliente ? un seat ma il seat ? occupata da altra persona.

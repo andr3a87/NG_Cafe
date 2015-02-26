@@ -6,3 +6,4 @@ m20a_hcheckf	HARD	10629
 m20a_hcheckf	LOW_PENALITY	12601
 m20a_hcheckf	LOW_PENALITY	12601
 m20a_hcheckf	LOW_PENALITY	12601
+m30a_hperson2	FIFO_BASE	31431
