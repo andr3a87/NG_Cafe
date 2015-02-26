@@ -67,8 +67,8 @@
       },
       "hperson2":{
         "penalty":17931,
-        "number-plane-reused":15,
-        "number-order":4,
+        "number-plane-reused":4,
+        "number-order":15,
         "order-not-performed":0
       },
       "hcheckf":{

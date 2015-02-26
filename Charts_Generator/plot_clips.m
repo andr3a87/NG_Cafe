@@ -1,3 +1,8 @@
+addpath('jsonlab');
+
+data=loadjson('30_output.json')
+data2 = data{1}
+
 maps = [10,20,30];
 strategies = {'FIFO-BASE', 'FIFO-PRO', 'LOW-PENALITY', 'HARD'};
 strategies_n = [1,2,3,4,5,6];
@@ -13,7 +18,6 @@ for map=1:maps_cnt
     result = zeros(strategies_cnt,histories_cnt);
     
     [pen,ord,plans] = read_output(maps(map),6,6);
-    pen
     
     maxo = max(max(pen));
     
