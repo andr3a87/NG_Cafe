@@ -1,4 +1,4 @@
-{"mappa10x10":[
+{"mappa20x20":[
   {"fifo_base":
     {
       "hdefault":{
@@ -14,16 +14,16 @@
         "order-not-performed":
       },
       "hhard":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty":24760,
+        "number-plane-reused":4,
+        "number-order":10,
+        "order-not-performed":0
       },
       "hperson1":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty":17931,
+        "number-plane-reused":4,
+        "number-order":10,
+        "order-not-performed":0
       },
       "hperson2":{
         "penalty":,
@@ -54,16 +54,16 @@
         "order-not-performed":
       },
       "hhard":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty":24760,
+        "number-plane-reused":4,
+        "number-order":10,
+        "order-not-performed":0
       },
       "hperson1":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty":17931,
+        "number-plane-reused":4,
+        "number-order":10,
+        "order-not-performed":0
       },
       "hperson2":{
         "penalty":,
@@ -94,16 +94,16 @@
         "order-not-performed":
       },
       "hhard":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty":21369,
+        "number-plane-reused":3,
+        "number-order":10,
+        "order-not-performed":0
       },
       "hperson1":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty":15840,
+        "number-plane-reused":4,
+        "number-order":10,
+        "order-not-performed":0
       },
       "hperson2":{
         "penalty":,
@@ -134,16 +134,16 @@
         "order-not-performed":
       },
       "hhard":{
-        "penalty":,
-        "number-plane-reused":3,
-        "number-order":,
-        "order-not-performed":
+        "penalty":15247,
+        "number-plane-reused":2,
+        "number-order":10,
+        "order-not-performed":1
       },
       "hperson1":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty":10655,
+        "number-plane-reused":2,
+        "number-order":10,
+        "order-not-performed":1
       },
       "hperson2":{
         "penalty":,
