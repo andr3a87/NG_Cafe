@@ -58,6 +58,7 @@ ric_prof_cc_lim(S,D,Visitati,[Az|Resto]) :-
     applicabile(Az,S),
     trasforma(Az,S,Nuovo_S),
     \+ member(Nuovo_S,Visitati),
+    num_nodi_open,
     D1 is D-1,
     ric_prof_cc_lim(Nuovo_S,D1,[S|Visitati],Resto).
 
@@ -65,10 +66,18 @@ ric_prof_cc_id(I,D,Ris) :- ric_prof_cc_lim(I,D,[],Ris).
 ric_prof_cc_id(I,D,Ris) :-
     D1 is D+1,
     ric_prof_cc_id(I,D1,Ris).
+    
+num_nodi_open:-
+        nb_getval(counter, N1),
+        New1 is N1 + 1,
+        nb_setval(counter, New1).
 
 prof_lim(D) :- iniziale(I),ric_prof_cc_lim(I,D,[],Ris),write(Ris).
 prof_id :- 
            iniziale(I),
+           nb_setval(counter , 0),
            time(ric_prof_cc_id(I,1,Ris)),
-           write(Ris),
+           nb_getval(counter, N_res),
+           writeln(Ris),
+           write(N_res),
            write('\n').

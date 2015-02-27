@@ -53,6 +53,7 @@ trasforma(nord,pos(R,C),pos(R1,C)) :- R1 is R-1.
 
 ric_amp([nodo(S,LISTA_AZ)|_],LISTA_AZ):- finale(S).
 ric_amp([nodo(S,LISTA_AZ)|RESTO],SOL):-
+        num_nodi_open,
         espandi(nodo(S,LISTA_AZ),LISTA_SUCC),
         append(RESTO,LISTA_SUCC,CODA),
         ric_amp(CODA,SOL).
@@ -69,8 +70,16 @@ successori(nodo(S,LISTA_AZ),[AZ|RESTO],[nodo(NUOVO_S,NUOVA_LISTA_AZ)|ALTRI]):-
         append(LISTA_AZ,[AZ],NUOVA_LISTA_AZ),
         successori(nodo(S,LISTA_AZ),RESTO,ALTRI).
         
+num_nodi_open:-
+        nb_getval(counter, N1),
+        New1 is N1 + 1,
+        nb_setval(counter, New1).
+        
 
 ampiezza:- iniziale(S),
-        ric_amp([nodo(S,[])],SOL), write(SOL).
+        nb_setval(counter , 0),
+        ric_amp([nodo(S,[])],SOL), 
+        writeln(SOL),
+        write(N_res).
 
 

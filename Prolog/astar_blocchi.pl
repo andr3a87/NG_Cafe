@@ -94,6 +94,7 @@ ric_astar([nodo(_,_, S, Lista_Az)|_],_, Lista_Az) :- finale(S), !.
 ric_astar([nodo(Fcost, Gcost, S, Lista_Az)| R_lista_open], Closed, Lista_Ris) :-
         member(S, Closed) ->
                 ric_astar(R_lista_open, Closed, Lista_Ris);
+        num_nodi_open,
         open_node(nodo(Fcost, Gcost, S, Lista_Az), Lista_children),
         ord_union(Lista_children, R_lista_open, Nuova_open),
         ric_astar(Nuova_open,[S|Closed],Lista_Ris).
@@ -106,16 +107,25 @@ best_node(_,[],[]).
 best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-       
         trasforma(Az, S, Nuovo_S),
         append(Lista_Az, [Az], Nuova_lista_az),
+        % num_nodi_open,
         best_node(nodo(Fcost, Gcost, S, Lista_Az), R_az, Old_children),
         G1 is Gcost + 1,
         calcolo_euristica(Nuovo_S, G1),
         f_val(F),
         ord_add_element(Old_children, nodo(F, G1, Nuovo_S, Nuova_lista_az), Lista_children).
+        
+num_nodi_open:-
+        nb_getval(counter, N1),
+        New1 is N1 + 1,
+        nb_setval(counter, New1).
 
 astar :-
         iniziale(S),
+        nb_setval(counter , 0),
         calcolo_euristica(S, 0),
         f_val(Fcost),
         time(ric_astar([nodo(Fcost, 0, S, [])], [], Ris)),
-        write(Ris),
+        nb_getval(counter, N_res),
+        writeln(Ris),
+        write(N_res),
         write('\n').

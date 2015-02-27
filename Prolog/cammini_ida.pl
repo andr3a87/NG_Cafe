@@ -82,6 +82,7 @@ ric_prof_lim(S,Depth,G,Visitati,[Az|Resto]) :-
                  applicabile(Az,S),
                  trasforma(Az,S,Nuovo_S),
                  \+ member(Nuovo_S,Visitati),
+                 num_nodi_open,
                  G1 is G + 1,
                  calcolo_euristica(Nuovo_S,Goal,G1),
                  ric_prof_lim(Nuovo_S,Depth,G1,[S|Visitati],Resto).
@@ -97,6 +98,11 @@ try_prof(F) :-
         ;
         retract(soglia(X)), !,
         assert(soglia(F)).
+        
+num_nodi_open:-
+        nb_getval(counter, N1),
+        New1 is N1 + 1,
+        nb_setval(counter, New1).
 
 ric_idastar(I,Ris,Depth,G) :- ric_prof_lim(I,Depth,G,[],Ris).
 
@@ -109,7 +115,10 @@ ric_idastar(I,Ris,_,G) :-
 idastar :-
         iniziale(S),
         finale(Goal),
+        nb_setval(counter , 0),
         calcolo_euristica(S,Goal,0),
         f_val(D),
         time(ric_idastar(S,Ris,D,0)),
-        write(Ris).
+        nb_getval(counter, N_res),
+        writeln(Ris),
+        write(N_res).
