@@ -1,0 +1,70 @@
+tempi prolog
+
+Cammini 10x10:
+ampiezza: non termina
+profondita: 
+	nodi visitati: 548376
+	tempo di calcolo: 3.203 secondi
+	num. inferenze: 21265407
+ampiezza con grafi:
+	da fare
+id astar:
+	nodi visitati: 13078
+	tempo di calcolo: 0.123 secondi
+	num. inferenze: 681842
+astar:
+	nodi visitati: 53
+	tempo di calcolo: 0.029 secondi
+	num. inferenze: 19517
+
+Cammini 20x20:
+ampiezza: non termina
+profondita: 
+	nodi visitati: 
+	tempo di calcolo:  secondi
+	num. inferenze: 
+ampiezza con grafi:
+	da fare
+id astar:
+	nodi visitati: 15796
+	tempo di calcolo: 0.146 secondi
+	num. inferenze: 791573
+astar:
+	nodi visitati: 128
+	tempo di calcolo: 0.037 secondi
+	num. inferenze: 65057
+
+Blocchi esempio Martelli:
+ampiezza: non termina
+profondita: 
+	nodi visitati: 13222
+	tempo di calcolo: 0.459 secondi
+	num. inferenze: 3364820
+ampiezza con grafi:
+	da fare
+id astar:
+	nodi visitati: 1444
+	tempo di calcolo: 0.076 secondi
+	num. inferenze: 477443
+astar:
+	nodi visitati: 304
+	tempo di calcolo: 0.072 secondi
+	num. inferenze: 396947
+
+Blocchi esempio Torasso-Domina:
+ampiezza: non termina
+profondita: 
+	nodi visitati: 4180656
+	tempo di calcolo: 232.268 secondi
+	num. inferenze: 1548207210
+ampiezza con grafi:
+	da fare
+id astar:
+	nodi visitati: 183364
+	tempo di calcolo: 14.564 secondi
+	num. inferenze: 89033213
+astar:
+	nodi visitati: 
+	tempo di calcolo:  secondi
+	num. inferenze: 
+	NON TERMINA PORCO DIO!

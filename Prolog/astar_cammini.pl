@@ -36,6 +36,7 @@ iniziale(pos(10,10)).
 
 finale(pos(20,20)).
 
+:- use_module(library(statistics)).
 :-dynamic(f_val/1). f_val(0).
 :-dynamic(h_val/1). h_val(0).
 
