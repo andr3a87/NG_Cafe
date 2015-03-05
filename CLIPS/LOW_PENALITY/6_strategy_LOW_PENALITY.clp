@@ -739,7 +739,7 @@
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
-  (modify ?f3 (cont =(+ ?c 1)))
+  (modify ?f3 (count =(+ ?c 1)))
 )
 
 (defrule strategy-set-as-accepted-next-delayed-orders
@@ -830,7 +830,7 @@
   ?f3<-(counter-order-performed (count ?c))
 =>
   (modify ?f1 (phase COMPLETED))
-  (modify ?f3 (cont =(+ ?c 1)))
+  (modify ?f3 (count =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
@@ -848,7 +848,7 @@
   ?f3<-(counter-order-performed (count ?c))
 =>
   (modify ?f1 (phase COMPLETED))
-  (modify ?f3 (cont =(+ ?c 1)))
+  (modify ?f3 (count =(+ ?c 1)))
   ;debug
   (if (> ?level 0)
   then
