@@ -105,7 +105,7 @@
   (declare (salience 24))
   ?f1<- (create-history)
 =>
-  (load-facts "../m20a_hhard/history.txt")
+  (load-facts "../default/history.txt")
   (retract ?f1)
 )
 
@@ -345,11 +345,12 @@
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
 
+
 ; Richiesta Ordine - Table non clean
 (defrule neworder2
   (declare (salience 200))
   (status (step ?i) (time ?t))
-?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
+  ?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
   (tablestatus (step ?i) (table-id ?tb) (clean no))
   (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))
 =>
@@ -367,6 +368,7 @@
 ;  (printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is not clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
+
 
 ; evento finish
 (defrule newfinish
@@ -393,14 +395,12 @@
   (status (step ?i) (time ?t))
   ?f1<- (event (step ?i) (type finish) (source ?tb))
   (tablestatus (step ?i) (table-id ?tb) (clean yes))
-  ?f2<-(counter-order-non-performed (count ?nc))
 =>
   ;(assert
   ;  (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
   ;              (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
   ;)
   (retract ?f1)
-  (modify ?f2 (count =(+ ?nc 1)))
   ;(printout t crlf " ENVIRONMENT:" crlf)
   ;(printout t " - " ?tb " declares finish " crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ERRORS") (verbosity 0) (text "%p1 declares finish but %p1 is not served.") (param1 ?tb)))
