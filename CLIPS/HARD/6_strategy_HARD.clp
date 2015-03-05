@@ -842,7 +842,7 @@
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
   (modify ?f3 (pen =(- ?pen 3)))
-  (modify ?f4 (cont =(+ ?c 1)))
+  (modify ?f4 (count =(+ ?c 1)))
 )
 
 ;Regola che imposta a Accepted gli ordini delayed successivi alla finish. (in questo caso sto servendo una finish)
@@ -886,7 +886,7 @@
   (retract ?f1)
   (modify ?f2 (pen =(- ?pen 3)))
   (modify ?f3 (phase COMPLETED))
-  (modify ?f3 (cont =(+ ?c 1)))
+  (modify ?f3 (count =(+ ?c 1)))
 )
 
 
@@ -936,7 +936,7 @@
   ?f3<-(counter-order-performed (count ?c))
 =>
   (modify ?f1 (phase COMPLETED))
-  (modify ?f3 (cont =(+ ?c 1)))
+  (modify ?f3 (count =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
