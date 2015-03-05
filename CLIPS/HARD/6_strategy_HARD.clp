@@ -661,7 +661,7 @@
   (not (plane-exist ?))
 =>
   (modify ?f2 (phase 6) (fail 0))
-  (assert(set-plane-in-position ?rt ?ct))  
+  (assert(set-plane-in-position ?rt ?ct))
   (focus SET-PLANE-AT-OK)
   ;debug
   (if (> ?level 0)
@@ -837,10 +837,12 @@
   (exec-order (table-id ?id) (step ?ds) (phase 6) (status delayed))
   ?f2<-(exec-order (table-id ?id) (step ?fs&:(< ?fs ?ds)) (status finish) (phase 0))
   ?f3<-(qty-order-sum (type finish) (pen ?pen) (qty-fo ?sfo) (qty-do ?sdo))
+  ?f4<-(counter-order-performed (count ?c))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
   (modify ?f3 (pen =(- ?pen 3)))
+  (modify ?f4 (cont =(+ ?c 1)))
 )
 
 ;Regola che imposta a Accepted gli ordini delayed successivi alla finish. (in questo caso sto servendo una finish)
@@ -879,10 +881,12 @@
   ?f1<-(update-current-order-table-cleaned)
   ?f2<-(qty-order-sum (type finish) (pen ?pen) (qty-fo ?sfo) (qty-do ?sdo))
   ?f3<-(exec-order (table-id ?id) (phase 6) (status finish) (origin-status finish))
+  ?f3<-(counter-order-performed (count ?c))
 =>
   (retract ?f1)
   (modify ?f2 (pen =(- ?pen 3)))
   (modify ?f3 (phase COMPLETED))
+  (modify ?f3 (cont =(+ ?c 1)))
 )
 
 
@@ -929,8 +933,10 @@
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (phase 7) (food-order 0) (drink-order 0))
   ;(K-agent (l-drink 0) (l-food 0))
+  ?f3<-(counter-order-performed (count ?c))
 =>
   (modify ?f1 (phase COMPLETED))
+  (modify ?f3 (cont =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
@@ -982,7 +988,7 @@
 (defrule set-plane-2
   (declare(salience 10))
   ?f1<-(set-plane-in-position ?rd ?cd)
-  
+
 =>
   (retract ?f1)
   (pop-focus)
