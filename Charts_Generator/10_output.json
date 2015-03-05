@@ -2,22 +2,22 @@
   {"fifo_base":
     {
       "hdefault":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 6621,
+        "number-plane-reused": 5,
+        "number-order": 10,
+        "order-not-performed": 2
       },
       "hsimple":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 1465,
+        "number-plane-reused": 5,
+        "number-order": 12,
+        "order-not-performed": 1
       },
       "hhard":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 14966,
+        "number-plane-reused": 14,
+        "number-order": 12,
+        "order-not-performed": 0
       },
       "hperson1":{
         "penalty":,
@@ -42,22 +42,22 @@
   {"fifo_pro":
     {
       "hdefault":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 6105,
+        "number-plane-reused": 4,
+        "number-order": 10,
+        "order-not-performed": 2
       },
       "hsimple":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 1465,
+        "number-plane-reused": 5,
+        "number-order": 12,
+        "order-not-performed": 1
       },
       "hhard":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 14966,
+        "number-plane-reused": 14,
+        "number-order": 12,
+        "order-not-performed": 0
       },
       "hperson1":{
         "penalty":,
@@ -82,22 +82,22 @@
   {"low_penalty":
     {
       "hdefault":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 4482,
+        "number-plane-reused": 4,
+        "number-order": 10,
+        "order-not-performed": 3
       },
       "hsimple":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 1730,
+        "number-plane-reused": 4,
+        "number-order": 12,
+        "order-not-performed": 2
       },
       "hhard":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 14651,
+        "number-plane-reused": 14,
+        "number-order": 12,
+        "order-not-performed": 1
       },
       "hperson1":{
         "penalty":,
@@ -122,22 +122,22 @@
   {"hard":
     {
       "hdefault":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 4708,
+        "number-plane-reused": 1,
+        "number-order": 10,
+        "order-not-performed": 1
       },
       "hsimple":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 1356,
+        "number-plane-reused": 3,
+        "number-order": 12,
+        "order-not-performed": 3
       },
       "hhard":{
-        "penalty":,
-        "number-plane-reused":3,
-        "number-order":,
-        "order-not-performed":
+        "penalty": 10895,
+        "number-plane-reused": 4,
+        "number-order": 12,
+        "order-not-performed": 4
       },
       "hperson1":{
         "penalty":,

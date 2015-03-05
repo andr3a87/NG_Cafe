@@ -1,36 +1,38 @@
-% !TEX root = main.tex
+% !TEX root = ../main.tex
 \chapter{Introduzione}
-Nel progetto sono stati affrontati alcuni dei vari problemi che riguardano l'intelligenza artificiale. In questa relazione spiegheremo quali soluzioni sono state adottate, i vantaggi e gli svantaggi e alcuni miglioramenti che possono esser fatti al nostro progetto
+Nel progetto sono stati affrontati alcuni dei vari problemi che riguardano l'intelligenza artificiale. In questa relazione spiegheremo quali soluzioni sono state adottate, i vantaggi e gli svantaggi e alcuni miglioramenti che possono esser fatti al nostro progetto.
 
 \section{Strategie}
 Per svolgere il progetto di IA-LAB sono state implementate 4 strategie in maniera incrementale:
 \begin{itemize}
-  \item FIFO WAIT: la strategia usa la politica fifo come politica di scelta degli ordini. 
+  \item FIFO WAIT: la strategia usa la politica fifo come politica di scelta degli ordini.
   \item FIFO PRO: Simile alla precendente, ma in caso di ostacolo che non permette di servire un ordine, l'ordine viene messo al fondo.
   \item LOW PENALITY: strategia che si basa sulla penalità per effettuare la scelta dell'ordine.
-  \item HARD: a differenza delle altre 3 strategia, questa permette di gestire più ordini in contemporanea. Come la precedente si basa sulle penalità.
+  \item HARD: a differenza delle altre 3 strategie, questa permette di gestire più ordini in contemporanea. Come la precedente si basa sulle penalità.
 \end{itemize}
 
 Ogni strategia è stata suddivisa in fasi dove ogni fase si occupa di uno specifico sotto-problema. Questa suddivisione ci ha permesso sia uno sviluppo incrementale all'interno della stessa strategia, sia tra strategie diverse, dove è bastato andare a sviluppare in modo più articolato una fase oppure nell'inserire nuove fasi.
-Nelle prime due strategia come astrazione utilizzeremo il concetto di coda. Gli ordini verranno inseriti in coda e prelevati dalla testa, quindi prelevati in ordine crescente di step.
 
-\subsection{Astar}
-Tutte le strategia utilizzano il modulo Astar per pianificare dei piani che permettano al nostro robot di spostarsi da un punto A a un punto B. Il punto A è la posizione del robot al momento della pianificazione mentre il goal (il punto B) è dato dalla cella destinazione. La cella destinazione può essere un dispenser, un cestino o un tavolo. Il modulo astar calcolerà quali sono i 4 punti di accesso alla nostra destinazione e si fermerà non appena arriverà a uno di esso.
+Nelle prime due strategie utilizzeremo come astrazione il concetto di coda. Gli ordini verranno inseriti in coda e prelevati dalla testa, quindi prelevati in ordine crescente di step.
+
+\subsection{Il modulo A*}
+Tutte le strategie utilizzano il modulo A* per la costruzione dei piani che permettono al nostro robot di spostarsi da un punto A a un punto B. Il punto A è la posizione del robot al momento della pianificazione mentre il goal (il punto B) è dato dalla cella destinazione. Il goal può essere un dispenser, un cestino o un tavolo. Il modulo A* calcolerà anche quali sono i 4 punti di accesso alla nostra destinazione e si fermerà non appena arriverà a uno di esso.
 
 Il modulo A* può terminare fornendo un piano, oppure può fallire. Per memorizzare il piano creato vengono usate due strutture:
 
 \begin{lstlisting}
-(deftemplate plane 
-	(slot plane-id) 
-	(multislot pos-start) 
-	(multislot pos-end) 
-	(slot direction) 
-	(slot cost) 
+(deftemplate plane
+	(slot plane-id)
+	(multislot pos-start)
+	(multislot pos-end)
+	(slot direction)
+	(slot cost)
 	(slot status (allowed-values ok failure))
 )
 \end{lstlisting}
+
 \begin{lstlisting}
-(deftemplate step-plane 
+(deftemplate step-plane
 	(slot plane-id)
 	(slot action)
 	(slot direction)
@@ -40,11 +42,11 @@ Il modulo A* può terminare fornendo un piano, oppure può fallire. Per memorizz
 )
 \end{lstlisting}
 
-La struttura step-plane indica i vari passi per eseguire il piano plane. I piani vengono memorizzati in modo tale che il robot non debba ripianificare più volte uno stesso percorso. Vengono memorizzati solo i piani principali; nel caso in cui un piano fallisca il piano "riparatore" non viene memorizzato.
+La struttura step-plane indica i vari passi per eseguire il piano \emph{plane}. I piani vengono memorizzati in modo tale che il robot non debba ripianificare più volte uno stesso percorso. Vengono memorizzati solo i piani principali; nel caso in cui un piano fallisca il piano \emph{riparatore} non viene memorizzato.
 
 \chapter{Strategie}
 \section{Strategia FIFO WAIT}
-La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto semplice, dove il primo ordine che arriva è l'ordine che viene servito. Vi sono vari casi per completare un ordine:\begin{itemize}
+La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto semplice, dove gli ordini vengono gestiti come una coda FIFO. Ci sono tre tipi di ordini, gestiti internamente alla strategia e sono diversi i modi in cui essi vengono completati:\begin{itemize}
   \item Ordine Accepted: un ordine di questo tipo verrà completato solo quando verranno consegnate al tavolo tutte le consumazioni richieste.
   \item Ordine Delayed: un ordine di questo tipo verrà completato solo quando verranno consegnate al tavolo tutte le consumazioni richieste. Rispetto al caso precedente le consumazioni non potranno esser consengate fin quando il tavolo non verrà pulito e le consumazioni buttate nel cestino.
   \item Ordine Finish: un ordine di questo tipo verrà completato solo quanto verrà pulito il tavolo e il robot butterà lo sporco nei vari cestini.
@@ -65,29 +67,29 @@ La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto se
 
 Come possiamo vedere dallo schema abbiamo suddiviso la nostre strategia in 7 fasi:
 \begin{itemize}
-  \item Fase 1: Nella prima fase viene individuato quale sarà l'ordine da servire. Ipotizzando di avere una coda in cui gli inserimenti vanno in coda e i prelievi dalla testa, l'ordine da evadere sarà l'ordine arrivato da più tempo cioè quello che ha un valore di step più basso.
-  \item Fase 2: In questa fase si andrà ad individuare quale sarà il cestino o il dispenser presso il quale il nostro robot dovrà recarsi. La ricerca del cestino o del dispenser dipene dal tipo di ordine.
+  \item Fase 1: Nella prima fase viene individuato quale sarà l'ordine da servire. Ipotizzando di avere una coda in cui gli inserimenti vanno in coda e i prelievi avvengono dalla testa, l'ordine da evadere sarà l'ordine arrivato da più tempo cioè quello che ha un valore di step più basso.
+  \item Fase 2: In questa fase si andrà ad individuare quale sarà il cestino o il dispenser presso il quale il nostro robot dovrà recarsi. La ricerca del cestino o del dispenser dipende dal tipo di ordine.
   \item Fase 3: In questa fase il robot arriverà alla destinazione prefissata. Per far ciò deve prima calcolare un piano con A* e poi eseguirlo. Il piano viene calcolato solo se non ne esiste già uno. In caso A* non trovi soluzione il robot esegue una wait e prova a ricalcolare A* fin quando non trova una soluzione.
   Quando il robot ha un piano per raggiungere la sua destinazione lo esegue. Nel caso in cui il piano fallisca il robot esegue una wait e prova a rieseguirlo.
-  \item Fase 4: Il robot a seconda dell'ordine che sta servendo si troverà davanti un dispenser per caricare delle consumazioni (ordine accepted) oppure davanti a un cestino per buttare lo sporco (ordine delayed o finish).
-  \item Fase 4.5: Questa è fase di controllo in cui il robot decide a seconda dell'ordine cosa deve fare. Per esempio se era un ordine accepted e ha caricato solo i 'food' e gli mancano i 'drink' dovrà ritornare alla fase 2; analogamente se era un ordine di finish o delayed e deve ancora buttare dello sporco.
+  \item Fase 4: Il robot a seconda dell'ordine che sta servendo si troverà davanti un dispenser per caricare delle consumazioni (ordine \emph{accepted}) oppure davanti a un cestino per buttare lo sporco (ordine \emph{delayed} o \emph{finish}).
+  \item Fase 4.5: Questa è la fase di controllo in cui il robot decide cosa deve fare, a seconda dell'ordine attivo. Per esempio se era un ordine accepted e ha caricato solo i \emph{food} e gli mancano i \emph{drink} dovrà ritornare alla fase 2; analogamente se era un ordine di finish o delayed e deve ancora buttare dello sporco.
   \item Fase 5: Identica alla fase 3 tranne per il fatto che la destinazione sarà un tavolo.
   \item Fase 6: Il robot in questa fase si trova in una posizione in cui può operare sul tavolo. Nel caso di ordine accepted rilascio tuttle le consumazioni caricate; in caso di ordine finish o delayed pulisco il tavolo.
   \item Fase 7: In questa fase controllo se l'ordine può essere considerato completato.
 \end{itemize}
 
 \subsection{Vantaggi e Svantaggi}
-Vantaggio di questa strategia è sicuramente la semplicità e l'intuibilità con la quale il sistema funziona. L'idea di questa strategia, oltra alla politica di evasione degli ordini che può essere cambiata in qualsiasi momento andando solo a modificare la fase 1, è quella che il mondo è dinamico e lo è con una certa frequenza. 
+Vantaggio di questa strategia è sicuramente la semplicità e l'intuibilità con la quale il sistema funziona. L'idea di questa strategia, oltra alla politica di evasione degli ordini che può essere cambiata in qualsiasi momento andando solo a modificare la fase 1, è quella che il mondo è dinamico e lo è con una certa frequenza.
 
-\begin{wrapfigure}{r}{0.33\textwidth} 
+\begin{wrapfigure}{r}{0.33\textwidth}
     \centering
     \includegraphics[width=0.33\textwidth]{Problema1_fifo_wait}
 \end{wrapfigure}
 
 L'assunzione dalla quale siamo partiti è che le persone si spostano e si spostano molto frequentemente. Da questo risulta evidente che se per arrivare in una determinata posizione incontro un ostacolo (una persona) la mossa più conveniente è quella di aspettare.
-Se prendiamo in considerazione le teorie di Rodney Brooks in cui afferma che un comportamento intelligente è attribuibile da un osservatore esterno che vede l'agente interagire con l'ambiente, allora in alcune circostanze il nostro agente potrebbe non dimostrare tale comportamento intelligente. Se una persona rimane, anche se per pochi step in una posizione lungo il percorso dell'agente, il nostro agente invece di aggirarla e dimostrare un comportamento intelligente continuerà a provare a muoversi lungo la sua direzione fin quando la persona non si sarà spostata. 
+Se prendiamo in considerazione le teorie di Rodney Brooks in cui afferma che un comportamento intelligente è attribuibile da un osservatore esterno che vede l'agente interagire con l'ambiente, allora in alcune circostanze il nostro agente potrebbe non dimostrare tale comportamento intelligente. Se una persona rimane, anche se per pochi step in una posizione lungo il percorso dell'agente, il nostro agente invece di aggirarla e dimostrare un comportamento intelligente continuerà a provare a muoversi lungo la sua direzione fin quando la persona non si sarà spostata.
 
-\begin{wrapfigure}{l}{0.25\textwidth} 
+\begin{wrapfigure}{l}{0.25\textwidth}
     \centering
     \includegraphics[width=0.25\textwidth]{Problema2_fifo_wait}
 \end{wrapfigure}
@@ -110,14 +112,14 @@ Il primo punto comporta delle modifiche nello schema visto in precedenza nella f
 \end{figure}
 
 \newpage
-\begin{wrapfigure}{r}{0.25\textwidth} 
+\begin{wrapfigure}{r}{0.25\textwidth}
     \centering
     \includegraphics[width=0.25\textwidth]{Problema1_fifo_pro}
 \end{wrapfigure}
 
-Più complicate le conseguenze del secondo punto, che sono strettamente legate alla pianificazione. La pianificazione non trova sempre una soluzione. Nel caso in cui astar non riesca a trovare un percorso per raggiungere la nostra destinazione cambiamo l'ordine da servire. Questo comporta che l'ordine corrente verrà messo al fondo della nostra coda ordini e sarà servito successivamente. Questo commporta alcuni problemi che hanno complicato la stratgia FIFO PRO rispetto la precedente, e che saranno comuni anche alle successive strategie. 
+Più complicate le conseguenze del secondo punto, che sono strettamente legate alla pianificazione. La pianificazione non trova sempre una soluzione. Nel caso in cui astar non riesca a trovare un percorso per raggiungere la nostra destinazione cambiamo l'ordine da servire. Questo comporta che l'ordine corrente verrà messo al fondo della nostra coda ordini e sarà servito successivamente. Questo commporta alcuni problemi che hanno complicato la stratgia FIFO PRO rispetto la precedente, e che saranno comuni anche alle successive strategie.
 
-La strategia FIFO WAIT aveva un grosso vantaggio: ogni volta che si serve un nuovo ordine sicuramente l'agente si trova nello stato adatto per iniziare a servirlo. 
+La strategia FIFO WAIT aveva un grosso vantaggio: ogni volta che si serve un nuovo ordine sicuramente l'agente si trova nello stato adatto per iniziare a servirlo.
 Questo significa che l'agente non ha nè sporco nè consumazioni a bordo. Questa sicurezza non si ha nella strategia FIFO PRO. Supponiamo che un agente stia servendo un ordine finish e debba andare al cestino per liberarsi dallo sporco ma sfortunatamente il cestino non ha punti d'ingresso perchè occupati da persone, questo ordine verrà abbandonato e inserito al fondo e verrà recuperato il successivo ordine. Se il successivo ordine è un accepted non potrò subito avviare le operazioni per servirlo, ma dovrò sempre liberarmi dello sporco.
 
 Nella fase 1 si ha un dispatcher che indica, a seconda dello stato dell'agente e dell'ordine, l'azione da compiere. La figura \ref{fig:figure4} mostra la fase 1 della strategia FIFO PRO.
@@ -160,7 +162,8 @@ Obiettivo di questa strategia è quella di minimizzare le penalità rispetto all
 
 \section{Strategia HARD}
 La strategia HARD è la più complessa e permette di servire più tavoli in contemporanea. In comune con la strategia precedente ha la ripianificazione nel caso il piano calcolato fallisca, e il cambio dell'ordine corrente per un altro nel caso non si riesca a trovare un piano per arrivare a destinazione.
-Iniziamo a vedere il meccanismo con il quale viene scelto l'ordine da evadere (FASE 1).
+
+Iniziamo a vedere i\l meccanismo con il quale viene scelto l'ordine da evadere (\emph{FASE 1}).
 
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{HARD_fase1}
@@ -181,13 +184,13 @@ x3=\sum_{k=1}^n Ordine_\textup{finish,k}(pen).
 \]
 
 Dalla formula \eqref{eqn:ordine} si deduce qual'è l'insieme di ordini che a ogni istante di tempo introducono più penalità nel sistema. Una volta individuato questo insieme si cerca al suo interno l'ordine con penalità maggiore. Tale ordine verrà servito.
-In alcuni casi il robot prima di servire tale ordine deve compiere delle altre operazion:  
+In alcuni casi il robot prima di servire tale ordine deve compiere delle altre operazion:
 \begin{itemize}
   \item l'ordine da evadere è una finish o delayed ma ho delle consumazioni a bordo, il robot deve consegnare le consumazioni che ha prima di servire l'ordine finish o delayed. Di conseguenza bisogna cercare uno o più ordini accepted. L'idea che sta alla base della ricerca in questo caso è quella di trovare l' ordine o gli ordini che minimizzino il numero di consegne. Se il robot si trova in una situazione di 1drink e 1food preferirà consegnare le consumazioni a un singolo tavolo invece che a due diversi.
   \item l'ordine da evadere è un accepted ma il robot ha sporco a bordo, il sistema forza il robot a recarsi ai cestini.
 \end{itemize}
 
-La fase 2 e 3 sono quasi identiche alle precedenti. La fase 2 viene esegita solo nel caso di ordini accepted, quindi si ricercherà solo il dispenser più vicino al robot. 
+La fase 2 e 3 sono quasi identiche alle precedenti. La fase 2 viene esegita solo nel caso di ordini accepted, quindi si ricercherà solo il dispenser più vicino al robot.
 
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{HARD_fase2}
@@ -195,7 +198,7 @@ La fase 2 e 3 sono quasi identiche alle precedenti. La fase 2 viene esegita solo
   \label{fig:figure8}
 \end{figure}
 
-Nella fase 4, ovvero il caricamento dai dispenser delle consumazioni, abbiamo introdotto la possibilità di caricare le consumazioni per più ordini. Quando il robot arriva a un dispenser carica le consumazioni per l'ordine corrente. Se ha ancora spazio a disposizione e vi sono conumazioni di altri ordini da poter caricare vengono caricate fino al raggiungimento della capacità massima. 
+Nella fase 4, ovvero il caricamento dai dispenser delle consumazioni, abbiamo introdotto la possibilità di caricare le consumazioni per più ordini. Quando il robot arriva a un dispenser carica le consumazioni per l'ordine corrente. Se ha ancora spazio a disposizione e vi sono conumazioni di altri ordini da poter caricare vengono caricate fino al raggiungimento della capacità massima.
 La fase 4.5 è molto più semplice delle precedenti. Il fatto di trattare e gestire la pulizia dei tavoli nel modulo EMPTY TRASH ha reso meno complicate alcune fasi.
 
 \begin{figure}[htp]
@@ -207,7 +210,7 @@ La fase 4.5 è molto più semplice delle precedenti. Il fatto di trattare e gest
 La fase 5 ovvero la ricerca e l'esecuzione del piano per arrivare al tavolo rimane immutata, e non la descriviamo nuovamente.
 
 
-Nella fase 6 si consegnano le consumazioni al tavolo se era un ordine di accepted o si pulisce il tavolo se era un ordine di finish o delayed. 
+Nella fase 6 si consegnano le consumazioni al tavolo se era un ordine di accepted o si pulisce il tavolo se era un ordine di finish o delayed.
 Nel primo caso potrebbe capitare che l'ordine non risulti completamente evaso, e come nella strategia LOW PENALITY, quest'ordine torna nella lista di ordini da evadere aggiornando le consumazioni da portare in base a quelle già consegnate.
 Nel caso sia un ordine di finish oltre a pulire il tavolo l'ordine viene impostato come completato, cosa che non accadeva nelle altre strategie.
 Nel caso sia un ordine di delayed l'ordine viene impostato ad accepted e torna nella lista di ordini da evadere. In entrambi i casi il robot ha dello sporco a bordo, ma sarà la fase 1 della strategia che indicherà al robot di andare ai cestini.
