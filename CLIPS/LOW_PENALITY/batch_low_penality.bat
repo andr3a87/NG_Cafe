@@ -60,6 +60,5 @@
 
 
 (reset)
-
-(run 257)
-(run 1200000)
+(assert (stop-at-step 99))
+;(run 1200000)

@@ -110,7 +110,7 @@
         (create)
         (counter-non-replane (count 0))
         (counter-order-non-performed (count 0))
-) 
+)
 
 
 ;; regola per inizializzazione
@@ -118,7 +118,7 @@
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "../m20a_hhard/initMap.txt")
+  (load-facts "../m10a/initMap.txt")
   (assert (create-map)
   (create-initial-setting)
   (create-history))

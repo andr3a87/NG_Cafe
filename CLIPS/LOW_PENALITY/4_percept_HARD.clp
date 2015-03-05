@@ -18,7 +18,7 @@
   ?p7 <- (prior-cell (pos-r =(- ?r 1)) (pos-c =(+ ?c 1))(contains ?x7))
   ?p8 <- (prior-cell (pos-r ?r)       (pos-c =(+ ?c 1))(contains ?x8))
   ?p9 <- (prior-cell (pos-r =(+ ?r 1)) (pos-c =(+ ?c 1))(contains ?x9))
-  
+
   ?f1 <- (K-cell (pos-r =(- ?r 1)) (pos-c =(- ?c 1)))
   ?f2 <- (K-cell (pos-r ?r)       (pos-c =(- ?c 1)))
   ?f3 <- (K-cell (pos-r =(+ ?r 1)) (pos-c =(- ?c 1)))
@@ -284,8 +284,8 @@
       (modify ?f3 (food-order (- ?fo 1)) (penality (- ?pen1 2)) )
       (modify ?f4 (qty-fo (- ?sfo 1)) (pen (- ?pen 2)))
   )
- 
- 
+
+
 )
 
 (defrule k-percept-delivery-drink
@@ -300,7 +300,7 @@
   ?f4<-(qty-order-sum (type accepted) (pen ?pen) (qty-do ?sdo))
   (exec (step =(- ?s 1)) (action DeliveryDrink) (param1 ?rfo) (param2 ?cfo))
   ;(strategy-service-table (step ?s2) (table-id ?id))
-  
+
 =>
   (modify ?fs (step ?s))
   (modify ?last-l (step ?s))
@@ -388,7 +388,7 @@
 ; TODO controllare step precedente di exec rispetto a perc-vision
 
 (defrule k-percept-clean-table_1
-  (declare(salience 100))
+  (declare(salience 200))
   (status (step ?current))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
   ?f1 <- (K-agent (l-drink ?a-ld) (l-food ?a-lf))
@@ -401,7 +401,7 @@
 )
 
 (defrule k-percept-clean-table_2
-  (declare(salience 100))
+  (declare(salience 200))
   (status (step ?current))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
 
@@ -416,7 +416,7 @@
 )
 
 (defrule k-percept-clean-table_3
-  (declare(salience 100))
+  (declare(salience 200))
   (status (step ?current))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
 
