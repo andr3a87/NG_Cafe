@@ -881,12 +881,12 @@
   ?f1<-(update-current-order-table-cleaned)
   ?f2<-(qty-order-sum (type finish) (pen ?pen) (qty-fo ?sfo) (qty-do ?sdo))
   ?f3<-(exec-order (table-id ?id) (phase 6) (status finish) (origin-status finish))
-  ?f3<-(counter-order-performed (count ?c))
+  ?f4<-(counter-order-performed (count ?c))
 =>
   (retract ?f1)
   (modify ?f2 (pen =(- ?pen 3)))
   (modify ?f3 (phase COMPLETED))
-  (modify ?f3 (count =(+ ?c 1)))
+  (modify ?f4 (count =(+ ?c 1)))
 )
 
 
@@ -931,19 +931,38 @@
 (defrule strategy-order-completed
   (status (step ?current))
   (debug ?level)
-  ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (phase 7) (food-order 0) (drink-order 0))
+  ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (origin-status accepted|delayed|finish) (phase 7) (food-order 0) (drink-order 0))
   ;(K-agent (l-drink 0) (l-food 0))
   ?f3<-(counter-order-performed (count ?c))
 =>
   (modify ?f1 (phase COMPLETED))
   (modify ?f3 (count =(+ ?c 1)))
-
+  
   ;debug
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step " ?step " of table: " ?id " is completed" crlf)
   )
 )
+
+;Ordine completato, retract fatto service table. Devo trovare il nuovo ordine da evadare.
+;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
+(defrule strategy-order-completed2
+  (status (step ?current))
+  (debug ?level)
+  ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (origin-status check-finish) (phase 7) (food-order 0) (drink-order 0))
+  ;(K-agent (l-drink 0) (l-food 0))
+=>
+  (modify ?f1 (phase COMPLETED))
+
+  
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step " ?step " of table: " ?id " is completed" crlf)
+  )
+)
+
 
 (defrule go-to-empty-trash
   (declare (salience 77))
