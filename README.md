@@ -33,7 +33,7 @@ Il modulo agent per semplicità di sviluppo è suddiviso in vari file:
 
 	**FASE 5**: Esecuzione di astar per determinare il piano per arrivare al tavolo ed esecuzione del piano.
 
-    **FASE 6**: Il robot arrivato al tavolo scarica.
+  **FASE 6**: Il robot arrivato al tavolo scarica.
 
 	Ripetizione delle fasi 3,4,5,6 finchè l'ordine non è completamente evaso.
 	
