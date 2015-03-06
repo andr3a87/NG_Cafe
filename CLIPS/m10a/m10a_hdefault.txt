@@ -43,12 +43,7 @@
 
 (personmove (step 31) (ident C1) (path-id P1))
 (personmove (step 60) (ident C2) (path-id P2))
-(personmove (step 100) (ident C2) (path-id P3))
-;(personmove (step 81) (ident C3) (path-id P8))
-;(personmove (step 140) (ident C1) (path-id P1))
-;(personmove (step 150) (ident C1) (path-id P5))
-;(personmove (step 200) (ident C1) (path-id P6))
-;(personmove (step 205) (ident C2) (path-id P2))
+(personmove (step 80) (ident C2) (path-id P3))
 
 (move-path P1 1 C1  8 3)
 (move-path P1 2 C1  7 3)

@@ -281,13 +281,18 @@
   (status (step ?current))
   (debug ?level)
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
-  (plan-executed (plane-id ?pid) (step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
-  ?f1<-(exec-order (table-id ?id) (phase 3) (fail ?f))
-  ?f2<-(K-agent)
+  (plan-executed (plane-id ?pid) (step ?current) (pos-end ?rd ?cd) (result fail))
+  (step-plane  (plane-id ?pid) (action ?oper) (father ?father) (pos-start ?ra ?ca) (child ?child) (direction ?dir))
+  ?f1 <- (exec-order (table-id ?id) (phase 3) (fail ?f))
+  ?f2 <- (K-agent (direction ?dir) (pos-r ?ra) (pos-c ?ca))
+  ?f3 <- (start 0)
 =>
   (modify ?f1 (phase 3) (fail (+ ?f 1)))
   (modify ?f2)
+  (retract ?f3)
   (assert (exec (step ?current) (action Wait)))
+  (assert (run-plane-astar (plane-id ?pid) (pos-start ?ra ?ca ?dir) (pos-end ?rd ?cd) (phase 2)))
+  (assert (start ?father))
 
   ;debug
   (if (> ?level 0)

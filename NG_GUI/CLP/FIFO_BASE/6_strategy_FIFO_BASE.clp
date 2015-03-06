@@ -231,6 +231,7 @@
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
 =>
   (assert (plane-exist ?pid))
+  (assert (add-counter-n-replane))
 )
 
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
@@ -241,6 +242,7 @@
   (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+  (assert (less-counter-n-replane))
 )
 
 ;Se il piano esiste allo lo eseguo.
@@ -279,13 +281,18 @@
   (status (step ?current))
   (debug ?level)
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
-  (plan-executed (plane-id ?pid) (step ?current) (pos-start ?ra ?ca) (pos-end ?rd ?cd) (result fail))
-  ?f1<-(exec-order (table-id ?id) (phase 3) (fail ?f))
-  ?f2<-(K-agent)
+  (plan-executed (plane-id ?pid) (step ?current) (pos-end ?rd ?cd) (result fail))
+  (step-plane  (plane-id ?pid) (action ?oper) (father ?father) (pos-start ?ra ?ca) (child ?child) (direction ?dir))
+  ?f1 <- (exec-order (table-id ?id) (phase 3) (fail ?f))
+  ?f2 <- (K-agent (direction ?dir) (pos-r ?ra) (pos-c ?ca))
+  ?f3 <- (start 0)
 =>
   (modify ?f1 (phase 3) (fail (+ ?f 1)))
   (modify ?f2)
+  (retract ?f3)
   (assert (exec (step ?current) (action Wait)))
+  (assert (run-plane-astar (plane-id ?pid) (pos-start ?ra ?ca ?dir) (pos-end ?rd ?cd) (phase 2)))
+  (assert (start ?father))
 
   ;debug
   (if (> ?level 0)
@@ -538,6 +545,7 @@
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
 =>
   (assert (plane-exist ?pid))
+  (assert (add-counter-n-replane))
 )
 
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
@@ -547,6 +555,7 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (not (plane-exist))
 =>
+  (assert (less-counter-n-replane))
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
 )
 
@@ -736,8 +745,8 @@
 
   ;debug
   (if (> ?level 0)
-  then
-  (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
+    then
+    (printout t " [DEBUG] [F7:s"?current":"?id"-SERVE] Order not completed, return to phase 2, order (food: "?fo", drink: "?do")" crlf)
   )
   (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text "PHASE 7>2: (%p1,serving) Served table. Order not completed, going back to the dispenser") (param1 ?id) )
   )
@@ -767,12 +776,13 @@
 (defrule strategy-order-completed
   (status (time ?t) (step ?current))
   (debug ?level)
-  ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
+  ?f1 <- (exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
+  ?f2 <- (counter-order-performed (count ?c))
 
   ;(K-agent (l-drink 0) (l-food 0))
 =>
   (modify ?f1 (phase COMPLETED))
-
+  (modify ?f2 (count =(+ ?c 1)))
   ;debug
   (if (> ?level 0)
   then
@@ -780,4 +790,24 @@
   )
   (assert (printGUI (time ?t) (step ?current) (source "PLANNER") (verbosity 1) (text  "ORDER COMPLETED (phase 7): table %p1") (param1 ?id) )
   )
+)
+
+
+
+(defrule update-counter-add
+  (declare (salience 150))
+  ?f1 <- (add-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(+ ?nr 1)))
+  (retract ?f1)
+)
+
+(defrule update-counter-less
+  (declare (salience 150))
+  ?f1 <- (less-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(- ?nr 1)))
+  (retract ?f1)
 )
