@@ -345,11 +345,12 @@
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
 
+
 ; Richiesta Ordine - Table non clean
 (defrule neworder2
   (declare (salience 200))
   (status (step ?i) (time ?t))
-?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
+  ?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
   (tablestatus (step ?i) (table-id ?tb) (clean no))
   (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))
 =>
@@ -368,6 +369,7 @@
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is not clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
 
+
 ; evento finish
 (defrule newfinish
   (declare (salience 200))
@@ -379,7 +381,7 @@
 =>
   (assert
     (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
-                (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
+    (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
   )
   (retract ?f1)
   ;(printout t crlf " ENVIRONMENT:" crlf)
@@ -575,7 +577,7 @@
   (status (step ?i) (time ?t))
   ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (activity seated|stand))
   ?f2 <- (personmove (step  ?i) (ident ?id) (path-id ?m))
-  => 
+  =>
   (modify  ?f1 (time ?t) (step ?i) (activity ?m) (move 0))
   ;(retract ?f2)
 )
@@ -586,12 +588,12 @@
 (defrule MovePerson3
   (declare (salience 10))
   (status (step ?i) (time ?t))
-  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s)) 
+  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s))
   (cell (pos-r ?x) (pos-c ?y) (contains Seat))
   ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
   (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
   ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Empty))
-  => 
+  =>
   (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
   (modify ?f2 (contains Person))
   ;(retract ?f3)
@@ -606,10 +608,10 @@
   (status (step ?i) (time ?t))
   ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated|~stand) (move ?s))
   ?f4 <- (cell (pos-r ?x) (pos-c ?y) (contains Person))
-  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c) 
+  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
   (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
   ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Empty))
-  => 
+  =>
   (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
   (modify ?f2 (contains Person))
   (modify ?f4 (contains Empty))
@@ -623,12 +625,12 @@
   (declare (salience 10))
   (status (step ?i) (time ?t))
   ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s))
-  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c) 
+  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
   (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
-  ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat)) 
+  ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat))
   (not (personstatus (step =(- ?i 1)) (pos-r ?r) (pos-c ?c) (activity seated)))
   ?f4 <- (cell (pos-r ?x) (pos-c ?y) (contains Person))
-  => 
+  =>
   (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (activity seated) (move NA))
   (modify ?f4 (contains Empty))
   ;(retract ?f3)
@@ -664,8 +666,10 @@
   (not (personstatus (ident ?id) (pos-r ?r) (pos-c ?c)))
 =>
   (modify  ?f1 (time ?t) (step ?i))
+
 )
 
+;// La cella in cui deve  andare la persona è la stessa su cui è già
 (defrule MovePerson_wait2_bis
   (declare (salience 10))
   (status (step ?i) (time ?t))
@@ -688,7 +692,7 @@
   ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat))
   (personstatus (step =(- ?i 1)) (pos-r ?r) (pos-c ?c)
   (activity seated))
-  => 
+  =>
   (modify  ?f1  (step ?i) (time ?t))
 )
 
@@ -698,7 +702,7 @@
   (status (step ?i) (time ?t))
   ?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
   (not (move-path ?m =(+ ?s 1) ?id ?r ?c))
-  => 
+  =>
   (modify  ?f1  (time ?t) (step ?i) (activity stand) (move NA))
 )
 

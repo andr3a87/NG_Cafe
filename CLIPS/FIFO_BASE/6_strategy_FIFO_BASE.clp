@@ -278,7 +278,7 @@
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto.
 (defrule strategy-re-execute-phase3
   (declare (salience 20))
-  (status (step ?current))
+  (status (step ?current) (time ?t))
   (debug ?level)
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (plan-executed (plane-id ?pid) (step ?current) (pos-end ?rd ?cd) (result fail))
@@ -298,6 +298,8 @@
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 3: Plane Failed. Wait and try again go to: "?c" in ("?rd","?cd")" crlf)
+    (assert (printGUI (time ?t) (step ?current) (source "ERRORS") (verbosity 1) (text "Init Phase 3: Plane Failed. Wait and try again go to: %p1 in (%p2,%p3)") (param1 ?c) (param2 ?rd) (param3 ?cd))
+    )
   )
 )
 
@@ -590,7 +592,7 @@
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto
 (defrule strategy-re-execute-phase5
   (declare (salience 1))
-  (status (step ?current))
+  (status (step ?current) (time ?t))
   (debug ?level)
   (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
   ?f2<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
@@ -604,6 +606,8 @@
   (if (> ?level 0)
     then
     (printout t " [DEBUG] [F3:s"?current":"?id"] Init Phase 5: Plane Failed. Wait and try again." crlf)
+    (assert (printGUI (time ?t) (step ?current) (source "ERRORS") (verbosity 1) (text "Init Phase 5: Plane Failed. Wait and try again.") )
+    )
   )
 )
 
