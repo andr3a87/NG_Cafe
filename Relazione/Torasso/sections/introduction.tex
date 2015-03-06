@@ -248,3 +248,30 @@ Si è dovuto gestire il caso in cui A* fallisca. Una prima soluzione in caso A* 
 
 \subsection{Checkfinish}
 \subsection{Vantaggi e Svantaggi}
+
+\section{Risultati}
+Le quattro strategie sono state create in maniera incrementale, aggiungendo regole e modificandone alcune al fine di migliorare le prestazioni delle strategie e minimizzare la penalità accumulata. Al fine di confermare queste ipotesi abbiamo creato un gruppo di history per trarre conclusioni e fare assunzioni basate su dati certi, le \emph{Final Results History}.
+
+Un altro gruppo di history, creato per testare le strategie stesse, affinché si compostassero come previsto, è stato creato durante lo sviluppo.
+
+\subsection{Testing Histories}
+Le testing history sono quattro: default, complicata, dave, finish, wait.
+
+\subsubsection{History \emph{default}}
+E' la history inclusa nel progetto.
+
+\begin{table}[h]
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+                 & FIFO\_BASE & FIFO\_PRO & LOW\_PENALITY & HARD \\ \hline
+Penalty          & 1452       & 1452      & 1452          & 676  \\ \hline
+Reused planes    & 1          & 1         & 1             & 0    \\ \hline
+Orders performed & 4          & 4         & 0             & 1    \\ \hline
+Total orders     & 4          & 4         & 4             & 4    \\ \hline
+\end{tabular}
+\end{table}
+
+
+
+\subsection{Final Results Histories}
+
