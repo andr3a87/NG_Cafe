@@ -13,3 +13,7 @@
 \contentsline {subsection}{\numberline {2.4.1}Modulo EMPTY TRASH}{14}{subsection.2.4.1}
 \contentsline {subsection}{\numberline {2.4.2}Checkfinish}{15}{subsection.2.4.2}
 \contentsline {subsection}{\numberline {2.4.3}Vantaggi e Svantaggi}{15}{subsection.2.4.3}
+\contentsline {section}{\numberline {2.5}Risultati}{15}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}Testing Histories}{15}{subsection.2.5.1}
+\contentsline {subsubsection}{History \emph {default}}{15}{section*.15}
+\contentsline {subsection}{\numberline {2.5.2}Final Results Histories}{15}{subsection.2.5.2}
