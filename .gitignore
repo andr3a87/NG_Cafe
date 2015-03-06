@@ -19,3 +19,9 @@ hs_err_pid*
 *.fdb_latexmk
 *.aux
 *.db
+
+*.idx
+
+*.ilg
+
+*.ind
