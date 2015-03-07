@@ -326,6 +326,9 @@
   (modify ?f1 (step ?current) (phase 0))
   (modify ?f4)
   (retract ?f2 ?f3)
+  (assert (add-counter-n-replane))
+  (assert (set-plane-in-position ?rd ?cd))
+  (focus SET-PLANE-AT-OK)
 
   ;debug
   (if (> ?level 0)
@@ -638,12 +641,16 @@
   (debug ?level)
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5))
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   ?f2<-(astar-solution (value no))
   ?f3<-(K-agent)
 =>
   (modify ?f1 (step ?current) (phase 0))
   (retract ?f2)
   (modify ?f3)
+  (assert (add-counter-n-replane))
+  (assert(set-plane-in-position ?rt ?ct))
+  (focus SET-PLANE-AT-OK)
 
   (if (> ?level 0)
     then

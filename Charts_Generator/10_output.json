@@ -88,7 +88,7 @@
         "order-performed": 6
       },
       "hsimple":{
-        "penalty": 1599 ,
+        "penalty": 1661 ,
         "number-plane-reused": 4,
         "number-order": 12,
         "order-performed": 11
@@ -112,7 +112,7 @@
         "order-performed":11
       },
       "hcheckf":{
-        "penalty":4543,
+        "penalty":4785,
         "number-plane-reused":7,
         "number-order":12,
         "order-performed":12

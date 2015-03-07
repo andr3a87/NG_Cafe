@@ -490,6 +490,7 @@
   (modify ?f1 (step ?current) (phase 0))
   (modify ?f4)
   (retract ?f2 ?f3)
+  (assert (add-counter-n-replane))
   (assert(set-plane-in-position ?rd ?cd))
   (focus SET-PLANE-AT-OK)
   ;debug
@@ -705,6 +706,7 @@
   (modify ?f1 (step ?current) (phase 0))
   (retract ?f2)
   (modify ?f3)
+  (assert (add-counter-n-replane))
   (assert(set-plane-in-position ?rt ?ct))
   (focus SET-PLANE-AT-OK)
 
@@ -850,7 +852,7 @@
   (declare(salience 7))
   ?f1<-(complete-order finish)
   (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
-  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(>= ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
   ?f3<-(qty-order-sum (type accepted) (pen ?pen1) (qty-fo ?sfo1) (qty-do ?sdo1))
   ?f4<-(qty-order-sum (type delayed) (pen ?pen2) (qty-fo ?sfo2) (qty-do ?sdo2))
 =>

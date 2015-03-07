@@ -30,10 +30,10 @@
         (pos-c 7)
         (activity seated))
 
-(event (step 2) (type request) (source T1) (food 1) (drink 2))
+(event (step 2) (type request) (source T1) (food 0) (drink 2))
 (event (step 5) (type request) (source T2) (food 0) (drink 2))
 (event (step 10) (type request) (source T3) (food 1) (drink 1))
-(event (step 40) (type request) (source T4) (food 2) (drink 0))
+(event (step 40) (type request) (source T4) (food 2) (drink 1))
 (event (step 60) (type finish) (source T1))
 (event (step 80) (type finish) (source T2))
 (event (step 90) (type request) (source T1) (food 1) (drink 0))
