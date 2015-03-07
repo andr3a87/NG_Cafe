@@ -22,13 +22,13 @@
       "hperson1":{
         "penalty":NaN,
         "number-plane-reused":0,
-        "number-order":12,
+        "number-order":11,
         "order-performed":2
       },
       "hperson2":{
         "penalty":NaN,
         "number-plane-reused":0,
-        "number-order":12,
+        "number-order":11,
         "order-performed":0
       },
       "hcheckf":{
@@ -62,13 +62,13 @@
       "hperson1":{
         "penalty":11711,
         "number-plane-reused":8,
-        "number-order":12,
+        "number-order":11,
         "order-performed":11
       },
       "hperson2":{
         "penalty":17594,
         "number-plane-reused":7,
-        "number-order":12,
+        "number-order":11,
         "order-performed":9
       },
       "hcheckf":{
@@ -102,13 +102,13 @@
       "hperson1":{
         "penalty":6943,
         "number-plane-reused":7,
-        "number-order":12,
+        "number-order":11,
         "order-performed":11
       },
       "hperson2":{
         "penalty":8235,
         "number-plane-reused":8,
-        "number-order":12,
+        "number-order":11,
         "order-performed":11
       },
       "hcheckf":{
@@ -140,20 +140,20 @@
         "order-performed": 5
       },
       "hperson1":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-performed":
+        "penalty":11423,
+        "number-plane-reused":2,
+        "number-order":11,
+        "order-performed":9
       },
       "hperson2":{
-        "penalty":,
-        "number-plane-reused":,
-        "number-order":,
-        "order-performed":
+        "penalty":8799,
+        "number-plane-reused":3,
+        "number-order":11,
+        "order-performed":5
       },
       "hcheckf":{
-        "penalty":3458,
-        "number-plane-reused":4,
+        "penalty":5000,
+        "number-plane-reused":5,
         "number-order":12,
         "order-performed":8
       }

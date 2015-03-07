@@ -218,8 +218,8 @@
   (best-pen ?pen)
   (debug ?level)
   ?f1<-(found-order-accepted)
-  ?f2<-(exec-order (step ?s) (origin-order-step ?step) (table-id ?sen) (time-order ?t) (status accepted) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (status accepted) (phase 0)))
+  ?f2<-(exec-order (step ?s&:(< ?s ?current)) (origin-order-step ?step) (table-id ?sen) (time-order ?t) (status accepted) (penality ?p&:(> ?p ?pen)) (phase 0))
+  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (status accepted) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
 =>
   (retract ?f1)
   (modify ?f2 (phase 1))
@@ -268,8 +268,8 @@
   (best-pen ?pen)
   (debug ?level)
   ?f1<-(found-order-finish-delayed)
-  ?f2<-(exec-order (step ?s) (origin-order-step ?step)  (table-id ?sen) (time-order ?t) (status delayed|finish) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (status delayed|finish) (phase 0)))
+  ?f2<-(exec-order (step ?s&:(< ?s ?current)) (origin-order-step ?step)  (table-id ?sen) (time-order ?t) (status delayed|finish) (penality ?p&:(> ?p ?pen)) (phase 0))
+  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (status delayed|finish) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
 =>
   (retract ?f1)
   (modify ?f2 (phase 1))
@@ -836,15 +836,19 @@
 (defrule strategy-complete-previous-order-finish
   (declare(salience 7))
   ?f1<-(complete-order delayed)
+  (debug ?level)
+  (status (step ?current))
   (exec-order (table-id ?id) (step ?ds) (phase 6) (status delayed))
   ?f2<-(exec-order (table-id ?id) (step ?fs&:(< ?fs ?ds)) (status finish) (phase 0))
   ?f3<-(qty-order-sum (type finish) (pen ?pen) (qty-fo ?sfo) (qty-do ?sdo))
-  ?f4<-(counter-order-performed (count ?c))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
   (modify ?f3 (pen =(- ?pen 3)))
-  (modify ?f4 (count =(+ ?c 1)))
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step " ?fs " of table: " ?id " is completed" crlf)
+  )
 )
 
 ;Regola che imposta a Accepted gli ordini delayed successivi alla finish. (in questo caso sto servendo una finish)
@@ -880,15 +884,20 @@
 ; Attenzione nel caso sia una check-finish questa regola non deve esser considerata (per questo aggiungiamo origin-status)
 (defrule strategy-complete-current-order-finish
   (declare(salience 5))
+  (status (step ?current))
+  (debug ?level)
   ?f1<-(update-current-order-table-cleaned)
   ?f2<-(qty-order-sum (type finish) (pen ?pen) (qty-fo ?sfo) (qty-do ?sdo))
-  ?f3<-(exec-order (table-id ?id) (phase 6) (status finish) (origin-status finish))
-  ?f4<-(counter-order-performed (count ?c))
+  ?f3<-(exec-order (table-id ?id) (phase 6) (status finish) (step ?fs) (origin-status finish))
 =>
   (retract ?f1)
   (modify ?f2 (pen =(- ?pen 3)))
   (modify ?f3 (phase COMPLETED))
-  (modify ?f4 (count =(+ ?c 1)))
+
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step " ?fs " of table: " ?id " is completed" crlf)
+  )
 )
 
 
@@ -935,10 +944,8 @@
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (origin-status accepted|delayed|finish) (phase 7) (food-order 0) (drink-order 0))
   ;(K-agent (l-drink 0) (l-food 0))
-  ?f3<-(counter-order-performed (count ?c))
 =>
   (modify ?f1 (phase COMPLETED))
-  (modify ?f3 (count =(+ ?c 1)))
   
   ;debug
   (if (> ?level 0)

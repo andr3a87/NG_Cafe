@@ -786,12 +786,10 @@
   (status (time ?t) (step ?current))
   (debug ?level)
   ?f1 <- (exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
-  ?f2 <- (counter-order-performed (count ?c))
 
   ;(K-agent (l-drink 0) (l-food 0))
 =>
   (modify ?f1 (phase COMPLETED))
-  (modify ?f2 (count =(+ ?c 1)))
   ;debug
   (if (> ?level 0)
   then

@@ -329,6 +329,7 @@
 ?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
   (tablestatus (step ?i) (table-id ?tb) (clean yes))
   (not (orderstatus (step ?i) (requested-by ?tb)))
+  ?f2<-(counter-order-performed (count ?c))
 =>
   (assert
     (orderstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb)
@@ -337,9 +338,11 @@
                              (answer pending))
     (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type order)
                               (drink-order ?nd) (food-order ?nf))
+    
   )
 
   (retract ?f1)
+  (modify ?f2 (count =(+ ?c 1)))
   ;(printout t crlf " ENVIRONMENT:" crlf)
   ;(printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
@@ -353,6 +356,7 @@
   ?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
   (tablestatus (step ?i) (table-id ?tb) (clean no))
   (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))
+  ?f2<-(counter-order-performed (count ?c))
 =>
   (assert
     (orderstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb)
@@ -364,6 +368,7 @@
   )
 
   (retract ?f1)
+  (modify ?f2 (count =(+ ?c 1)))
 ;  (printout t crlf " ENVIRONMENT:" crlf)
 ;  (printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is not clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
@@ -378,12 +383,14 @@
   (tablestatus (step ?i) (table-id ?tb) (clean no))
   (not (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb)))  ;non c'é già stata un finish
   (not (orderstatus (step ?i) (time ?t) (requested-by ?tb)))                      ;l'ordine é stato completato
+  ?f2<-(counter-order-performed (count ?c))
 =>
   (assert
     (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
     (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
   )
   (retract ?f1)
+  (modify ?f2 (count =(+ ?c 1)))
   ;(printout t crlf " ENVIRONMENT:" crlf)
   ;(printout t " - " ?tb " declares finish " crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text "%p1 declares finish.") (param1 ?tb)))

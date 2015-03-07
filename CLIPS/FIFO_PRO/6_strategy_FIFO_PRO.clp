@@ -729,11 +729,9 @@
   ?f1<-(complete-order delayed)
   (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
   ?f2<-(exec-order (table-id ?id) (step ?step&:(> ?step ?s)) (status finish) (phase 0))
-  ?f3 <- (counter-order-performed (count ?c))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
-  (modify ?f3 (count =(+ ?c 1)))
 )
 
 (defrule strategy-set-as-accepted-next-delayed-orders
@@ -822,10 +820,8 @@
   (debug ?level)
   (exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
   ?f1<-(exec-order (table-id ?id2) (step ?step2) (phase 0) (food-order 0) (drink-order 0) (clean yes))
-  ?f2 <- (counter-order-performed (count ?c))
 => 
   (modify ?f1 (phase COMPLETED))
-  (modify ?f2 (count =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
@@ -840,10 +836,8 @@
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
-  ?f2 <- (counter-order-performed (count ?c))
 => 
   (modify ?f1 (phase COMPLETED))
-  (modify ?f2 (count =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
