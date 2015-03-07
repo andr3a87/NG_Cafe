@@ -746,7 +746,7 @@
   (declare(salience 7))
   ?f1<-(complete-order finish)
   (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
-  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(>= ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
 =>
   (retract ?f1)
   (modify ?f2 (status accepted))

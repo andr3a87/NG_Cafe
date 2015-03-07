@@ -104,9 +104,13 @@
 
 (deftemplate prior-cell  (slot pos-r) (slot pos-c)
                          (slot contains (allowed-values Zero Wall Person Empty Parking Table Seat TB RB DD FD)))
+(deftemplate counter-non-replane (slot count))
+(deftemplate counter-order-performed (slot count))
 (deffacts init
-	(create)
-)
+        (create)
+        (counter-non-replane (count 0))
+        (counter-order-performed (count 0))
+) 
 
 ;; regola per inizializzazione
 ;; legge anche initial map (prior cell), initial agent status e durata simulazione (in numero di passi)

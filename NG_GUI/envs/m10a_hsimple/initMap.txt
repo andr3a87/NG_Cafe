@@ -1,4 +1,4 @@
-(maxduration 100)
+(maxduration 500)
 
 (initial_agentposition (pos-r 2) (pos-c 5) (direction south))
 (Table (table-id T1) (pos-r 9) (pos-c 2))
@@ -64,7 +64,7 @@
 (prior-cell (pos-r 2) (pos-c 5) (contains Parking))
 (prior-cell (pos-r 1) (pos-c 5) (contains Wall))
 (prior-cell (pos-r 10) (pos-c 6) (contains Wall))
-(prior-cell (pos-r 9) (pos-c 6) (contains Seat))
+(prior-cell (pos-r 9) (pos-c 6) (contains Empty))
 (prior-cell (pos-r 8) (pos-c 6) (contains Table))
 (prior-cell (pos-r 7) (pos-c 6) (contains Empty))
 (prior-cell (pos-r 6) (pos-c 6) (contains Empty))

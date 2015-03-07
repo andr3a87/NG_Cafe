@@ -236,7 +236,7 @@ public class MonitorView extends ClipsView implements Observer {
     private void updateMap() throws IOException {
         Integer step = model.getStep();
         Integer time = model.getTime();
-        Integer leftTime = model.getMaxDuration() - model.getTime();
+        Integer leftTime = model.getMaxDuration() - model.getStep();
         cp_frame.getTimeTextField().setText(time.toString());
         cp_frame.getLeftTimeTextField().setText(leftTime.toString());
         cp_frame.getStepTextField().setText(step.toString());

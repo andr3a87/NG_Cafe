@@ -53,9 +53,8 @@
   (status (step ?current) )
   (debug ?level)
   ?f1 <- (last-intention (step ?last) (time ?time))
-  ?f2<-(exec-order (step ?next&:(and (>= ?next ?last) (<= ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
-  ;(not (exec-order (step ?lol&:(and (<= ?lol ?next) (> ?lol ?last) (< ?lol ?current))) (time-order ?t1&:(and(< ?t1 ?t) (neq ?t ?t1)))  (action Inform|Finish) (phase 0)))
-  (not (exec-order (step ?lol&:(and (< ?lol ?next) (> ?lol ?last) (< ?lol ?current)))  (action Inform|Finish)))
+  ?f2<-(exec-order (step ?next&:(and (>= ?next ?last) (< ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
+  (not (exec-order (step ?lol&:(and (<= ?lol ?next) (>= ?lol ?last) (< ?lol ?current))) (time-order ?t1&:(< ?t1 ?t)) (action Inform|Finish) (phase 0)))
   (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
   (modify ?f1 (step ?next) (time ?t))
@@ -249,8 +248,8 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (not (plane-exist))
 =>
-  (assert (less-counter-n-replane))
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+  (assert (less-counter-n-replane))
   (printout t " [INFO] [F3:s"?current":"?id"] Run Astar to: "?rd ","?cd crlf)
 )
 
@@ -322,6 +321,7 @@
   (modify ?f4)
   (retract ?f2 ?f3)
   (assert(set-plane-in-position ?rd ?cd))
+  (assert (add-counter-n-replane))
   (focus SET-PLANE-AT-OK)
 
   ;debug
@@ -551,6 +551,7 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
+
 =>
   (assert (plane-exist ?pid))
   (assert (add-counter-n-replane))
@@ -565,8 +566,8 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (not (plane-exist))
 =>
-  (assert (less-counter-n-replane))
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
+  (assert (less-counter-n-replane))
   (printout t " [INFO] [F5:s"?current":"?id"] Run Astar to: "?rt ","?ct crlf)
 )
 
@@ -635,6 +636,7 @@
   (retract ?f2)
   (modify ?f3)
   (assert(set-plane-in-position ?rt ?ct))
+  (assert (add-counter-n-replane))
   (focus SET-PLANE-AT-OK)
 
   (if (> ?level 0)
@@ -738,7 +740,7 @@
   (declare(salience 7))
   ?f1<-(complete-order finish)
   (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
-  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(>= ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
 =>
   (retract ?f1)
   (modify ?f2 (status accepted))
@@ -825,7 +827,6 @@
   (modify ?f1 (phase COMPLETED))
   (modify ?f2 (count =(+ ?c 1)))
 
-
   ;debug
   (if (> ?level 0)
   then
@@ -851,8 +852,6 @@
   )
 )
 
-
-
 (defrule update-counter-add
   (declare (salience 150))
   ?f1 <- (add-counter-n-replane)
@@ -870,7 +869,6 @@
   (modify ?f2 (count =(- ?nr 1)))
   (retract ?f1)
 )
-
 
 
 (defmodule SET-PLANE-AT-OK (import AGENT ?ALL) (export ?ALL))

@@ -54,7 +54,7 @@
   (debug ?level)
   ?f1 <- (last-intention (step ?last) (time ?time))
   ?f2<-(exec-order (step ?next&:(and (>= ?next ?last) (< ?next ?current))) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (phase 0))
-  (not (exec-order (step ?lol&:(and (<= ?lol ?next) (> ?lol ?last) (< ?lol ?current))) (time-order ?t1&:(and(< ?t1 ?t) (neq ?t ?t1)))  (action Inform|Finish) (phase 0)))
+  (not (exec-order (step ?lol&:(and (<= ?lol ?next) (>= ?lol ?last) (< ?lol ?current))) (time-order ?t1&:(< ?t1 ?t)) (action Inform|Finish) (phase 0)))
   (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
   (modify ?f1 (step ?next) (time ?t))
@@ -236,6 +236,7 @@
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
 =>
   (assert (plane-exist ?pid))
+  (assert (add-counter-n-replane))
   (printout t " [INFO] [F3:s"?current":"?id"] Exist a plane for go to the dispenser." crlf)
 )
 
@@ -248,6 +249,7 @@
   (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+  (assert (less-counter-n-replane))
   (printout t " [INFO] [F3:s"?current":"?id"] Run Astar to: "?rd ","?cd crlf)
 )
 
@@ -319,6 +321,7 @@
   (modify ?f4)
   (retract ?f2 ?f3)
   (assert(set-plane-in-position ?rd ?cd))
+  (assert (add-counter-n-replane))
   (focus SET-PLANE-AT-OK)
 
   ;debug
@@ -548,8 +551,10 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
+
 =>
   (assert (plane-exist ?pid))
+  (assert (add-counter-n-replane))
   (printout t " [INFO] [F5:s"?current":"?id"] Exist a plane for go to the table." crlf)
 )
 
@@ -562,6 +567,7 @@
   (not (plane-exist))
 =>
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
+  (assert (less-counter-n-replane))
   (printout t " [INFO] [F5:s"?current":"?id"] Run Astar to: "?rt ","?ct crlf)
 )
 
@@ -630,6 +636,7 @@
   (retract ?f2)
   (modify ?f3)
   (assert(set-plane-in-position ?rt ?ct))
+  (assert (add-counter-n-replane))
   (focus SET-PLANE-AT-OK)
 
   (if (> ?level 0)
@@ -722,16 +729,18 @@
   ?f1<-(complete-order delayed)
   (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
   ?f2<-(exec-order (table-id ?id) (step ?step&:(> ?step ?s)) (status finish) (phase 0))
+  ?f3 <- (counter-order-performed (count ?c))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
+  (modify ?f3 (count =(+ ?c 1)))
 )
 
 (defrule strategy-set-as-accepted-next-delayed-orders
   (declare(salience 7))
   ?f1<-(complete-order finish)
   (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
-  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(>= ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
 =>
   (retract ?f1)
   (modify ?f2 (status accepted))
@@ -813,8 +822,10 @@
   (debug ?level)
   (exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
   ?f1<-(exec-order (table-id ?id2) (step ?step2) (phase 0) (food-order 0) (drink-order 0) (clean yes))
+  ?f2 <- (counter-order-performed (count ?c))
 => 
   (modify ?f1 (phase COMPLETED))
+  (modify ?f2 (count =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
@@ -829,14 +840,34 @@
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
+  ?f2 <- (counter-order-performed (count ?c))
 => 
   (modify ?f1 (phase COMPLETED))
+  (modify ?f2 (count =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
   )
+)
+
+(defrule update-counter-add
+  (declare (salience 150))
+  ?f1 <- (add-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(+ ?nr 1)))
+  (retract ?f1)
+)
+
+(defrule update-counter-less
+  (declare (salience 150))
+  ?f1 <- (less-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(- ?nr 1)))
+  (retract ?f1)
 )
 
 

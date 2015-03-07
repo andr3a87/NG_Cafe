@@ -22,7 +22,7 @@
   (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2))))
 )
 
-;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish. 
+;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish.
 ;Inform con strategy-return-phase6-to-2_delayed
 (defrule answer-msg-order2
   (declare (salience 150))
@@ -34,7 +34,7 @@
   (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (clean no) (phase 0) (fail 0) (penality (+ ?do ?fo))))
 )
 
-;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco. 
+;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco.
 (defrule answer-msg-order3
   (declare (salience 150))
   (status (step ?current))
@@ -81,7 +81,7 @@
   (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste ?ldw) (l_f_waste ?lfw))
 =>
   ; se l'ordine è accepted e non ho sporco posso servirlo
-  (if (and(=(str-compare ?origin-statuss "accepted") 0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0))
+  (if (and(=(str-compare ?status "accepted") 0) (= (str-compare ?ldw "no")0 ) (= (str-compare ?lfw "no")0))
   then
     (modify ?f1 (table-id ?id) (phase 2))
   )
@@ -104,7 +104,7 @@
   (if (and(= (str-compare ?status "delayed") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)))
   then
     (modify ?f1 (table-id ?id) (phase 2))
-  ) 
+  )
   ; se ho ricevuto una finish e non ho cibo caricato vado a pulire il tavolo
   (if (and(= (str-compare ?status "finish") 0)  (= ?lf 0) (= ?ld 0) (=(str-compare ?clean "no")0) )
   then
@@ -119,7 +119,7 @@
   (if (and(= (str-compare ?status "finish") 0) (=(str-compare ?clean "yes")0) (or(= (str-compare ?ldw "yes")0 ) (= (str-compare ?lfw "yes")0)))
   then
     (modify ?f1 (table-id ?id) (phase 2))
-  ) 
+  )
 )
 
 ;
@@ -143,7 +143,7 @@
         (assert (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type food)))
 )
 
-;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser 
+;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun drink-dispenser
 (defrule distance-manhattan-do
   (declare (salience 70))
   (exec-order (drink-order ?do) (table-id ?id) (phase 2) (status accepted))
@@ -183,7 +183,7 @@
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 2))
-  (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d)) 
+  (strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rd1 ?cd1) (distance ?d))
   (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
   (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
@@ -242,7 +242,9 @@
 =>
   (assert (plane-exist ?pid))
   (printout t " [INFO] [F3:s"?current":"?id"] Exist a plane for go to the dispenser." crlf)
+  (assert (add-counter-n-replane))
 )
+
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-3
   (declare (salience 1))
@@ -251,6 +253,7 @@
   (strategy-best-dispenser (pos-dispenser ?rd ?cd) (type ?c))
   (not (plane-exist))
 =>
+  (assert (less-counter-n-replane))
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
   (printout t " [INFO] [F3:s"?current":"?id"] Run Astar to: "?rd ","?cd crlf)
 )
@@ -285,7 +288,7 @@
   )
 )
 
-;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-dispenser. 
+;Piano fallito, il robot deve ripianificare il percorso per raggiungere il best-dispenser.
 ;Devo modificare K-agent altrimenti la regola S0 di astar non parte perche attivata più volte dal medesimo fatto.
 (defrule strategy-re-execute-phase3
   (declare (salience 20))
@@ -297,11 +300,10 @@
   ?f2<-(exec-order (table-id ?id) (phase 3) (fail ?f))
   ?f3<-(K-agent)
 =>
-  (modify ?f1 (status failure)) 
+  (modify ?f1 (status failure))
   (modify ?f2 (phase 3) (fail (+ ?f 1)))
   (modify ?f3)
-  (assert(set-plane-in-position ?rd ?cd))
-  (focus SET-PLANE-AT-OK)
+
 
   ;debug
   (if (> ?level 0)
@@ -357,7 +359,7 @@
   (test (> ?fo ?lf))
 =>
   (assert (exec (step ?ks) (action LoadFood) (param1 ?rd) (param2 ?cd)))
-        
+
   ;debug
   (if (> ?level 0)
   then
@@ -381,7 +383,7 @@
   (test (> ?do ?ld))
 =>
   (assert (exec (step ?ks) (action LoadDrink) (param1 ?rd) (param2 ?cd)))
-        
+
   ;debug
   (if (> ?level 0)
   then
@@ -401,7 +403,7 @@
   (exec-order (step ?s2) (table-id ?id) (phase 4))
   (strategy-best-dispenser (pos-dispenser ?rfo ?cfo) (type TB))
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l_f_waste yes))
- 
+
   (or (and (test(= ?ra ?rfo)) (test(= ?ca (+ ?cfo 1))))
       (and (test(= ?ra ?rfo)) (test(= ?ca (- ?cfo 1))))
       (and (test(= ?ra (+ ?rfo 1))) (test(= ?ca ?cfo)))
@@ -445,13 +447,13 @@
   )
 )
 
-; Una volta caricato o scaricato rimuovo il fatto best-dispenser. 
+; Una volta caricato o scaricato rimuovo il fatto best-dispenser.
 ; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule strategy-clean-best-dispenser
         (declare (salience 60))
         ?f1<-(exec-order (drink-order ?do) (food-order ?fo) (phase 4))
         ?f2 <- (strategy-best-dispenser)
-=>  
+=>
         (retract ?f2)
         (modify ?f1 (phase 4.5))
 )
@@ -562,6 +564,7 @@
 =>
   (assert (plane-exist ?pid))
   (printout t " [INFO] [F5:s"?current":"?id"] Exist a plane for go to the table." crlf)
+  (assert (add-counter-n-replane))
 )
 
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
@@ -572,6 +575,7 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (not (plane-exist))
 =>
+  (assert (less-counter-n-replane))
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
   (printout t " [INFO] [F5:s"?current":"?id"] Run Astar to: "?rt ","?ct crlf)
 )
@@ -596,7 +600,7 @@
   ?f2<-(exec-order (table-id ?id) (phase 5) (drink-order ?do) (food-order ?fo) (status ?a))
 =>
   (modify ?f2 (phase 6) (fail 0))
-  (assert(set-plane-in-position ?rt ?ct))  
+  (assert(set-plane-in-position ?rt ?ct))
   (focus SET-PLANE-AT-OK)
   ;debug
   (if (> ?level 0)
@@ -616,11 +620,10 @@
   ?f2<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
   ?f3<-(K-agent)
 =>
-  (modify ?f1 (status failure)) 
+  (modify ?f1 (status failure))
   (modify ?f2 (phase 5) (fail (+ ?f 1)))
   (modify ?f3)
-  (assert(set-plane-in-position ?rt ?ct))
-  (focus SET-PLANE-AT-OK)
+
   ;debug
   (if (> ?level 0)
     then
@@ -726,22 +729,24 @@
   )
 )
 
-;Regola che cancella gli ordini di finish precedenti all'ordine che sto servendo. Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato  
+;Regola che cancella gli ordini di finish precedenti all'ordine che sto servendo. Se servo prima un ordine delayed di un ordin finish, quando pulisco l'ordine finish diventa completato
 (defrule strategy-delete-order-finish
   (declare(salience 7))
   ?f1<-(complete-order delayed)
   (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
   ?f2<-(exec-order (table-id ?id) (step ?step&:(< ?step ?s)) (status finish) (phase 0))
+  ?f3<-(counter-order-performed (count ?c))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
+  (modify ?f3 (count =(+ ?c 1)))
 )
 
 (defrule strategy-set-as-accepted-next-delayed-orders
   (declare(salience 7))
   ?f1<-(complete-order finish)
   (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
-  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(>= ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
 =>
   (retract ?f1)
   (modify ?f2 (status accepted))
@@ -782,7 +787,7 @@
 ; FASE 7 della Strategia: Controllo se l'ordine è stato evaso.
 ;
 
-;Devo ancora consegnare della roba al tavolo. L'ordine aggiornato torna nella lista degli ordini da servire 
+;Devo ancora consegnare della roba al tavolo. L'ordine aggiornato torna nella lista degli ordini da servire
 (defrule strategy-return-search-order
   (status (step ?current))
   (debug ?level)
@@ -805,7 +810,7 @@
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (phase 7) (status delayed|finish))
   (K-agent (l_d_waste ?ldw) (l_f_waste ?lfw))
-  (test (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0))) 
+  (test (or (= (str-compare ?ldw "yes") 0) (= (str-compare ?lfw "yes") 0)))
 =>
   (modify ?f1 (phase 2))
 
@@ -822,8 +827,10 @@
   (debug ?level)
   (exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
   ?f1<-(exec-order (table-id ?id2) (step ?step2) (phase 0) (food-order 0) (drink-order 0) (clean yes))
-=> 
+  ?f3<-(counter-order-performed (count ?c))
+=>
   (modify ?f1 (phase COMPLETED))
+  (modify ?f3 (count =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
@@ -838,15 +845,37 @@
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
-=> 
+  ?f3<-(counter-order-performed (count ?c))
+=>
   (modify ?f1 (phase COMPLETED))
-
+  (modify ?f3 (count =(+ ?c 1)))
   ;debug
   (if (> ?level 0)
   then
   (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step" ?step " of table:" ?id " is completed" crlf)
   )
 )
+
+
+
+(defrule update-counter-add
+  (declare (salience 150))
+  ?f1 <- (add-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(+ ?nr 1)))
+  (retract ?f1)
+)
+
+(defrule update-counter-less
+  (declare (salience 150))
+  ?f1 <- (less-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(- ?nr 1)))
+  (retract ?f1)
+)
+
 
 (defmodule SET-PLANE-AT-OK (import AGENT ?ALL) (export ?ALL))
 
@@ -862,7 +891,7 @@
 (defrule set-plane-2
   (declare(salience 10))
   ?f1<-(set-plane-in-position ?rd ?cd)
-  
+
 =>
   (retract ?f1)
   (pop-focus)
