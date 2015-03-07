@@ -85,9 +85,9 @@ stazione('Westminster',8,1.8).
 fermata(Stazione,Linea):- percorso(Linea,0,P), member(Stazione,P).
 
 
-iniziale([at('Bayswater'),ground]).
+iniziale([at('Holborn'),ground]).
 
-finale([at('Covent Garden'),ground]).
+finale([at('Waterloo'),ground]).
 
 calcolo_euristica([at(Stazione1),_],[at(Stazione2),_]) :-
         stazione(Stazione1, R, C),
