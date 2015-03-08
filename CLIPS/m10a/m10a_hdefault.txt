@@ -70,4 +70,3 @@
 (move-path P3 4 C2  3 6)
 (move-path P3 5 C2  3 5)
 (move-path P3 6 C2  4 5)
-

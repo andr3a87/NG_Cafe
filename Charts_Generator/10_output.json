@@ -2,10 +2,11 @@
   {"fifo_base":
     {
       "hdefault":{
-        "penalty": NaN,
-        "number-plane-reused": 0,
+        "penalty": 5837,
+        "number-plane-reused": 2,
         "number-order": 10,
-        "order-performed": 1
+        "order-performed": 7,
+        "step-at-finish":171
       },
       "hsimple":{
         "penalty": 1465,
@@ -32,20 +33,21 @@
         "order-performed":0
       },
       "hcheckf":{
-        "penalty":NaN,
-        "number-plane-reused":0,
+        "penalty":4964,
+        "number-plane-reused":8,
         "number-order":12,
-        "order-performed":4
+        "order-performed":12
       }
     }
   },
   {"fifo_pro":
     {
       "hdefault":{
-        "penalty": 5767,
+        "penalty": 5616,
         "number-plane-reused": 4,
         "number-order": 10,
-        "order-performed": 7
+        "order-performed": 7,
+        "step-at-finish":176
       },
       "hsimple":{
         "penalty": 1527,
@@ -72,7 +74,7 @@
         "order-performed":9
       },
       "hcheckf":{
-        "penalty":6961,
+        "penalty":4964,
         "number-plane-reused":8,
         "number-order":12,
         "order-performed":12
@@ -112,8 +114,8 @@
         "order-performed":11
       },
       "hcheckf":{
-        "penalty":4785,
-        "number-plane-reused":7,
+        "penalty":3840,
+        "number-plane-reused":5,
         "number-order":12,
         "order-performed":12
       }
@@ -152,10 +154,10 @@
         "order-performed":5
       },
       "hcheckf":{
-        "penalty":5000,
+        "penalty":3380,
         "number-plane-reused":5,
         "number-order":12,
-        "order-performed":8
+        "order-performed":9
       }
     }
   }
