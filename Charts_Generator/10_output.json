@@ -47,19 +47,22 @@
         "number-plane-reused": 4,
         "number-order": 10,
         "order-performed": 7,
-        "step-at-finish":176
+        "step-at-finish":176,
+        "desc":"Caso in cui aspettare invece che ripianificare quanto si incontra uno ostacolo comporta più penalità. Ecco spiegata la differenza tra FIFO Base e FIFO Pro"
       },
       "hsimple":{
         "penalty": 1527,
         "number-plane-reused": 5,
         "number-order": 12,
-        "order-performed": 11
+        "order-performed": 11,
+        "desc":"Nel caso in cui le penalità tra fifo_pro e fifo_base siano uguali, significa che le persone non hanno inciso sulla strategia, e che quindi non ci sono state ripianificazioni o attese"
       },
       "hhard":{
         "penalty": 14966,
         "number-plane-reused": 14,
         "number-order": 12,
-        "order-performed": 9
+        "order-performed": 9,
+        "desc":"Nel caso in cui le penalità tra fifo_pro e fifo_base siano uguali, significa che le persone non hanno inciso sulla strategia, e che quindi non ci sono state ripianificazioni o attese"
       },
       "hperson1":{
         "penalty":11711,
@@ -68,10 +71,11 @@
         "order-performed":11
       },
       "hperson2":{
-        "penalty":17594,
+        "penalty":7594,
         "number-plane-reused":7,
         "number-order":11,
-        "order-performed":9
+        "order-performed":9,
+        "desc":"Risultato strano non me lo spiego molto. Ha culo che incontra meno persone???"
       },
       "hcheckf":{
         "penalty":4964,
@@ -99,7 +103,8 @@
         "penalty": 14651,
         "number-plane-reused": 14,
         "number-order": 12,
-        "order-performed": 9
+        "order-performed": 9,
+        "desc":"rispetto a fifo_pro e fifo_base non possiamo affermare che le persone non abbiano causati ritardi per via di ripianificazioni (anzi osservando il log si sono viste ripianificazioni), ma cmq la penalità risulta inferiore"
       },
       "hperson1":{
         "penalty":6943,
@@ -111,7 +116,8 @@
         "penalty":8235,
         "number-plane-reused":8,
         "number-order":11,
-        "order-performed":11
+        "order-performed":11,
+        "desc":"Bisogna imposta un maxduration = allo step necessario per servire l'ultimo ordine. Altrimenti il robot rimane in una posizione che blocca le persone e accumula penalità"
       },
       "hcheckf":{
         "penalty":3840,
@@ -130,22 +136,24 @@
         "order-performed": 8
       },
       "hsimple":{
-        "penalty": 1356,
+        "penalty": 1379,
         "number-plane-reused": 3,
         "number-order": 12,
         "order-performed": 9
       },
       "hhard":{
-        "penalty": 10895,
+        "penalty": 12313,
         "number-plane-reused": 4,
         "number-order": 12,
-        "order-performed": 5
+        "order-performed": 5,
+        "desc":"rispetto a fifo_pro e fifo_base non possiamo affermare che le persone non abbiano causati ritardi per via di ripianificazioni (anzi osservando il log si sono viste ripianificazioni), ma cmq la penalità risulta inferiore. Il numero di ordini serviti non è indicativo. Questa strategia utilizza un ottimizazzione per cui è possibili che faccia delle cose per cui degli ordini dopo non vengano presi. (Pulisco dei tavoli per cui successivamente arriverà una finish che non potrà esser presa in consegna in quanto il tavolo è pulito.). In genereale serve più tavoli in contemporanea, quindi il tempo per concludere un singolo tavolo è piu lungo di quello delle altra strategia che servono un tavolo alla volta (Altro motivo per cui servo meno ordini)."
       },
       "hperson1":{
         "penalty":11423,
         "number-plane-reused":2,
         "number-order":11,
-        "order-performed":9
+        "order-performed":9,
+        "desc":"Rispetto a Low Penalty ha un costo molto elevato. Avendo dimostrato che nelle history precedenti Hard aveva un comportamento migliore, questo risultato contrastante è dovuto al fatto che servendo gli ordini in maniera diversa rispetto a low penalty si trova a dover ripianificare più volte i percorsi per arrivare a destinazione (Totalmenta casuale, l'ordine con cui serve lo fa incappare a dover ripianificare più volte perche si trova ostacoli. Low penalty su questa history è piu fortunato ripianifica meno.)."
       },
       "hperson2":{
         "penalty":8799,
