@@ -153,13 +153,18 @@
 ;// quando finisce il tempo l'esecuzione si interrompe e vengono stampate le penalitá
 
 (defrule game-over
-	(declare (salience 10))
-	(maxduration ?d)
-	(status (step ?d))
-	(penalty ?p)
+        (declare (salience 10))
+        (maxduration ?d)
+        (status (step ?d))
+        (penalty ?p)
+        (counter-non-replane (count ?nr))
+        (counter-order-performed (count ?nc))
 =>
-	(printout t crlf " TIME OVER - Penalità accumulate: " ?p crlf crlf)
-	(halt)
+        (printout t crlf " TIME OVER - Penalita' accumulate: " ?p crlf crlf)
+        (printout t crlf " TIME OVER - Number of not replane: " ?nr crlf crlf)
+        (printout t crlf " TIME OVER - Number of order performed: " ?nc crlf crlf)
+
+        (halt)
 )
 
 ; Per le stampe (interpretabili da CLIPSJNI)

@@ -47,7 +47,7 @@
   (assert (et-distance-basket (pos-start ?ra ?ca) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?ra ?rfo)) (abs(- ?ca ?cfo)))) (type trash-drink)))
 )
 
-;Regola che cerca il dispenser/cestino più vicino
+;Regola che cerca il cestino più vicino
 (defrule et-search-best-basket
   (declare (salience 60))
   (status (step ?current))
@@ -292,7 +292,6 @@
 )
 
 ; Una volta scaricato rimuovo il fatto best-dispenser.
-; Nel caso del carico controllo che non abbia ancora drink o food di quell'ordine da caricare
 (defrule et-clean-best-dispenser
         (declare (salience 60))
         ?f1<-(go-to-basket (phase 3))

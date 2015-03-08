@@ -138,7 +138,7 @@ public class MonitorView extends ClipsView implements Observer {
         String advise = "";
         if (result.equals("disaster")) {
             advise = "DISASTRO\n";
-        } else if (model.getTime() == model.getMaxDuration()) {
+        } else if (model.getStep() == model.getMaxDuration()) {
             advise = "Maxduration has been reached.\n";
         } else {
             advise = "DONE.\n";

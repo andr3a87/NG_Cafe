@@ -105,7 +105,7 @@
   (declare (salience 24))
   ?f1<- (create-history)
 =>
-  (load-facts "../m10a/m10a_hperson1.txt")
+  (load-facts "history.txt")
   (retract ?f1)
 )
 
@@ -329,7 +329,6 @@
 ?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
   (tablestatus (step ?i) (table-id ?tb) (clean yes))
   (not (orderstatus (step ?i) (requested-by ?tb)))
-  ?f2<-(counter-order-performed (count ?c))
 =>
   (assert
     (orderstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb)
@@ -338,25 +337,21 @@
                              (answer pending))
     (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type order)
                               (drink-order ?nd) (food-order ?nf))
-    
   )
 
   (retract ?f1)
-  (modify ?f2 (count =(+ ?c 1)))
   ;(printout t crlf " ENVIRONMENT:" crlf)
   ;(printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
 
-
 ; Richiesta Ordine - Table non clean
 (defrule neworder2
   (declare (salience 200))
   (status (step ?i) (time ?t))
-  ?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
+?f1<- (event (step ?i) (type request) (source ?tb) (food ?nf) (drink ?nd))
   (tablestatus (step ?i) (table-id ?tb) (clean no))
   (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb))
-  ?f2<-(counter-order-performed (count ?c))
 =>
   (assert
     (orderstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb)
@@ -368,12 +363,10 @@
   )
 
   (retract ?f1)
-  (modify ?f2 (count =(+ ?c 1)))
 ;  (printout t crlf " ENVIRONMENT:" crlf)
 ;  (printout t " - " ?tb " orders " ?nf " food e " ?nd " drinks" crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text  "%p1 orders (%p2f:%p3d). %p1 is not clean") (param1 ?tb) (param2 ?nf) (param3 ?nd)))
 )
-
 
 ; evento finish
 (defrule newfinish
@@ -383,14 +376,12 @@
   (tablestatus (step ?i) (table-id ?tb) (clean no))
   (not (cleanstatus (step ?i) (arrivaltime ?tt&:(< ?tt ?t)) (requested-by ?tb)))  ;non c'é già stata un finish
   (not (orderstatus (step ?i) (time ?t) (requested-by ?tb)))                      ;l'ordine é stato completato
-  ?f2<-(counter-order-performed (count ?c))
 =>
   (assert
     (cleanstatus (step ?i) (time ?t) (arrivaltime ?t) (requested-by ?tb) (source ?tb))
-    (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
+                (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type finish))
   )
   (retract ?f1)
-  (modify ?f2 (count =(+ ?c 1)))
   ;(printout t crlf " ENVIRONMENT:" crlf)
   ;(printout t " - " ?tb " declares finish " crlf)
   (assert (printGUI (time ?t) (step ?i) (source "ENV") (verbosity 0) (text "%p1 declares finish.") (param1 ?tb)))
@@ -593,7 +584,7 @@
 ;// La cella di partenza ? un seat in cui si trovava l'operatore
 
 (defrule MovePerson3
-  (declare (salience 10)) 
+  (declare (salience 10))
   (status (step ?i) (time ?t))
   ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s)) 
   (cell (pos-r ?x) (pos-c ?y) (contains Seat))
@@ -673,10 +664,8 @@
   (not (personstatus (ident ?id) (pos-r ?r) (pos-c ?c)))
 =>
   (modify  ?f1 (time ?t) (step ?i))
-
 )
 
-;// La cella in cui deve  andare la persona è la stessa su cui è già
 (defrule MovePerson_wait2_bis
   (declare (salience 10))
   (status (step ?i) (time ?t))

@@ -123,7 +123,7 @@
   (focus CLEAN-TABLE-DISTANCE)
 )
 
-;Se non sto facendo nulla prima della wait provo a effettuare una checkfinish su un tavolo che aveva oridinato.
+;Se non sto facendo nulla prima della wait provo a
 (defrule strategy-empty-trash
   (declare (salience 135))
   (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
@@ -131,7 +131,6 @@
   (assert (go-to-basket (phase 1)))
   (focus EMPTY-TRASH)
 )
-
 
 ;
 ; FASE 1 della Strategia: Ricerca di un tavolo da servire.
@@ -206,7 +205,8 @@
   (qty-order-sum (type delayed) (pen ?pen2))
   (qty-order-sum (type finish) (pen ?pen3))
   (test(< ?pen1 (+ ?pen2 ?pen3)))
-  (K-agent (l-drink ?ld&:(> ?ld 0)) (l-food ?lf&:(> ?lf 0)) (l_d_waste no) (l_f_waste no))
+  (K-agent (l-drink ?ld) (l-food ?lf) (l_d_waste no) (l_f_waste no))
+  (test(or (> ?ld 0) (> ?lf 0)))
 =>
   (assert (force-delivery (min 1000)))
 )
@@ -218,8 +218,8 @@
   (best-pen ?pen)
   (debug ?level)
   ?f1<-(found-order-accepted)
-  ?f2<-(exec-order (step ?s) (origin-order-step ?step) (table-id ?sen) (time-order ?t) (status accepted) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (status accepted) (phase 0)))
+  ?f2<-(exec-order (step ?s&:(< ?s ?current)) (origin-order-step ?step) (table-id ?sen) (time-order ?t) (status accepted) (penality ?p&:(> ?p ?pen)) (phase 0))
+  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (status accepted) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
 =>
   (retract ?f1)
   (modify ?f2 (phase 1))
@@ -268,8 +268,8 @@
   (best-pen ?pen)
   (debug ?level)
   ?f1<-(found-order-finish-delayed)
-  ?f2<-(exec-order (step ?s) (origin-order-step ?step)  (table-id ?sen) (time-order ?t) (status delayed|finish) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1) (penality ?p2&:(> ?p2 ?p)) (status delayed|finish) (phase 0)))
+  ?f2<-(exec-order (step ?s&:(< ?s ?current)) (origin-order-step ?step)  (table-id ?sen) (time-order ?t) (status delayed|finish) (penality ?p&:(> ?p ?pen)) (phase 0))
+  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (status delayed|finish) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
 =>
   (retract ?f1)
   (modify ?f2 (phase 1))
@@ -403,8 +403,10 @@
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rd ?cd) (status ok))
 =>
   (assert (plane-exist ?pid))
+  (assert (add-counter-n-replane))
   (printout t " [INFO] [F3:s"?current":"?id"] Exist a plane for go to the dispenser." crlf)
 )
+
 ;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule strategy-create-plane-3
   (declare (salience 1))
@@ -414,6 +416,7 @@
   (not (plane-exist ?))
 =>
   (assert (start-astar (pos-r ?rd) (pos-c ?cd)))
+  (assert (less-counter-n-replane))
   (printout t " [INFO] [F3:s"?current":"?id"] Not exist a valid plane. Run Astar to: "?rd ","?cd crlf)
 )
 
@@ -487,6 +490,7 @@
   (modify ?f1 (step ?current) (phase 0))
   (modify ?f4)
   (retract ?f2 ?f3)
+  (assert (add-counter-n-replane))
   (assert(set-plane-in-position ?rd ?cd))
   (focus SET-PLANE-AT-OK)
   ;debug
@@ -618,6 +622,7 @@
   (K-agent (pos-r ?ra) (pos-c ?ca))
   (plane (plane-id ?pid)(pos-start ?ra ?ca) (pos-end ?rt ?ct) (status ok))
 =>
+  (assert (add-counter-n-replane))
   (assert (plane-exist ?pid))
   (printout t " [INFO] [F5:s"?current":"?id"] Exist a plane for go to the table." crlf)
 )
@@ -630,6 +635,7 @@
   (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   (not (plane-exist ?))
 =>
+  (assert (less-counter-n-replane))
   (assert (start-astar (pos-r ?rt) (pos-c ?ct)))
   (printout t " [INFO] [F5:s"?current":"?id"] Run Astar to: "?rt ","?ct crlf)
 )
@@ -656,7 +662,7 @@
   (not (plane-exist ?))
 =>
   (modify ?f2 (phase 6) (fail 0))
-  (assert(set-plane-in-position ?rt ?ct))  
+  (assert(set-plane-in-position ?rt ?ct))
   (focus SET-PLANE-AT-OK)
   ;debug
   (if (> ?level 0)
@@ -700,6 +706,7 @@
   (modify ?f1 (step ?current) (phase 0))
   (retract ?f2)
   (modify ?f3)
+  (assert (add-counter-n-replane))
   (assert(set-plane-in-position ?rt ?ct))
   (focus SET-PLANE-AT-OK)
 
@@ -778,7 +785,7 @@
   )
 )
 
-;regola per controllare se le consumazioni al tavolo sono state consumate.
+;regola per controllare se le consumazioni al tavolo sono state consumate e che non si già arrivato un ordine di cleantable.
 (defrule strategy-do-CheckFinish
   (declare(salience 10))
   (status (step ?current))
@@ -786,6 +793,7 @@
   (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-drink ?ld) (l-food ?lf))
   (K-table (table-id ?id) (pos-r ?rt) (pos-c ?ct) (clean no))
   (exec-order (table-id ?id) (phase 6) (status  check-finish))
+  (not(exec-order (table-id ?id) (phase 0) (status finish)))
   ; controlla che l'agente sia scarico
   (test (= (+ ?ld ?lf) 0))
 =>
@@ -828,6 +836,8 @@
 (defrule strategy-complete-previous-order-finish
   (declare(salience 7))
   ?f1<-(complete-order delayed)
+  (debug ?level)
+  (status (step ?current))
   (exec-order (table-id ?id) (step ?ds) (phase 6) (status delayed))
   ?f2<-(exec-order (table-id ?id) (step ?fs&:(< ?fs ?ds)) (status finish) (phase 0))
   ?f3<-(qty-order-sum (type finish) (pen ?pen) (qty-fo ?sfo) (qty-do ?sdo))
@@ -835,14 +845,18 @@
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
   (modify ?f3 (pen =(- ?pen 3)))
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step " ?fs " of table: " ?id " is completed" crlf)
+  )
 )
 
-;Regola che imposta a COMPLETE gli ordini delayed successivi alla finish. (in questo caso sto servendo una finish)
+;Regola che imposta a Accepted gli ordini delayed successivi alla finish. (in questo caso sto servendo una finish)
 (defrule strategy-set-as-accepted-next-delayed-orders
   (declare(salience 7))
   ?f1<-(complete-order finish)
   (exec-order (table-id ?id) (step ?fs) (phase 6) (status finish))
-  ?f2<-(exec-order (table-id ?id) (step ?ds&:(> ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
+  ?f2<-(exec-order (table-id ?id) (step ?ds&:(>= ?ds ?fs)) (status delayed) (phase 0) (drink-order ?do) (food-order ?fo))
   ?f3<-(qty-order-sum (type accepted) (pen ?pen1) (qty-fo ?sfo1) (qty-do ?sdo1))
   ?f4<-(qty-order-sum (type delayed) (pen ?pen2) (qty-fo ?sfo2) (qty-do ?sdo2))
 =>
@@ -867,21 +881,29 @@
 )
 
 ; aggiorno lo status finish a completed perché ho appena pulito il tavolo (ho appena servito un ordine di tipo finish)
+; Attenzione nel caso sia una check-finish questa regola non deve esser considerata (per questo aggiungiamo origin-status)
 (defrule strategy-complete-current-order-finish
   (declare(salience 5))
+  (status (step ?current))
+  (debug ?level)
   ?f1<-(update-current-order-table-cleaned)
   ?f2<-(qty-order-sum (type finish) (pen ?pen) (qty-fo ?sfo) (qty-do ?sdo))
-  ?f3<-(exec-order (table-id ?id) (phase 6) (status finish))
+  ?f3<-(exec-order (table-id ?id) (phase 6) (status finish) (step ?fs) (origin-status finish))
 =>
   (retract ?f1)
   (modify ?f2 (pen =(- ?pen 3)))
   (modify ?f3 (phase COMPLETED))
+
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step " ?fs " of table: " ?id " is completed" crlf)
+  )
 )
 
 
 ;Se non ho ne da scaricare cibo, ne da scaricare drink ne da pulire il tavolo vado alla fase 7.
 (defrule go-phase7
-  (declare(salience 5))
+  (declare(salience 4))
   (debug ?level)
   (status (step ?current))
   ?f3<-(exec-order (table-id ?id) (phase 6))
@@ -920,11 +942,11 @@
 (defrule strategy-order-completed
   (status (step ?current))
   (debug ?level)
-  ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (phase 7) (food-order 0) (drink-order 0))
+  ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (origin-status accepted|delayed|finish) (phase 7) (food-order 0) (drink-order 0))
   ;(K-agent (l-drink 0) (l-food 0))
 =>
   (modify ?f1 (phase COMPLETED))
-
+  
   ;debug
   (if (> ?level 0)
   then
@@ -932,12 +954,53 @@
   )
 )
 
+;Ordine completato, retract fatto service table. Devo trovare il nuovo ordine da evadare.
+;Ordine completato se ho scaricato tutta la roba e  l'agente non ha niente (attenzione giusto nella logica di servire un tavolo alla volta)
+(defrule strategy-order-completed2
+  (status (step ?current))
+  (debug ?level)
+  ?f1<-(exec-order (table-id ?id) (origin-order-step ?step) (origin-status check-finish) (phase 7) (food-order 0) (drink-order 0))
+  ;(K-agent (l-drink 0) (l-food 0))
+=>
+  (modify ?f1 (phase COMPLETED))
+
+  
+  ;debug
+  (if (> ?level 0)
+  then
+  (printout t " [DEBUG] [F6:s"?current":"?id"] Phase 7: Order at step " ?step " of table: " ?id " is completed" crlf)
+  )
+)
+
+
 (defrule go-to-empty-trash
   (declare (salience 77))
   (go-to-basket)
 =>
   (focus EMPTY-TRASH)
 )
+
+
+
+(defrule update-counter-add
+  (declare (salience 150))
+  ?f1 <- (add-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(+ ?nr 1)))
+  (retract ?f1)
+)
+
+(defrule update-counter-less
+  (declare (salience 150))
+  ?f1 <- (less-counter-n-replane)
+  ?f2 <- (counter-non-replane (count ?nr))
+  =>
+  (modify ?f2 (count =(- ?nr 1)))
+  (retract ?f1)
+)
+
+
 
 (defmodule SET-PLANE-AT-OK (import AGENT ?ALL) (export ?ALL))
 
@@ -953,7 +1016,7 @@
 (defrule set-plane-2
   (declare(salience 10))
   ?f1<-(set-plane-in-position ?rd ?cd)
-  
+
 =>
   (retract ?f1)
   (pop-focus)

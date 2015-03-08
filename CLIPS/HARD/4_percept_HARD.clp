@@ -388,7 +388,7 @@
 ; TODO controllare step precedente di exec rispetto a perc-vision
 
 (defrule k-percept-clean-table_1
-  (declare(salience 100))
+  (declare(salience 200))
   (status (step ?current))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
   ?f1 <- (K-agent (l-drink ?a-ld) (l-food ?a-lf))
@@ -401,7 +401,7 @@
 )
 
 (defrule k-percept-clean-table_2
-  (declare(salience 100))
+  (declare(salience 200))
   (status (step ?current))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
 
@@ -416,7 +416,7 @@
 )
 
 (defrule k-percept-clean-table_3
-  (declare(salience 100))
+  (declare(salience 200))
   (status (step ?current))
   (exec (step =(- ?current 1))(action CleanTable) (param1 ?rfo) (param2 ?cfo))
 

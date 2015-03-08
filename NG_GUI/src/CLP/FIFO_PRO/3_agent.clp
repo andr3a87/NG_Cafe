@@ -59,6 +59,7 @@
   (slot drink-order)
   (slot food-order)
   (slot phase)
+  (slot clean) ;indica che il tavolo è stato pulito, ma la spazzatura non buttata. Solo per gli ordini finish e 1delat
   (slot fail)
   (slot penality)
   (slot check-finish (default no))
@@ -76,6 +77,9 @@
 
 ; Ci dice se l'inizializzazione dell'agente è conclusa
 (deftemplate init-agent (slot done (allowed-values yes no)))
+
+
+
 
 (deffacts initial-fact-agent
   (last-perc (step -1))
@@ -96,6 +100,7 @@
 (deftemplate force-delivery (slot min) (slot step) (slot table-id))
 (deftemplate go-to-basket (slot phase))
 (deftemplate table-distance (slot table-id) (slot distance))
+
 (deffacts initial-fact-agent2
   (qty-order-sum (type accepted) (pen 0) (qty-fo 0) (qty-do 0))
   (qty-order-sum (type delayed) (pen 0) (qty-fo 0) (qty-do 0))
