@@ -41,9 +41,9 @@
 (event (step 120) (type finish) (source T4))
 (event (step 121) (type finish) (source T3))
 
-(personmove (step 31) (ident C1) (path-id P1))
-(personmove (step 60) (ident C2) (path-id P2))
-(personmove (step 80) (ident C2) (path-id P3))
+(personmove (step 25) (ident C1) (path-id P1))
+(personmove (step 55) (ident C2) (path-id P2))
+(personmove (step 78) (ident C2) (path-id P3))
 
 (move-path P1 1 C1  8 3)
 (move-path P1 2 C1  7 3)
