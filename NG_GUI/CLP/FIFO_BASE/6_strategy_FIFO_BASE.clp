@@ -594,13 +594,18 @@
   (declare (salience 1))
   (status (step ?current) (time ?t))
   (debug ?level)
-  (plan-executed (step ?current) (pos-start ?rs ?cs) (pos-end ?rg ?cg) (result fail))
-  ?f2<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
-  ?f3<-(K-agent)
+  (plan-executed (plane-id ?pid) (step ?current) (pos-end ?rg ?cg) (result fail))
+  (step-plane  (plane-id ?pid) (action ?oper) (father ?father) (pos-start ?ra ?ca) (child ?child) (direction ?dir))
+  ?f1<-(exec-order (table-id ?id) (phase 5)  (fail ?f))
+  ?f2 <- (K-agent (direction ?dir) (pos-r ?ra) (pos-c ?ca))
+  ?f3 <- (start 0)
 =>
-  (modify ?f2 (phase 5) (fail (+ ?f 1)))
-  (modify ?f3)
+  (modify ?f1 (phase 5) (fail (+ ?f 1)))
+  (modify ?f2)
+  (retract ?f3)
   (assert (exec (step ?current) (action Wait)))
+  (assert (run-plane-astar (plane-id ?pid) (pos-start ?ra ?ca ?dir) (pos-end ?rg ?cg) (phase 2)))
+  (assert (start ?father))
 
   ;debug
   (if (> ?level 0)
@@ -781,12 +786,10 @@
   (status (time ?t) (step ?current))
   (debug ?level)
   ?f1 <- (exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
-  ?f2 <- (counter-order-performed (count ?c))
 
   ;(K-agent (l-drink 0) (l-food 0))
 =>
   (modify ?f1 (phase COMPLETED))
-  (modify ?f2 (count =(+ ?c 1)))
   ;debug
   (if (> ?level 0)
   then

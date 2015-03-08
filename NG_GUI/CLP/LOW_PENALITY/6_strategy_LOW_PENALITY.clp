@@ -55,8 +55,8 @@
   (debug ?level)
   ;?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
-  ?f2<-(exec-order (step ?s) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1&:(< ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (action Inform|Finish) (phase 0)))
+  ?f2<-(exec-order (step ?s&:(< ?s ?current)) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (penality ?p&:(> ?p ?pen)) (phase 0))
+  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (action Inform|Finish) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -326,6 +326,9 @@
   (modify ?f1 (step ?current) (phase 0))
   (modify ?f4)
   (retract ?f2 ?f3)
+  (assert (add-counter-n-replane))
+  (assert (set-plane-in-position ?rd ?cd))
+  (focus SET-PLANE-AT-OK)
 
   ;debug
   (if (> ?level 0)
@@ -638,12 +641,16 @@
   (debug ?level)
   (status (step ?current))
   ?f1<-(exec-order (step ?s2) (table-id ?id) (phase 5))
+  (K-table (pos-r ?rt) (pos-c ?ct) (table-id ?id))
   ?f2<-(astar-solution (value no))
   ?f3<-(K-agent)
 =>
   (modify ?f1 (step ?current) (phase 0))
   (retract ?f2)
   (modify ?f3)
+  (assert (add-counter-n-replane))
+  (assert(set-plane-in-position ?rt ?ct))
+  (focus SET-PLANE-AT-OK)
 
   (if (> ?level 0)
     then
@@ -735,11 +742,9 @@
   ?f1<-(complete-order delayed)
   (exec-order (table-id ?id) (step ?s) (phase 6) (status delayed))
   ?f2<-(exec-order (table-id ?id) (step ?step&:(< ?step ?s)) (status finish) (phase 0))
-  ?f3<-(counter-order-performed (count ?c))
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
-  (modify ?f3 (count =(+ ?c 1)))
 )
 
 (defrule strategy-set-as-accepted-next-delayed-orders
@@ -827,10 +832,8 @@
   (debug ?level)
   (exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
   ?f1<-(exec-order (table-id ?id2) (step ?step2) (phase 0) (food-order 0) (drink-order 0) (clean yes))
-  ?f3<-(counter-order-performed (count ?c))
 =>
   (modify ?f1 (phase COMPLETED))
-  (modify ?f3 (count =(+ ?c 1)))
 
   ;debug
   (if (> ?level 0)
@@ -845,10 +848,8 @@
   (status (step ?current))
   (debug ?level)
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
-  ?f3<-(counter-order-performed (count ?c))
 =>
   (modify ?f1 (phase COMPLETED))
-  (modify ?f3 (count =(+ ?c 1)))
   ;debug
   (if (> ?level 0)
   then
