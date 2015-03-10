@@ -123,12 +123,14 @@
   (focus CLEAN-TABLE-DISTANCE)
 )
 
-;Se non sto facendo nulla prima della wait provo a
+;Se non sto facendo nulla prima della wait provo a scarica immondizia se c'è l'ho
 (defrule strategy-empty-trash
   (declare (salience 135))
   (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
+  (K-agent (l_d_waste ?ldw) (l_f_waste ?lfw))
+  (test(or(=(str-compare ?ldw "yes")0) (=(str-compare ?lfw "yes")0)))
 =>
-  (assert (go-to-basket (phase 1)))
+  (assert (go-to-basket (phase 0)))
   (focus EMPTY-TRASH)
 )
 
@@ -188,7 +190,7 @@
   (K-agent (l-drink 0) (l-food 0) (l_d_waste ?ldw) (l_f_waste ?lfw))
   (test(or(=(str-compare ?ldw "yes")0) (=(str-compare ?lfw "yes")0)))
 =>
-  (assert (go-to-basket (phase 1)))
+  (assert (go-to-basket (phase 0)))
   (focus EMPTY-TRASH)
 )
 

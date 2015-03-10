@@ -9,7 +9,7 @@
 ;
 (defrule et-init-tb
   (declare (salience 100))
-  (go-to-basket (phase 1))
+  (go-to-basket (phase 0))
   (K-cell (pos-r ?r) (pos-c ?c) (contains TB))
 =>
   (assert(service-trash TB ?r ?c))
@@ -17,10 +17,17 @@
 
 (defrule et-init-rb
   (declare (salience 100))
-  (go-to-basket (phase 1))
+  (go-to-basket (phase 0))
   (K-cell (pos-r ?r) (pos-c ?c) (contains RB))
 =>
   (assert(service-trash RB ?r ?c))
+)
+
+(defrule et-go-phase1
+  (declare (salience 10))
+  ?f1<-(go-to-basket (phase 0))
+=>
+  (modify ?f1 (phase 1))
 )
 
 ;
@@ -94,7 +101,7 @@
 =>
   (assert (plane-exist ?pid))
 )
-;Se il piano non esiste allora d evo avviare astar per cercare un percorso che mi porti a destinazione.
+;Se il piano non esiste allora devo avviare astar per cercare un percorso che mi porti a destinazione.
 (defrule et-create-plane-3
   (declare (salience 1))
   ?f1<-(go-to-basket (phase 2))
@@ -159,7 +166,7 @@
   )
 )
 
-;Se non esiste un percorso per arrivare a destinazione, torno al modulo strategy.
+;Se non esiste un percorso per arrivare a destinazione.
 ;Posso andare a pulire un altro tavolo.
 ;Posso cercare un altro cestino.
 ;Insisto col perseguire il fatto di voler arrivare a questo cestino.
