@@ -273,20 +273,72 @@ Total orders     & 4          & 4         & 4             & 4    \\ \hline
 
 \subsection{Final Results Histories}
 
-Per ottenere i risultati finali sulle strategie sono state create tre mappe e sei history diverse per ogni mappa. Le mappe sono di tre dimensioni diverse: \emph{10x10} blocchi, \emph{20x20} e \emph{30x30}; mentre le cinque history sono state etichettate come: \emph{hdefault}, \emph{hsimple}, \emph{hhard}, \emph{hperson1}, \emph{hperson2} e \emph{hcheckf}.
+Per ottenere i risultati finali sulle strategie sono state create tre mappe e sei history diverse per ogni mappa. Le mappe sono di tre dimensioni diverse: \emph{10x10} blocchi, \emph{20x20} e \emph{30x30}; mentre le cinque history sono state etichettate come: \emph{hdefault}, \emph{hsimple}, \emph{hhard}, \emph{hperson1}, \emph{hperson2} e \emph{hcheckf}. Ogni history rappresenta uno scenario particolare.
 
-\paragraph{hdefault}
+La history default presenta le seguenti caratteristiche:
+\begin{itemize}
+  \item poche persone che si muovono.
+  \item presenza sia di ordini con molte richieste, sia di ordini con poche richieste.
+\end{itemize}
+La history hsimple presenta le seguenti caratteristiche:
+\begin{itemize}
+    \item non vi sono persone che si muovono.
+    \item presenza solo di ordini con poche richieste.
+  \end{itemize}
+La history hhard presenta le seguenti caratteristiche:
+\begin{itemize}
+    \item non vi sono persone che si muovono.
+    \item presenza solo di ordini con tante richieste.
+  \end{itemize}
+La history hperson1 presenta le seguenti caratteristiche:
+\begin{itemize}
+    \item molte persone che si muovono di continuo. Ogni persona si sposta da un punto A a B e viceversa.
+    \item presenza sia di ordini con molte richieste, sia di ordini con poche richieste.
+  \end{itemize}
+La history hperson2 presenta le seguenti caratteristiche:\begin{itemize}
+    \item molte persone che si muovono di continuo. Ogni persona si sposta da un punto A a B e viceversa. A differenza della hperson1 che ad ogni step una persona si muove, nella hperson2 lo spostamento avviene ogni x step. Con x che varia da 1 a 4.
+    \item presenza sia di ordini con molte richieste, sia di ordini con poche richieste.
+  \end{itemize}
+La history hcheckf presenta le seguenti caratteristiche:
+\begin{itemize}
+    \item non vi sono persone che si muovono.
+    \item presenza sia di ordini con molte richieste, sia di ordini con poche richieste.
+    \item history create in modo tale da utilizzare l'azione di checkfinish da parte della strategia HARD.
+\end{itemize}
+
+\subsection{Risultati sulla mappa 10x10: history_default}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|}
+\hline
+\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
+Penalty                & 5837       & 5616      & 4192         & 4166 \\ \hline
+Reused Planes          & 2          & 4         & 5            & 0    \\ \hline
+Order performed        & 10         & 10        & 10           & 10   \\ \hline
+Total orders           & 7          & 7         & 6            & 6    \\ \hline
+\end{tabular}
+\end{table}
+
+Dalla tabella notiamo che la strategy HARD è quella che minimizza la nostra penalità. Questo risultato può essere forviante in quanto dipende dal numero di ordini che la strategia riesce a servire. Questo numeropuò variare a second della strategia in quanto ordini inseriti nella history non sono consistenti con l'esecuzione di una strategia e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
+
+Come precedentemente spiegato nel capitolo \ref{sec:Il modulo A*} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
+
+Dall'esecuzione della FIFO BASE e FIFO PRO su questa history si ha un primo confronto tra l'idea di aspettare nel caso in cui vi sia una persona sul percorso del robot, e quella della FIFO PRO di ripianificare. Notiamo che anche se il robot deve ripianificare e allungare i tempi di consegna per via dell'esecuzione di un altro percorso, la penalità risulta migliore rispetto al fatto di aspettare anche se per pochi step (3 nella nostra esecuzione). La FIFO BASE completa i suoi ordini in 171 step mentre la FIFO PRO in 176.
 
 
-\paragraph{hsimple}
+\subsection{Risultati sulla mappa 10x10: history_simple}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|}
+\hline
+\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
+Penalty                & 5837       & 5616      & 4192         & 4166 \\ \hline
+Reused Planes          & 2          & 4         & 5            & 0    \\ \hline
+Order performed        & 10         & 10        & 10           & 10   \\ \hline
+Total orders           & 7          & 7         & 6            & 6    \\ \hline
+\end{tabular}
+\end{table}
 
-\paragraph{hhard}
+Dalla tabella notiamo che la strategy HARD è quella che minimizza la nostra penalità. Questo risultato può essere forviante in quanto dipende dal numero di ordini che la strategia riesce a servire. Questo numeropuò variare a second della strategia in quanto ordini inseriti nella history non sono consistenti con l'esecuzione di una strategia e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
 
-\paragraph{hperson1}
+Come precedentemente spiegato nel capitolo \ref{sec:Il modulo A*} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
 
-\paragraph{hperson2}
-
-\paragraph{hcheckf}
-
-\subsubsection{title}
-
+Dall'esecuzione della FIFO BASE e FIFO PRO su questa history si ha un primo confronto tra l'idea di aspettare nel caso in cui vi sia una persona sul percorso del robot, e quella della FIFO PRO di ripianificare. Notiamo che anche se il robot deve ripianificare e allungare i tempi di consegna per via dell'esecuzione di un altro percorso, la penalità risulta migliore rispetto al fatto di aspettare anche se per pochi step (3 nella nostra esecuzione). La FIFO BASE completa i suoi ordini in 171 step mentre la FIFO PRO in 176.
