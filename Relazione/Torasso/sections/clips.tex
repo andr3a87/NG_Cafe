@@ -314,14 +314,14 @@ La history hcheckf presenta le seguenti caratteristiche:
 \multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
 Penalty                & 5837       & 5616      & 4192         & 4166 \\ \hline
 Reused Planes          & 2          & 4         & 5            & 0    \\ \hline
-Order performed        & 7          & 7         & 6            & 6   \\ \hline
-Total orders           & 10         & 10        & 10           & 10    \\ \hline
+Order performed        & 7          & 7         & 6            & 6    \\ \hline
+Total orders           & 10         & 10        & 10           & 10   \\ \hline
 \end{tabular}
 \end{table}
 
 Dalla tabella notiamo che la strategy HARD è quella che minimizza la nostra penalità. Questo risultato può essere forviante in quanto dipende dal numero di ordini che la strategia riesce a servire. Questo numero può variare a second della strategia in esecuzione in quanto ordini inseriti nella history non sono consistenti con tale esecuzione e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
 
-Come precedentemente spiegato nel capitolo \ref{sec:Il modulo A*} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
+Come precedentemente spiegato nel capitolo ref{sec:Il modulo A*} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
 
 Dall'esecuzione della FIFO BASE e FIFO PRO su questa history si ha un primo confronto tra l'idea di aspettare nel caso in cui vi sia una persona sul percorso del robot, e quella della FIFO PRO di ripianificare. Notiamo che anche se il robot deve ripianificare e allungare i tempi di consegna per via dell'esecuzione di un altro percorso, la penalità risulta migliore rispetto al fatto di aspettare anche se per pochi step (3 nella nostra esecuzione). La FIFO BASE completa i suoi ordini in 171 step mentre la FIFO PRO in 176.
 
@@ -338,9 +338,9 @@ Total orders           & 12         & 12        & 12           & 12   \\ \hline
 \end{tabular}
 \end{table}
 
-Nel caso in cui le penalità tra FIFO_BASE e FIFO_PRO risultino uguali, significa che le persone non hanno inciso sull' esecuzione della strategia, e che quindi non ci sono state nè ripianificazioni nè attese.
+Nel caso in cui le penalità tra FIFO WAIT e FIFO PRO risultino uguali, significa che le persone non hanno inciso sull' esecuzione della strategia, e che quindi non ci sono state nè ripianificazioni nè attese.
 
-\subsection{Risultati sulla mappa 10x10: history_hard}
+\subsection{Risultati sulla mappa 10x10: hhard}
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
@@ -351,4 +351,45 @@ Order performed        & 9          & 9         & 9            & 9     \\ \hline
 Total orders           & 12         & 12        & 12           & 12    \\ \hline
 \end{tabular}
 \end{table}
+
+Nel caso in cui le penalità tra FIFO WAIT e FIFO PRO risultino uguali, significa che le persone non hanno inciso sull' esecuzione della strategia, e che quindi non ci sono state nè ripianificazioni nè attese.In LOW PENALTY e HARD pur effettuando delle ripianificazioni la penalty risulta inferiore.
+
+\subsection{Risultati sulla mappa 10x10: hperson1}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|}
+\hline
+\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD  \\ \hline
+Penalty                & NaN      & 11711     & 6943        & 11423    \\ \hline
+Reused Planes          & 0        & 8         & 7           & 2        \\ \hline
+Order performed        & 2        & 11        & 11          & 11       \\ \hline
+Total orders           & 12       & 12        & 12          & 12       \\ \hline
+\end{tabular}
+\end{table}
+
+La strategy FIFO WAIT non termina in quanto si arriva in una situazione di deadlock. Il valore molto alto riscontrato su HARD è dovuto al fatto che ripianifica un numero di volte maggiore rispetto alle altre penalità.
+
+\subsection{Risultati sulla mappa 10x10: hperson2}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|}
+\hline
+\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD  \\ \hline
+Penalty                & NaN      & 7594      & 8235        & 6747     \\ \hline
+Reused Planes          & 0        & 7         & 8           & 3        \\ \hline
+Order performed        & 0        & 9         & 11          & 7        \\ \hline
+Total orders           & 12       & 12        & 12          & 12       \\ \hline
+\end{tabular}
+\end{table}
+
+\subsection{Risultati sulla mappa 10x10: hcheckf}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|}
+\hline
+\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD  \\ \hline
+Penalty                & 4964     & 4964      & 3840        & 3336     \\ \hline
+Reused Planes          & 8        & 8         & 5           & 5        \\ \hline
+Order performed        & 12       & 12        & 12          & 12       \\ \hline
+Total orders           & 12       & 12        & 12          & 12       \\ \hline
+\end{tabular}
+\end{table}
+
 

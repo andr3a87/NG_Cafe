@@ -23,13 +23,13 @@
       "hperson1":{
         "penalty":NaN,
         "number-plane-reused":0,
-        "number-order":11,
+        "number-order":12,
         "order-performed":2
       },
       "hperson2":{
         "penalty":NaN,
         "number-plane-reused":0,
-        "number-order":11,
+        "number-order":12,
         "order-performed":0
       },
       "hcheckf":{
@@ -67,13 +67,13 @@
       "hperson1":{
         "penalty":11711,
         "number-plane-reused":8,
-        "number-order":11,
+        "number-order":12,
         "order-performed":11
       },
       "hperson2":{
         "penalty":7594,
         "number-plane-reused":7,
-        "number-order":11,
+        "number-order":12,
         "order-performed":9,
         "desc":"Risultato strano non me lo spiego molto. Ha culo che incontra meno persone???"
       },
@@ -109,13 +109,13 @@
       "hperson1":{
         "penalty":6943,
         "number-plane-reused":7,
-        "number-order":11,
+        "number-order":12,
         "order-performed":11
       },
       "hperson2":{
         "penalty":8235,
         "number-plane-reused":8,
-        "number-order":11,
+        "number-order":12,
         "order-performed":11,
         "desc":"Bisogna imposta un maxduration = allo step necessario per servire l'ultimo ordine. Altrimenti il robot rimane in una posizione che blocca le persone e accumula penalità"
       },
@@ -153,7 +153,7 @@
       "hperson1":{
         "penalty":11423,
         "number-plane-reused":2,
-        "number-order":11,
+        "number-order":12,
         "order-performed":11,
         "order-complete-by-checkfinish":2,
         "desc":"Rispetto a Low Penalty ha un costo molto elevato. Avendo dimostrato che nelle history precedenti Hard aveva un comportamento migliore, questo risultato contrastante è dovuto al fatto che servendo gli ordini in maniera diversa rispetto a low penalty si trova a dover ripianificare più volte i percorsi per arrivare a destinazione (Totalmenta casuale, l'ordine con cui serve lo fa incappare a dover ripianificare più volte perche si trova ostacoli. Low penalty su questa history è piu fortunato ripianifica meno.)."
@@ -161,7 +161,7 @@
       "hperson2":{
         "penalty":6747,
         "number-plane-reused":3,
-        "number-order":11,
+        "number-order":12,
         "order-performed":7,
         "order-complete-by-checkfinish":2
       },
