@@ -32,10 +32,10 @@
         "order-performed":4
       },
       "hcheckf":{
-        "penalty":21322,
-        "number-plane-reused":4,
+        "penalty":12348,
+        "number-plane-reused":7,
         "number-order":15,
-        "order-performed":14
+        "order-performed":13
       }
     }
   },
@@ -72,10 +72,10 @@
         "order-performed":13
       },
       "hcheckf":{
-        "penalty":21322,
-        "number-plane-reused":4,
+        "penalty":12348,
+        "number-plane-reused":7,
         "number-order":15,
-        "order-performed":14
+        "order-performed":13
       }
     }
   },
@@ -112,10 +112,10 @@
         "order-performed":15
       },
       "hcheckf":{
-        "penalty":14623,
-        "number-plane-reused":2,
+        "penalty":9317,
+        "number-plane-reused":3,
         "number-order":15,
-        "order-performed":14
+        "order-performed":13
       }
     }
   },
@@ -152,10 +152,10 @@
         "order-performed":15
       },
       "hcheckf":{
-        "penalty":13343,
-        "number-plane-reused":2,
+        "penalty":6866,
+        "number-plane-reused":1,
         "number-order":15,
-        "order-performed":14
+        "order-performed":13
       }
     }
   }
