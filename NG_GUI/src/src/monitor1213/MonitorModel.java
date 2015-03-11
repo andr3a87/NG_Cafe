@@ -287,7 +287,7 @@ public class MonitorModel extends ClipsModel {
 //ritorna true se time==maxduration o se result non e' "no" e quindi e' "disaster" o "done"
         // CHIEDERE AL PROF: aggiungere un default per result (di valore nil nel metodo creation5)
         //if (time >= maxduration || (!(result.equalsIgnoreCase("no")) && !(result.equalsIgnoreCase("nil")))) {
-        if (step >= maxduration || !result.equalsIgnoreCase("no")) {
+        if (step+1 >= maxduration || !result.equalsIgnoreCase("no")) {
             return true;
         }
         return false;

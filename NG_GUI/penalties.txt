@@ -18,3 +18,4 @@ m10a_hsimple	FIFO_BASE	1771
 m10a_hperson1	FIFO_BASE	50355
 m10a_hperson1	FIFO_PRO	19207
 m10a_hperson2	FIFO_PRO	38606
+m10a_hperson1	FIFO_PRO	11711
