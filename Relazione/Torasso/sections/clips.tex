@@ -16,6 +16,7 @@ Ogni strategia è stata suddivisa in fasi dove ogni fase si occupa di uno specif
 Nelle prime due strategie utilizzeremo come astrazione il concetto di coda. Gli ordini verranno inseriti in coda e prelevati dalla testa, quindi prelevati in ordine crescente di step.
 
 \subsection{Il modulo A*}
+\label{sec:modulo_astar}
 Tutte le strategie utilizzano il modulo A* per la costruzione dei piani che permettono al nostro robot di spostarsi da un punto A a un punto B. Il punto A è la posizione del robot al momento della pianificazione mentre il goal (il punto B) è dato dalla cella destinazione. Il goal può essere un dispenser, un cestino o un tavolo. Il modulo A* calcolerà anche quali sono i 4 punti di accesso alla nostra destinazione e si fermerà non appena arriverà a uno di esso.
 
 Il modulo A* può terminare fornendo un piano, oppure può fallire. Per memorizzare il piano creato vengono usate due strutture:
@@ -321,7 +322,7 @@ Total orders           & 10         & 10        & 10           & 10   \\ \hline
 
 Dalla tabella notiamo che la strategy HARD è quella che minimizza la nostra penalità. Questo risultato può essere forviante in quanto dipende dal numero di ordini che la strategia riesce a servire. Questo numero può variare a second della strategia in esecuzione in quanto ordini inseriti nella history non sono consistenti con tale esecuzione e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
 
-Come precedentemente spiegato nel capitolo ref{sec:Il modulo A*} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
+Come precedentemente spiegato nel capitolo \ref{sec:modulo_astar} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
 
 Dall'esecuzione della FIFO BASE e FIFO PRO su questa history si ha un primo confronto tra l'idea di aspettare nel caso in cui vi sia una persona sul percorso del robot, e quella della FIFO PRO di ripianificare. Notiamo che anche se il robot deve ripianificare e allungare i tempi di consegna per via dell'esecuzione di un altro percorso, la penalità risulta migliore rispetto al fatto di aspettare anche se per pochi step (3 nella nostra esecuzione). La FIFO BASE completa i suoi ordini in 171 step mentre la FIFO PRO in 176.
 
