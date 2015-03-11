@@ -269,6 +269,7 @@
   then
   (printout t " [DEBUG] [ET] [F4:s"?current"] EmptyFood in TrashBasket: ("?rfo","?cfo")" crlf)
   )
+  (pop-focus)
 )
 
 ; regola per scaricare il drink
@@ -296,6 +297,7 @@
   then
   (printout t " [DEBUG] [ET] [F4:s"?current"] Release drink in RecyclableBasket: ("?rfo","?cfo")" crlf)
   )
+  (pop-focus)
 )
 
 ; Una volta scaricato rimuovo il fatto best-dispenser.
@@ -319,11 +321,16 @@
   (pop-focus)
 )
 
-(defrule empty-trash-completed2
+(defrule empty-trash-completed2-1
   ?f1<-(go-to-basket (phase 4))
-  (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste ?ldw) (l_f_waste ?lfw))
-  (test(or (str-compare ?ldw "yes")0 (str-compare ?lfw "yes")0) )
+  (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste yes))
   =>
-  (retract ?f1)
-  (pop-focus)
+  (modify ?f1 (phase 1))
+)
+
+(defrule empty-trash-completed2-2
+  ?f1<-(go-to-basket (phase 4))
+  (K-agent (step ?ks) (pos-r ?ra) (pos-c ?ca) (l-food ?lf) (l-drink ?ld) (l_d_waste yes) (l_f_waste no))
+  =>
+  (modify ?f1 (phase 1))
 )

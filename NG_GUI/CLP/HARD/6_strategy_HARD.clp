@@ -127,6 +127,7 @@
 (defrule strategy-empty-trash
   (declare (salience 135))
   (not (exec-order (phase 0|1|2|3|4|4.5|5|6|7)))
+  (not (go-to-basket))
   (K-agent (l_d_waste ?ldw) (l_f_waste ?lfw))
   (test(or(=(str-compare ?ldw "yes")0) (=(str-compare ?lfw "yes")0)))
 =>

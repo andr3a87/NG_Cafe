@@ -236,7 +236,8 @@
 
 ;Ricerca dell'ordine accepted da servire che minimizzi le consegne.
 ;Obiettivo è arrivare ad avere il robot con 0 food e 0 drink a bordo perchè devo passare alla fase di pulizia dei tavoli.
-(defrule strategy-search-order-accepted-2
+;Caso 1 il robot ha a bordo sia food che drink
+(defrule strategy-search-order-accepted-2-caso1
   (declare (salience 70))
   (status (step ?current))
   (debug ?level)
@@ -244,6 +245,8 @@
   ?f1<-(force-delivery (min ?min))
   (exec-order (step ?s) (origin-order-step ?step) (food-order ?fo) (drink-order ?do)  (table-id ?sen) (status accepted) (phase 0))
   (test(< (+ (- ?lf ?fo ) (- ?ld ?do )) ?min))
+  (test(> ?lf 0))
+  (test(> ?ld 0))
 =>
   (modify ?f1 (min =(+ (- ?lf ?fo ) (- ?ld ?do ))) (step ?s) (table-id ?sen))
 
@@ -253,6 +256,54 @@
       (printout t " [DEBUG] [F0:s"?current":"-1"] Init Phase 1 - table: " ?sen ". Step of order is:" ?step crlf)
   )
 )
+
+;Ricerca dell'ordine accepted da servire che minimizzi le consegne.
+;Obiettivo è arrivare ad avere il robot con 0 food e 0 drink a bordo perchè devo passare alla fase di pulizia dei tavoli.
+;Caso 2 il robot ha a bordo solo food.
+(defrule strategy-search-order-accepted-2-caso2
+  (declare (salience 70))
+  (status (step ?current))
+  (debug ?level)
+  (K-agent (l-drink ?ld) (l-food ?lf))
+  ?f1<-(force-delivery (min ?min))
+  (exec-order (step ?s) (origin-order-step ?step) (food-order ?fo) (table-id ?sen) (status accepted) (phase 0))
+  (test(< (- ?lf ?fo ) ?min))
+  (test(> ?lf 0))
+  (test(= ?ld 0))
+=>
+  (modify ?f1 (min =(- ?lf ?fo)) (step ?s) (table-id ?sen))
+
+  ;debug
+  (if (> ?level 0)
+    then
+      (printout t " [DEBUG] [F0:s"?current":"-1"] Init Phase 1 - table: " ?sen ". Step of order is:" ?step crlf)
+  )
+)
+
+;Ricerca dell'ordine accepted da servire che minimizzi le consegne.
+;Obiettivo è arrivare ad avere il robot con 0 food e 0 drink a bordo perchè devo passare alla fase di pulizia dei tavoli.
+;Caso 2 il robot ha a bordo solo drink.
+(defrule strategy-search-order-accepted-2-caso3
+  (declare (salience 70))
+  (status (step ?current))
+  (debug ?level)
+  (K-agent (l-drink ?ld) (l-food ?lf))
+  ?f1<-(force-delivery (min ?min))
+  (exec-order (step ?s) (origin-order-step ?step) (drink-order ?do)  (table-id ?sen) (status accepted) (phase 0))
+  (test(< (- ?ld ?do ) ?min))
+  (test(= ?lf 0))
+  (test(> ?ld 0))
+=>
+  (modify ?f1 (min =(- ?ld ?do )) (step ?s) (table-id ?sen))
+
+  ;debug
+  (if (> ?level 0)
+    then
+      (printout t " [DEBUG] [F0:s"?current":"-1"] Init Phase 1 - table: " ?sen ". Step of order is:" ?step crlf)
+  )
+)
+
+
 
 ;Trovato l'ordine che minimizza il numero di consegne, vado a consegnare al tavolo.
 (defrule strategy-search-order-accepted-2bis
