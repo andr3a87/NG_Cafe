@@ -62,6 +62,9 @@
   (slot clean) ;indica che il tavolo è stato pulito, ma la spazzatura non buttata. Solo per gli ordini finish e 1delat
   (slot fail)
   (slot penality)
+  ; calcola la distanza di manthattan totale per servire l'ordine (robot-neardispenser, neardispender-otherdispenser, otherdispender-tavolo); ottimizzato in modo che se l'ordine comprende solo food o drink, non sarà calcolato un percorso inutile.
+  ; USATO IN: PENDIST
+  (slot distpath)
   (slot check-finish (default no))
 )
 
@@ -92,6 +95,8 @@
   (next-plane-id 1)
   (best-pen 0)
   (debug 2)
+  ;
+  (last-updated-order-distpath 0)
 )
 
 
