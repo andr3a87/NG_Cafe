@@ -55,6 +55,7 @@
 ;(set-break search-best-dispenser)
 ;(set-break strategy-do-CleanTable)
 ;(set-break strategy-go-phase1)
+(load "6b_updatedistpath.clp")
 (load "../7_a_star.clp")
 (load "../8_clean-plane.clp")
 

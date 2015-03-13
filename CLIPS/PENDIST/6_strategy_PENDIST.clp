@@ -28,7 +28,7 @@
   (K-table (pos-r ?r) (pos-c ?c) (table-id ?sen) (clean yes))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 accepted)))
-  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2) (distpath 0))))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status accepted) (origin-status accepted) (drink-order ?do) (food-order ?fo) (phase 0) (fail 0) (penality (*(+ ?do ?fo)2)) (distpath 0)))
 )
 
 ;Attiva quando ricevo un ordine da un tavolo sporco che per specifica assumiamo abbia inviato precedentemente una finish.
@@ -40,7 +40,7 @@
   (K-table (table-id ?sen) (clean no))
 =>
   (assert (exec (step ?current) (action Inform) (param1 ?sen) (param2 ?t) (param3 delayed)))
-  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (clean no) (phase 0) (fail 0) (penality (+ ?do ?fo) (distpath 0))))
+  (assert (exec-order (step ?current) (origin-order-step ?current) (action Inform) (table-id ?sen) (time-order ?t) (status delayed) (origin-status delayed) (drink-order ?do) (food-order ?fo) (clean no) (phase 0) (fail 0) (penality (+ ?do ?fo)) (distpath 0)))
 )
 
 ;Attiva quando ricevo un 'ordine' di finish da un tavolo sporco.

@@ -74,7 +74,7 @@
 
 (deftemplate strategy-distance-dispenser (multislot pos-start) (multislot pos-end) (slot distance) (slot type (allowed-values food drink trash-food trash-drink)))
 (deftemplate strategy-best-dispenser (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
-(deftemplate best-distpath (slot id) (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
+(deftemplate best-distpath (slot id) (slot distance) (multislot pos-dispenser) (slot type (allowed-values DD FD RB TB)))
 (deftemplate best-dispenser (slot distance) (multislot pos-best-dispenser))
 (deftemplate plan-executed (slot plane-id)(slot step) (multislot pos-start) (multislot pos-end ) (slot result (allowed-values ok fail)  ))
 (deftemplate astar-solution (slot value (allowed-values no)))
