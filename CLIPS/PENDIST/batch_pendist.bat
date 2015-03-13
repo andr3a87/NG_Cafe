@@ -56,10 +56,11 @@
 ;(set-break strategy-do-CleanTable)
 ;(set-break strategy-go-phase1)
 (load "6b_updatedistpath.clp")
+(load "6c_cleandistpath.clp")
 (load "../7_a_star.clp")
 (load "../8_clean-plane.clp")
 
 
 (reset)
 ;(assert (stop-at-step 99))
-(run 1200000)
+(run 2000)

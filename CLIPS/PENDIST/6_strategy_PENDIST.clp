@@ -55,7 +55,7 @@
 ; aggiorna tutti gli ordini che hanno distpath a 0
 ; la salience deve essere alta in modo da precedere la scelta del tavolo da servire
 ; @TODO alla fase 7 di ogni ordine, cancellare (=0) i distpath di tutti gli ordini
-(defrule update-order-distpath
+(defrule update-order-distpath-focus
   (declare (salience 140))
   (status (step ?current))
 
@@ -78,8 +78,8 @@
   (debug ?level)
   ;?f1 <- (last-intention (step ?last) (time ?time))
   ; cerca una exec di tipo inform
-  ?f2<-(exec-order (step ?s&:(< ?s ?current)) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (action Inform|Finish) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
+  ?f2<-(exec-order (step ?s&:(< ?s ?current)) (action Inform|Finish) (table-id ?sen) (time-order ?t) (status ?status) (priority ?p&:(> ?p ?pen)) (phase 0))
+  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (priority ?p2&:(>= ?p2 ?p)) (action Inform|Finish) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
 
   ; @TODO cambiare per gestire più tavoli
   ;La ricerca avviene solo ne caso non stia servendo nessun altro ordine, ovvero non esiste un ordine che è nelle fasi 1,2,3,4,5,6 o 7
@@ -768,6 +768,8 @@
 =>
   (retract ?f1)
   (modify ?f2 (phase COMPLETED))
+  (assert (clean-order-distpath))
+  (focus CLEAN-DISTPATH)
 )
 
 (defrule strategy-set-as-accepted-next-delayed-orders
@@ -857,6 +859,8 @@
   ?f1<-(exec-order (table-id ?id2) (step ?step2) (phase 0) (food-order 0) (drink-order 0) (clean yes))
 =>
   (modify ?f1 (phase COMPLETED))
+  (assert (clean-order-distpath))
+  (focus CLEAN-DISTPATH)
 
   ;debug
   (if (> ?level 0)
@@ -873,6 +877,8 @@
   ?f1<-(exec-order (table-id ?id) (step ?step) (phase 7) (food-order 0) (drink-order 0))
 =>
   (modify ?f1 (phase COMPLETED))
+  (assert (clean-order-distpath))
+  (focus CLEAN-DISTPATH)
   ;debug
   (if (> ?level 0)
   then

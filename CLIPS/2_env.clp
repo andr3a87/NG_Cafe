@@ -105,7 +105,7 @@
   (declare (salience 24))
   ?f1<- (create-history)
 =>
-  (load-facts "../m30a_hperson1/history.txt")
+  (load-facts "../m10a/m10a_hperson1.txt")
   (retract ?f1)
 )
 
@@ -338,7 +338,7 @@
                              (answer pending))
     (msg-to-agent (request-time ?t) (step ?i) (sender ?tb) (type order)
                               (drink-order ?nd) (food-order ?nf))
-    
+
   )
 
   (retract ?f1)
@@ -584,7 +584,7 @@
   (status (step ?i) (time ?t))
   ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (activity seated|stand))
   ?f2 <- (personmove (step  ?i) (ident ?id) (path-id ?m))
-  => 
+  =>
   (modify  ?f1 (time ?t) (step ?i) (activity ?m) (move 0))
   ;(retract ?f2)
 )
@@ -593,14 +593,14 @@
 ;// La cella di partenza ? un seat in cui si trovava l'operatore
 
 (defrule MovePerson3
-  (declare (salience 10)) 
+  (declare (salience 10))
   (status (step ?i) (time ?t))
-  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s)) 
+  ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s))
   (cell (pos-r ?x) (pos-c ?y) (contains Seat))
   ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
   (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
   ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Empty))
-  => 
+  =>
   (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
   (modify ?f2 (contains Person))
   ;(retract ?f3)
@@ -615,10 +615,10 @@
   (status (step ?i) (time ?t))
   ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated|~stand) (move ?s))
   ?f4 <- (cell (pos-r ?x) (pos-c ?y) (contains Person))
-  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c) 
+  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
   (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
   ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Empty))
-  => 
+  =>
   (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (move (+ ?s 1)))
   (modify ?f2 (contains Person))
   (modify ?f4 (contains Empty))
@@ -632,12 +632,12 @@
   (declare (salience 10))
   (status (step ?i) (time ?t))
   ?f1 <- (personstatus (step =(- ?i 1)) (ident ?id) (pos-r ?x) (pos-c ?y) (activity ?m&~seated&~stand) (move ?s))
-  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c) 
+  ?f3 <- (move-path ?m =(+ ?s 1) ?id ?r ?c)
   (not (agentstatus (step ?i) (pos-r ?r) (pos-c ?c)))
-  ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat)) 
+  ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat))
   (not (personstatus (step =(- ?i 1)) (pos-r ?r) (pos-c ?c) (activity seated)))
   ?f4 <- (cell (pos-r ?x) (pos-c ?y) (contains Person))
-  => 
+  =>
   (modify  ?f1  (step ?i) (time ?t) (pos-r ?r) (pos-c ?c) (activity seated) (move NA))
   (modify ?f4 (contains Empty))
   ;(retract ?f3)
@@ -699,7 +699,7 @@
   ?f2 <- (cell (pos-r ?r) (pos-c ?c) (contains Seat))
   (personstatus (step =(- ?i 1)) (pos-r ?r) (pos-c ?c)
   (activity seated))
-  => 
+  =>
   (modify  ?f1  (step ?i) (time ?t))
 )
 
@@ -709,7 +709,7 @@
   (status (step ?i) (time ?t))
   ?f1<- (personstatus (step =(- ?i 1)) (time ?tt) (ident ?id) (activity ?m&~seated&~stand) (move ?s))
   (not (move-path ?m =(+ ?s 1) ?id ?r ?c))
-  => 
+  =>
   (modify  ?f1  (time ?t) (step ?i) (activity stand) (move NA))
 )
 

@@ -65,6 +65,10 @@
   ; calcola la distanza di manthattan totale per servire l'ordine (robot-neardispenser, neardispender-otherdispenser, otherdispender-tavolo); ottimizzato in modo che se l'ordine comprende solo food o drink, non sarà calcolato un percorso inutile.
   ; USATO IN: PENDIST
   (slot distpath (default 0))
+  ; serve per mantenere un valore aggiornato dell'euristica di priorità
+  ; (1/distpath)*penality
+  ; USATO IN: PENDIST
+  (slot priority (default 0))
   (slot check-finish (default no))
 )
 

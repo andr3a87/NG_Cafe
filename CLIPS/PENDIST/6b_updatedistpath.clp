@@ -189,18 +189,16 @@
 ; MANHATTAN RECYCLED FASE 2/3
 ; cerca la distanza tra l'ultimo dispencer trovato e il tavolo
 ; ===========================================
-;Regola che calcola la distanza di manhattan dalla posizione corrente del robot al tavolo
-
-; (defrule distance-manhattan-robot-table-1
-;   (declare (salience 70))
-;   (update-order-distpath ?table ?step 2)
-;   (exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
-;   (K-table (table-id ?table) (pos-r ?rt) (pos-c ?ct))
-;   (best-distpath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
-;   (not(best-distpath (id ?step&:(> ?step ?s)) (pos-dispenser ?rd ?cd) (type ?c)))
-;   =>
-;   (assert (strategy-distance-dispenser (pos-start ?rd1 ?cd1) (pos-end ?rt ?ct) (distance (+ (abs(- ?rd1 ?rt)) (abs(- ?cd1 ?cfo))))))
-; )
+(defrule distance-manhattan-bestdispenser-table-3
+  (declare (salience 70))
+  (update-order-distpath ?table ?step 2)
+  (exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
+  (K-table (table-id ?table) (pos-r ?rt) (pos-c ?ct))
+  (best-distpath (id ?s) (pos-dispenser ?rd ?cd) (type ?c))
+  (not(best-distpath (id ?step&:(> ?step ?s)) (type ?c)))
+  =>
+  (assert (strategy-distance-dispenser (pos-start ?rd ?cd) (pos-end ?rt ?ct) (distance (+ (abs(- ?rd ?rt)) (abs(- ?cd ?ct))))))
+)
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun trash basket (Food)
 (defrule distance-manhattan-tb-3
@@ -284,7 +282,6 @@
   (retract ?f2)
   (retract ?f3)
   (retract ?f4)
-  (pop-focus)
 )
 
 (defrule ud-update-order-distance-caso2
@@ -298,5 +295,13 @@
   (retract ?f0)
   (retract ?f2)
   (retract ?f4)
+)
+
+(defrule ud-update-priority-value
+  (declare (salience 50))
+  ?f1<-(exec-order (food-order ?fo) (table-id ?table) (distpath ?dp) (penality ?pen) (phase 0) (status accepted))
+  (test (> ?dp 0))
+  =>
+  (modify ?f1 (priority =(* ?pen (* (/ 1 ?dp) 10) )))
   (pop-focus)
 )
