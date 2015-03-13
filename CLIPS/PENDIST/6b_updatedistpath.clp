@@ -90,7 +90,7 @@
   (test (< ?lf ?fo))
   (test (< (+ ?lf ?ld) 4))
   ; se ho già trovato un best dispenser non lo cerco di nuovo
-  (test (~ ?c FD))
+  (test (neq ?c FD))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains FD))
   =>
   (assert (strategy-distance-dispenser (pos-start ?rd ?cd) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?rd ?rfo)) (abs(- ?cd ?cfo)))) (type food)))
@@ -107,10 +107,10 @@
   (test (< ?ld ?do))
   (test (< (+ ?lf ?ld) 4))
   ; se ho già trovato un best dispenser non lo cerco di nuovo
-  (test (~ ?c DD))
+  (test (neq ?c DD))
   (K-cell (pos-r ?rdo) (pos-c ?cdo) (contains DD))
 =>
-  (assert (strategy-distance-dispenser (pos-start ?rd ?crypto.createDiffieHellman(prime, [encoding])) (pos-end ?rdo ?cdo) (distance (+ (abs(- ?rd ?rdo)) (abs(- ?crypto.createDiffieHellman(prime, [encoding]) ?cdo)))) (type drink)))
+  (assert (strategy-distance-dispenser (pos-start ?rd ?cd) (pos-end ?rdo ?cdo) (distance (+ (abs(- ?rd ?rdo)) (abs(- ?cd ?cdo)))) (type drink)))
 )
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun trash basket (Food)
@@ -191,28 +191,28 @@
 ; ===========================================
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot al tavolo
 
-(defrule distance-manhattan-robot-table-1
-  (declare (salience 70))
-  (update-order-distpath ?table ?step 2)
-  (exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
-  (K-table (table-id ?table) (pos-r ?rt) (pos-c ?ct))
-  (best-distpath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
-  (not(best-distpath (id ?step&:(> ?step ?s)) (pos-dispenser ?rd ?cd) (type ?c)))
-  =>
-  (assert (strategy-distance-dispenser (pos-start ?rd1 ?cd1) (pos-end ?rt ?ct) (distance (+ (abs(- ?rd1 ?rt)) (abs(- ?cd1 ?cfo))))))
-)
+; (defrule distance-manhattan-robot-table-1
+;   (declare (salience 70))
+;   (update-order-distpath ?table ?step 2)
+;   (exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
+;   (K-table (table-id ?table) (pos-r ?rt) (pos-c ?ct))
+;   (best-distpath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
+;   (not(best-distpath (id ?step&:(> ?step ?s)) (pos-dispenser ?rd ?cd) (type ?c)))
+;   =>
+;   (assert (strategy-distance-dispenser (pos-start ?rd1 ?cd1) (pos-end ?rt ?ct) (distance (+ (abs(- ?rd1 ?rt)) (abs(- ?cd1 ?cfo))))))
+; )
 
 ;Regola che calcola la distanza di manhattan dalla posizione corrente del robot a ciascun trash basket (Food)
 (defrule distance-manhattan-tb-3
   (declare (salience 70))
   (update-order-distpath ?table ?step 2)
   (exec-order (table-id ?table) (phase 0) (status delayed|finish))
-  (best-distpath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
-  (not(best-distpath (id ?step&:(> ?step ?s)) (pos-dispenser ?rd ?cd) (type ?c)))
+  (best-distpath (id ?s) (pos-dispenser ?rd ?cd) (type ?c))
+  (not(best-distpath (id ?step&:(> ?step ?s)) (type ?c)))
   (K-table (table-id ?table) (l-food ?f&:(> ?f 0)))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains TB))
   ; se ho già trovato un best dispenser di questo tipo non lo cerco di nuovo
-  (test (~ ?c TB))
+  (test (neq ?c TB))
   =>
   (assert (strategy-distance-dispenser (pos-start ?rd ?cd) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?rd ?rfo)) (abs(- ?cd ?cfo)))) (type trash-food)))
 )
@@ -222,12 +222,12 @@
   (declare (salience 70))
   (update-order-distpath ?table ?step 2)
   (exec-order (table-id ?table) (phase 0) (status delayed|finish))
-  (best-distpath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
-  (not(best-distpath (id ?step&:(> ?step ?s)) (pos-dispenser ?rd ?cd) (type ?c)))
+  (best-distpath (id ?s) (pos-dispenser ?rd ?cd) (type ?c))
+  (not(best-distpath (id ?step&:(> ?step ?s)) (type ?c)))
   (K-table (table-id ?table) (l-drink ?d&:(> ?d 0)))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains RB))
   ; se ho già trovato un best dispenser di questo tipo non lo cerco di nuovo
-  (test (~ ?c RB))
+  (test (neq ?c RB))
   =>
   (assert (strategy-distance-dispenser (pos-start ?rd ?cd) (pos-end ?rfo ?cfo) (distance (+ (abs(- ?rd ?rfo)) (abs(- ?cd ?cfo)))) (type trash-drink)))
 )
@@ -258,10 +258,10 @@
 (defrule ud-go-to-distpath-phase4
   (declare (salience 50))
   ?f1<-(update-order-distpath ?table ?step 2)
-  (best-distpath (id 2) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  (best-distpath (id 2) (pos-dispenser ?rd1 ?cd1) (type ?c))
   =>
   (assert (update-order-distpath ?table ?step 3))
-  (retract ?1)
+  (retract ?f1)
 )
 
 
@@ -275,9 +275,9 @@
   (declare (salience 50))
   ?f0<-(update-order-distpath ?table ?step 3)
   ?f1<-(exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
-  ?f2<-(best-distpath (id 0) (distance ?dist2) (pos-dispenser ?rd1 ?cd1) (type ?c1)))
-  ?f3<-(best-distpath (id 1) (distance ?dist3) (pos-dispenser ?rd2 ?cd2) (type ?c2)))
-  ?f4<-(best-distpath (id 2) (distance ?dist4) (pos-dispenser ?rd3 ?cd3) (type ?c3)))
+  ?f2<-(best-distpath (id 0) (distance ?dist2) (pos-dispenser ?rd1 ?cd1) (type ?c1))
+  ?f3<-(best-distpath (id 1) (distance ?dist3) (pos-dispenser ?rd2 ?cd2) (type ?c2))
+  ?f4<-(best-distpath (id 2) (distance ?dist4) (pos-dispenser ?rd3 ?cd3) (type ?c3))
   =>
   (modify ?f1 (distpath =(+ ?dist2 ?dist3 ?dist4) ))
   (retract ?f0)
@@ -291,8 +291,8 @@
   (declare (salience 50))
   ?f0<-(update-order-distpath ?table ?step 3)
   ?f1<-(exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
-  ?f2<-(best-distpath (id 0) (distance ?dist2) (pos-dispenser ?rd1 ?cd1) (type ?c1)))
-  ?f4<-(best-distpath (id 2) (distance ?dist4) (pos-dispenser ?rd2 ?cd2) (type ?c2)))
+  ?f2<-(best-distpath (id 0) (distance ?dist2) (pos-dispenser ?rd1 ?cd1) (type ?c1))
+  ?f4<-(best-distpath (id 2) (distance ?dist4) (pos-dispenser ?rd2 ?cd2) (type ?c2))
   =>
   (modify ?f1 (distpath =(+ ?dist2 ?dist4) ))
   (retract ?f0)
