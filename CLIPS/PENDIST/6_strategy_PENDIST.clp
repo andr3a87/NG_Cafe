@@ -62,7 +62,7 @@
   ; cerco tutti gli ordini pendenti (fase 0)
   ?f2<-(exec-order (action Inform|Finish) (origin-order-step ?step) (table-id ?table) (phase 0) (distpath 0))
 =>
-  (assert (update-order-distpath ?table ?step))
+  (assert (update-order-distpath ?table ?step 0))
   (focus UPDATE-DISTPATH)
 )
 
