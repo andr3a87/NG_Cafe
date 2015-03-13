@@ -52,7 +52,7 @@
   (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
   (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
-  (assert(best-dispath (id 0) (distance ?dist) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  (assert (best-distpath (id 0) (distance ?d) (pos-dispenser ?rd1 ?cd1) (type ?c)))
 )
 
 ; pulisce le distanze ai dispensers/tavoli
@@ -70,7 +70,7 @@
   (declare (salience 80))
   ?f1<-(update-order-distpath ?table ?step 0)
   (best-distpath (id 0) (pos-dispenser ?rd ?cd) (type ?c))
-  (not(strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d))
+  (not(strategy-distance-dispenser (pos-start ?ra ?ca) (pos-end ?rdo ?cdo) (distance ?d)))
 =>
   (assert(update-order-distpath ?table ?step 1))
   (retract ?f1)
@@ -150,7 +150,7 @@
   (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
   (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
-  (assert (best-dispath (id 1) (distance ?dist) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  (assert (best-distpath (id 1) (distance ?d) (pos-dispenser ?rd1 ?cd1) (type ?c)))
 )
 
 ; pulisce le distanze ai dispensers/cestini
@@ -164,7 +164,7 @@
   (retract ?f1)
 )
 
-; Nel caso ci sia un (best-dispath (id 1)) vado alla fase 2
+; Nel caso ci sia un (best-distpath (id 1)) vado alla fase 2
 (defrule ud-go-to-phase2-caso1
   (declare (salience 80))
   ?f1<-(update-order-distpath ?table ?step 1)
@@ -175,11 +175,11 @@
   (retract ?f1)
 )
 
-; Nel caso non ci sia un (best-dispath (id 1)) vado alla fase 2
+; Nel caso non ci sia un (best-distpath (id 1)) vado alla fase 2
 (defrule ud-go-to-phase2-caso2
   (declare (salience 50))
   ?f1<-(update-order-distpath ?table ?step 1)
-  (not(best-dispath (id 1) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  (not(best-distpath (id 1) (pos-dispenser ?rd1 ?cd1) (type ?c)))
   =>
   (assert (update-order-distpath ?table ?step 2))
   (retract ?f1)
@@ -196,8 +196,8 @@
   (update-order-distpath ?table ?step 2)
   (exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
   (K-table (table-id ?table) (pos-r ?rt) (pos-c ?ct))
-  (best-dispath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
-  not(best-distpath (id ?step&:(> ?step ?s) (pos-dispenser ?rd ?cd) (type ?c))
+  (best-distpath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
+  (not(best-distpath (id ?step&:(> ?step ?s)) (pos-dispenser ?rd ?cd) (type ?c)))
   =>
   (assert (strategy-distance-dispenser (pos-start ?rd1 ?cd1) (pos-end ?rt ?ct) (distance (+ (abs(- ?rd1 ?rt)) (abs(- ?cd1 ?cfo))))))
 )
@@ -207,8 +207,8 @@
   (declare (salience 70))
   (update-order-distpath ?table ?step 2)
   (exec-order (table-id ?table) (phase 0) (status delayed|finish))
-  (best-dispath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
-  not(best-distpath (id ?step&:(> ?step ?s) (pos-dispenser ?rd ?cd) (type ?c))
+  (best-distpath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
+  (not(best-distpath (id ?step&:(> ?step ?s)) (pos-dispenser ?rd ?cd) (type ?c)))
   (K-table (table-id ?table) (l-food ?f&:(> ?f 0)))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains TB))
   ; se ho già trovato un best dispenser di questo tipo non lo cerco di nuovo
@@ -222,8 +222,8 @@
   (declare (salience 70))
   (update-order-distpath ?table ?step 2)
   (exec-order (table-id ?table) (phase 0) (status delayed|finish))
-  (best-dispath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
-  not(best-distpath (id ?step&:(> ?step ?s) (pos-dispenser ?rd ?cd) (type ?c))
+  (best-distpath (id ?s) (pos-dispenser ?rd1 ?cd1) (type ?c))
+  (not(best-distpath (id ?step&:(> ?step ?s)) (pos-dispenser ?rd ?cd) (type ?c)))
   (K-table (table-id ?table) (l-drink ?d&:(> ?d 0)))
   (K-cell (pos-r ?rfo) (pos-c ?cfo) (contains RB))
   ; se ho già trovato un best dispenser di questo tipo non lo cerco di nuovo
@@ -233,7 +233,7 @@
 )
 
 ;Regola che cerca il dispenser/cestino più vicino
-(defrule search-best-dispenser-2
+(defrule search-best-dispenser-3
   (declare (salience 60))
   (status (step ?current))
   (update-order-distpath ?table ?step 2)
@@ -241,11 +241,11 @@
   (not (strategy-distance-dispenser  (pos-start ?ra ?ca) (pos-end ?rd2 ?cd2) (distance ?dist&:(< ?dist ?d)) ))
   (K-cell (pos-r ?rd1) (pos-c ?cd1) (contains ?c))
 =>
-  (assert (best-dispath (id 2) (distance ?dist) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  (assert (best-distpath (id 2) (distance ?d) (pos-dispenser ?rd1 ?cd1) (type ?c)))
 )
 
 ; pulisce le distanze ai dispensers/cestini
-(defrule clean-distance-dispenser-2
+(defrule clean-distance-dispenser-3
   (declare (salience 80))
   (status (step ?current))
   (update-order-distpath ?table ?step 2)
@@ -258,7 +258,7 @@
 (defrule ud-go-to-distpath-phase4
   (declare (salience 50))
   ?f1<-(update-order-distpath ?table ?step 2)
-  (best-dispath (id 2) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  (best-distpath (id 2) (pos-dispenser ?rd1 ?cd1) (type ?c)))
   =>
   (assert (update-order-distpath ?table ?step 3))
   (retract ?1)
@@ -275,9 +275,9 @@
   (declare (salience 50))
   ?f0<-(update-order-distpath ?table ?step 3)
   ?f1<-(exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
-  ?f2<-(best-dispath (id 0) (distance ?dist2) (pos-dispenser ?rd1 ?cd1) (type ?c)))
-  ?f3<-(best-dispath (id 1) (distance ?dist3) (pos-dispenser ?rd1 ?cd1) (type ?c)))
-  ?f4<-(best-dispath (id 2) (distance ?dist4) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  ?f2<-(best-distpath (id 0) (distance ?dist2) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  ?f3<-(best-distpath (id 1) (distance ?dist3) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  ?f4<-(best-distpath (id 2) (distance ?dist4) (pos-dispenser ?rd1 ?cd1) (type ?c)))
   =>
   (modify ?f1 (distpath =(+ ?dist2 ?dist3 ?dist4) ))
   (retract ?f0)
@@ -290,8 +290,8 @@
   (declare (salience 50))
   ?f0<-(update-order-distpath ?table ?step 3)
   ?f1<-(exec-order (food-order ?fo) (table-id ?table) (phase 0) (status accepted))
-  ?f2<-(best-dispath (id 0) (distance ?dist2) (pos-dispenser ?rd1 ?cd1) (type ?c)))
-  ?f4<-(best-dispath (id 2) (distance ?dist4) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  ?f2<-(best-distpath (id 0) (distance ?dist2) (pos-dispenser ?rd1 ?cd1) (type ?c)))
+  ?f4<-(best-distpath (id 2) (distance ?dist4) (pos-dispenser ?rd1 ?cd1) (type ?c)))
   =>
   (modify ?f1 (distpath =(+ ?dist2 ?dist4) ))
   (retract ?f0)
