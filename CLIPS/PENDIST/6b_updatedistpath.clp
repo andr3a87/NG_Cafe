@@ -284,6 +284,7 @@
   (retract ?f2)
   (retract ?f3)
   (retract ?f4)
+  (pop-focus)
 )
 
 (defrule ud-update-order-distance-caso2
@@ -297,4 +298,5 @@
   (retract ?f0)
   (retract ?f2)
   (retract ?f4)
+  (pop-focus)
 )
