@@ -302,6 +302,6 @@
   ?f1<-(exec-order (food-order ?fo) (table-id ?table) (distpath ?dp) (penality ?pen) (phase 0) (status accepted))
   (test (> ?dp 0))
   =>
-  (modify ?f1 (priority =(* ?pen (* (/ 1 ?dp) 100) )))
+  (modify ?f1 (priority =(* ?pen (* (/ 1 ?dp) 1) )))
   (pop-focus)
 )
