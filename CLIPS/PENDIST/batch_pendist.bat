@@ -55,7 +55,7 @@
 ;(set-break search-best-dispenser)
 ;(set-break strategy-do-CleanTable)
 ;(set-break strategy-go-phase1)
-(set-break update-order-distpath-focus)
+;(set-break ud-update-priority-value)
 (load "6b_updatedistpath.clp")
 (load "6c_cleandistpath.clp")
 (load "../7_a_star.clp")
@@ -63,6 +63,6 @@
 
 
 (reset)
-(run 257)
-(run 1000)
-(assert (stop-at-step 108))
+(run 238)
+;(run 100)
+(assert (stop-at-step 60))

@@ -127,6 +127,46 @@
       }
     }
   },
+  {"pendist":
+    {
+      "hdefault":{
+        "penalty": 3810,
+        "number-plane-reused": 2,
+        "number-order": 10,
+        "order-performed": 7
+      },
+      "hsimple":{
+        "penalty": 1543 ,
+        "number-plane-reused": 2,
+        "number-order": 12,
+        "order-performed": 11
+      },
+      "hhard":{
+        "penalty": 13888,
+        "number-plane-reused": 14,
+        "number-order": 12,
+        "order-performed": 9,
+      },
+      "hperson1":{
+        "penalty":6943,
+        "number-plane-reused":7,
+        "number-order":12,
+        "order-performed":11
+      },
+      "hperson2":{
+        "penalty":8235,
+        "number-plane-reused":8,
+        "number-order":12,
+        "order-performed":11,
+      },
+      "hcheckf":{
+        "penalty":3796,
+        "number-plane-reused":8,
+        "number-order":12,
+        "order-performed":12
+      }
+    }
+  },
   {"hard":
     {
       "hdefault":{

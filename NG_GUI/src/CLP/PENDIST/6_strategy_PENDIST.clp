@@ -52,40 +52,20 @@
   (assert (exec-order (step ?current) (origin-order-step ?current) (action Finish) (table-id ?sen) (time-order ?t) (status finish) (origin-status finish) (drink-order 0) (food-order 0) (clean no) (phase 0) (fail 0) (penality 3) (distpath 0)))
 )
 
-; calcola distpath tutti gli ordini che hanno distpath a 0
+; aggiorna tutti gli ordini che hanno distpath a 0
 ; la salience deve essere alta in modo da precedere la scelta del tavolo da servire
+; @TODO alla fase 7 di ogni ordine, cancellare (=0) i distpath di tutti gli ordini
 (defrule update-order-distpath-focus
   (declare (salience 140))
+  (status (step ?current))
+
   ; cerco tutti gli ordini pendenti (fase 0)
-  (exec-order (action Inform|Finish) (origin-order-step ?step) (table-id ?table) (phase 0) (distpath 0))
+  ?f2<-(exec-order (action Inform|Finish) (origin-order-step ?step) (table-id ?table) (phase 0) (distpath 0))
   (not (exec-order (phase 1|2|3|4|4.5|5|6|7)))
 =>
   (assert (update-order-distpath ?table ?step 0))
   (focus UPDATE-DISTPATH)
 )
-
-;Aggiorno la priorità degli ordini su cui ho calcolato distpath
-(defrule ud-update-priority-value
-  (declare (salience 90))
-  (status (step ?current))
-  ?f1<-(exec-order (step ?s&:(<= ?s ?current)) (time-order ?t) (distpath ?dp&:(> ?dp 0)) (penality ?pen) (phase 0) (action Inform|Finish))
-  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (action Inform|Finish) (distpath ?dp1&:(> ?dp1 0)) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
-  ;(test (> ?dp 0))
-  (min-distpath ?md)
-  =>
-  ;(halt)
-  (modify ?f1 (priority =(* ?pen (+ (* (/ ?md ?dp) 0.5) 0.5) )) (distpath -1))
- 
-)
-
-;aggiornate le priorità rimuovo il fatto min-distpath
-(defrule rm-min-dispath
-  (declare (salience 80))
-  ?f1<-(min-distpath ?md)
-  =>
-  (retract ?f1)
-)
-
 
 ;
 ; FASE 1 della Strategia: Ricerca di un tavolo da servire.
