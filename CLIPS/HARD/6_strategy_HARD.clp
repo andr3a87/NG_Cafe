@@ -222,7 +222,8 @@
   (debug ?level)
   ?f1<-(found-order-accepted)
   ?f2<-(exec-order (step ?s&:(< ?s ?current)) (origin-order-step ?step) (table-id ?sen) (time-order ?t) (status accepted) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (status accepted) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
+  ;(not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (status accepted) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
+  (not (exec-order (penality ?p2&:(> ?p2 ?p)) (status accepted) (phase 0)))
 =>
   (retract ?f1)
   (modify ?f2 (phase 1))
@@ -323,7 +324,8 @@
   (debug ?level)
   ?f1<-(found-order-finish-delayed)
   ?f2<-(exec-order (step ?s&:(< ?s ?current)) (origin-order-step ?step)  (table-id ?sen) (time-order ?t) (status delayed|finish) (penality ?p&:(> ?p ?pen)) (phase 0))
-  (not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (status delayed|finish) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
+  ;(not (exec-order (step ?s1&:(<= ?s1 ?s)) (penality ?p2&:(>= ?p2 ?p)) (status delayed|finish) (phase 0) (time-order ?t1&:(< ?t1 ?t))))
+  (not (exec-order (penality ?p2&:(> ?p2 ?p)) (status accepted) (phase 0)))
 =>
   (retract ?f1)
   (modify ?f2 (phase 1))
