@@ -162,16 +162,16 @@
   {"hard":
     {
       "hdefault":{
-        "penalty":8267,
+        "penalty":8469,
         "number-plane-reused":0,
         "number-order":9,
         "order-performed":7
       },
       "hsimple":{
-        "penalty":14064,
+        "penalty":14052,
         "number-plane-reused":0,
         "number-order":20,
-        "order-performed":12
+        "order-performed":14
       },
       "hhard":{
         "penalty":69313,
@@ -180,20 +180,20 @@
         "order-performed":12
       },
       "hperson1":{
-        "penalty":34531,
+        "penalty":33327,
         "number-plane-reused":2,
         "number-order":20,
         "order-performed":12
       },
       "hperson2":{
-        "penalty":33861,
-        "number-plane-reused":2,
+        "penalty":34061,
+        "number-plane-reused":3,
         "number-order":20,
         "order-performed":12
       },
       "hcheckf":{
-        "penalty":12490,
-        "number-plane-reused":5,
+        "penalty":10387,
+        "number-plane-reused":10,
         "number-order":21,
         "order-performed":21
       }
