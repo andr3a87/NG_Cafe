@@ -5,11 +5,11 @@
 (defrule clean-order-distpath
   (declare (salience 50))
   (clean-order-distpath)
-  ?f1<-(exec-order (distpath ?d) (phase 0))
-  (test (> ?d 0))
+  ?f1<-(exec-order (distpath -1) (phase 0))
   =>
   (modify ?f1 (distpath 0))
 )
+
 
 (defrule clean-order-distpath-focuspop
   (declare (salience 40))

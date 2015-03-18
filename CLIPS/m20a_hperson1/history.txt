@@ -609,7 +609,7 @@
 (personmove (step 181) (ident C4) (path-id P9))
 (personmove (step 211) (ident C4) (path-id P9))
 (personmove (step 241) (ident C4) (path-id P9))
-(personmove (step 271) (ident C4) (path-id P9))
+(personmove (step 274) (ident C4) (path-id P9))
 (personmove (step 301) (ident C4) (path-id P9))
 (personmove (step 331) (ident C4) (path-id P9))
 (personmove (step 361) (ident C4) (path-id P9))

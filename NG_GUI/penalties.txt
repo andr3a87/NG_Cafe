@@ -20,3 +20,5 @@ m10a_hperson1	FIFO_PRO	19207
 m10a_hperson2	FIFO_PRO	38606
 m10a_hperson1	FIFO_PRO	11711
 m10a_hdefault	PENDIST	3961
+m10a_hperson1	HARD	62608
+m10a_hperson1	HARD	62608
