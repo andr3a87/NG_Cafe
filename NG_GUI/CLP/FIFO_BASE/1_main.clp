@@ -122,7 +122,6 @@
   (assert (create-map)
   (create-initial-setting)
   (create-history))
-  (assert (stop-at-step 256))
   (retract ?f)
   (focus ENV)
 )

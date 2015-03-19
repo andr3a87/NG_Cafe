@@ -4,7 +4,7 @@
   (status (step ?s))
   ?last-v <- (last-perc-vision (step ?old-s))
   (test (> ?s ?old-s))
-  (not(k-cell-clean yes))
+  (not (k-cell-clean yes))
   (perc-vision (step ?s) (time ?t) )
 
   ?fa <- (K-agent (step ?) (time ?) (pos-r ?r) (pos-c ?c) (direction ?) (l-drink ?) (l-food ?) (l_d_waste ?) (l_f_waste ?))
@@ -18,7 +18,7 @@
   ?p7 <- (prior-cell (pos-r =(- ?r 1)) (pos-c =(+ ?c 1))(contains ?x7))
   ?p8 <- (prior-cell (pos-r ?r)       (pos-c =(+ ?c 1))(contains ?x8))
   ?p9 <- (prior-cell (pos-r =(+ ?r 1)) (pos-c =(+ ?c 1))(contains ?x9))
-  
+
   ?f1 <- (K-cell (pos-r =(- ?r 1)) (pos-c =(- ?c 1)))
   ?f2 <- (K-cell (pos-r ?r)       (pos-c =(- ?c 1)))
   ?f3 <- (K-cell (pos-r =(+ ?r 1)) (pos-c =(- ?c 1)))
@@ -267,7 +267,7 @@
   ?f1<-(K-agent (l-food ?lf) (l-drink ?ld) (l_d_waste no) (l_f_waste no))
   ?f2<-(K-table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo) (l-food ?klf))
   ;(strategy-service-table (step ?s2) (table-id ?id))
-  
+
   (exec (step =(- ?s 1)) (action DeliveryFood) (param1 ?rfo) (param2 ?cfo))
 =>
   (modify ?fs (step ?s))
@@ -292,7 +292,7 @@
   ?f2<-(K-table (table-id ?id) (pos-r ?rfo) (pos-c ?cfo) (l-drink ?kld))
   (exec (step =(- ?s 1)) (action DeliveryDrink) (param1 ?rfo) (param2 ?cfo))
   ;(strategy-service-table (step ?s2) (table-id ?id))
-  
+
 =>
   (modify ?fs (step ?s))
   (modify ?last-l (step ?s))

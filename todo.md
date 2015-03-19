@@ -34,5 +34,6 @@ hdefault, hsimple, hhard, hperson1, hperson2, hcheckf
 
 
 #COSA MANCA?
-	* Mappe 10x10
 	* Grafici Relazione CLIPS
+	* PENDIST comportamento diverso lato GUI
+	* controlla hisorty checkf, comportamento in cui il robot lascia le consumazioni e subitofa una checkfinis (senza errori però)

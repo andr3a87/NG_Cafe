@@ -118,7 +118,7 @@
 (defrule createworld
   ?f <- (create)
 =>
-  (load-facts "../m10a/initMap.txt")
+  (load-facts "../dom1_wait/InitMap.txt")
   (assert (create-map)
   (create-initial-setting)
   (create-history))
