@@ -8,6 +8,7 @@ In questo capitolo verrà trattata l' implementazione delle due strategie non in
 
 \subsection{Il codice sviluppato}
 
+\begin{lstlisting}
 ric_amp([nodo(S,LISTA_AZ)|_],LISTA_AZ):- finale(S).
 ric_amp([nodo(S,LISTA_AZ)|RESTO],SOL):-
         num_nodi_open,
@@ -20,24 +21,25 @@ espandi(nodo(S,LISTA_AZ),LISTA_SUCC):-
         findall(AZ,applicabile(AZ,S),AZIONI),
 
         successori(nodo(S,LISTA_AZ),AZIONI,LISTA_SUCC).
-        
+
 successori(_,[],[]).
 successori(nodo(S,LISTA_AZ),[AZ|RESTO],[nodo(NUOVO_S,NUOVA_LISTA_AZ)|ALTRI]):-
         trasforma(AZ,S,NUOVO_S),
         append(LISTA_AZ,[AZ],NUOVA_LISTA_AZ),
         successori(nodo(S,LISTA_AZ),RESTO,ALTRI).
-        
+
 num_nodi_open:-
         nb_getval(counter, N1),
         New1 is N1 + 1,
         nb_setval(counter, New1).
-        
+
 
 ampiezza:- iniziale(S),
         nb_setval(counter , 0),
-        ric_amp([nodo(S,[])],SOL), 
+        ric_amp([nodo(S,[])],SOL),
         writeln(SOL),
         write(N_res).
+\end{lstlisting}
 
 \subsection{Analisi dettagliata della strategia}
 
@@ -57,6 +59,7 @@ Anche per quanto riguarda il dominio del mondo dei blocchi il risultato non camb
 
 \subsection{Il codice sviluppato}
 
+\begin{lstlisting}
 ampiezza :-
     iniziale(S),
     finale(Goal),
@@ -92,6 +95,7 @@ node(nodo(S, Lista_Az), [Az|R_az], Lista_children) :-
         append(Lista_Az, [Az], Nuova_lista_az),
         node(nodo(S, Lista_Az), R_az, Old_children),
         ord_add_element(Old_children, nodo(Nuovo_S, Nuova_lista_az), Lista_children).
+\end{lstlisting}
 
 \subsection{Analisi dettagliata della strategia}
 
@@ -135,6 +139,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \subsection{Il codice sviluppato}
 
+\begin{lstlisting}
 ric_prof_cc_lim(S,_,_,[]) :- finale(S),!.
 ric_prof_cc_lim(S,D,Visitati,[Az|Resto]) :-
     D>0,
@@ -149,7 +154,7 @@ ric_prof_cc_id(I,D,Ris) :- ric_prof_cc_lim(I,D,[],Ris).
 ric_prof_cc_id(I,D,Ris) :-
     D1 is D+1,
     ric_prof_cc_id(I,D1,Ris).
-    
+
 num_nodi_open:-
         nb_getval(counter, N1),
         New1 is N1 + 1,
@@ -164,6 +169,7 @@ prof_id :-
         writeln(Ris),
         write(N_res),
         write('\n').
+\end{lstlisting}
 
 \subsection{Analisi dettagliata della strategia}
 
@@ -211,11 +217,12 @@ In questo capitolo verrà trattata l'implementazione delle strategie informate v
 \section{Ricerca in profondità ad approfondimento iterativo con stima (IDA*)}
 
 \subsection{Il codice sviluppato}
-        
+
+\begin{lstlisting}
 ric_prof_lim(S,Depth,_,_,[]) :-
         f_val(F),
         F =< Depth,
-        finale(S),!. 
+        finale(S),!.
 ric_prof_lim(S,Depth,G,Visitati,[Az|Resto]) :-
         f_val(F),
         F =< Depth,
@@ -238,7 +245,7 @@ try_prof(F) :-
         ;
         retract(soglia(X)), !,
         assert(soglia(F)).
-        
+
 num_nodi_open:-
         nb_getval(counter, N1),
         New1 is N1 + 1,
@@ -262,6 +269,7 @@ idastar :-
         writeln(Ris),
         write(N_res),
         write('\n').
+\end{lstlisting}
 
 \subsection{Analisi dettagliata della strategia}
 
@@ -273,6 +281,7 @@ Per quanto riguarda il caso generico, abbiamo sempre il controllo della \lstinli
 
 \subsection{Dominio dei Cammini}
 
+\begin{lstlisting}
 calcolo_euristica(pos(R,C),pos(R1,C1), G) :-
         X is R - R1,
         Y is C - C1,
@@ -284,6 +293,7 @@ calcolo_euristica(pos(R,C),pos(R1,C1), G) :-
         assert(f_val(F)),
         retract(h_val(_)),
         assert(h_val(H)).
+\end{lstlisting}
 
 Per quanto riguarda il dominio dei cammini l'euristica utilizzata per generare i valori di \lstinline{f_val} è stata la classica distanza di Manhattan. Vengono presi in inpunt le coordinate \lstinline{x} e \lstinline{y} del nodo corrente e del nodo goal e si esegue questo semplice calcolo:
 
@@ -307,6 +317,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \subsection{Dominio del Mondo dei Blocchi}
 
+\begin{lstlisting}
 calcolo_euristica(S, G) :-
         goal(Res),
         ord_subtract(S, Res, Diff),
@@ -322,6 +333,7 @@ calcola_h([_|Resto_Ok],H) :-
         H is H1 + 1,
         retract(h_val(_)),
         assert(h_val(H)).
+\end{lstlisting}
 
 L'euristica utilizzata per il mondo dei blocchi fornisce il nostro valore di \lstinline{f_val} sommando il costo del cammino trovato dal nodo iniziale al nodo corrente, con il numero dei blocchi che si trovano nella posizione della configurazione finale. Questo viene fatto generando la lista dei nodi in posizione corretta tramite \lstinline{ord_subtract(List1,List2,Res)}. \lstinline{Ord_subtract} è una regola nativa di Prolog e non fa altro che sottrarre la \lstinline{List1} dalla \lstinline{List2} due e mettere la lista risultante in \lstinline{Res}. Infine tramite la regola \lstinline{calcola_h} contiamo gli elementi di \lstinline{Res} per trovare il numero dei blocchi in posizione correta che saranno poi sommati a G per avere la nostra \lstinline{f_val}. L'algoritmo si dimostra estremamente veloce anche in questo dominio risolvendo l'esempio del professor Martelli in soli 0.076 secondi, visitando appena 1444 nodi e facendo 477443 inferenze. Sull'esempio del professor Torasso si ha un significativo aumento nei tempi di risoluzione, ma l'algoritmo si comporta comunque ottimamente mettendoci 14.564 secondi per trovare la soluzione. Ovviamente tempi maggiori comportano un maggior numero di nodi visitati e di inferenze che in questo caso sono 183364 per quanto riguarda i nodi visitati e 89033213 per quanto riguarda il numero di inferenze eseguite.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
@@ -343,6 +355,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \subsection{Il codice sviluppato}
 
+\begin{lstlisting}
 ric_astar([nodo(_,_, S, Lista_Az)|_],_, Lista_Az) :- finale(S), !.
 ric_astar([nodo(Fcost, Gcost, S, Lista_Az)| R_lista_open], Closed, Lista_Ris) :-
         member(S, Closed) ->
@@ -357,7 +370,7 @@ open_node(nodo(Fcost, Gcost, S, Lista_Az), Lista_childern) :-
         best_node(nodo(Fcost, Gcost, S, Lista_Az), Az_applicabili, Lista_childern).
 
 best_node(_,[],[]).
-best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-       
+best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-
         trasforma(Az, S, Nuovo_S),
         append(Lista_Az, [Az], Nuova_lista_az),
         % num_nodi_open,
@@ -366,7 +379,7 @@ best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-
         calcolo_euristica(Nuovo_S, G1),
         f_val(F),
         ord_add_element(Old_children, nodo(F, G1, Nuovo_S, Nuova_lista_az), Lista_children).
-        
+
 num_nodi_open:-
         nb_getval(counter, N1),
         New1 is N1 + 1,
@@ -382,6 +395,7 @@ astar :-
         writeln(Ris),
         write(N_res),
         write('\n').
+\end{lstlisting}
 
 \subsection{Analisi dettagliata della strategia}
 
@@ -391,6 +405,7 @@ Come ultimo passo richiamiamo la ricerca astar sul primo nodo della lista dei no
 
 \subsection{Dominio dei Cammini}
 
+\begin{lstlisting}
 calcolo_euristica(pos(R,C),pos(R1,C1), G) :-
         X is R - R1,
         Y is C - C1,
@@ -402,6 +417,7 @@ calcolo_euristica(pos(R,C),pos(R1,C1), G) :-
         assert(f_val(F)),
         retract(h_val(_)),
         assert(h_val(H)).
+\end{lstlisting}
 
 Per quanto riguarda il dominio dei cammini è stata utilizzata la stessa euristica descritta per la ricerca ad approfondimento iterativo con stima (IDA*) ovvero la distanza di Manhattan. Con l'esempio del professor Martelli (cammini 10x10) l'algoritmo impiega appena 0.029 secondi per trovare la soluzione; visita appena 53 nodi ed esegue solamente 19517 inferenze per arrivare al goal. Anche con l'esempio del professor Torasso (cammini 20x20) l'algoritmo si comporta ottimamente impiegando 0.037 secondi, visitando 128 nodi e facendo 65057 inferenze per trovare la soluzione.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
@@ -420,6 +436,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \subsection{Dominio del Mondo dei Blocchi}
 
+\begin{lstlisting}
 calcolo_euristica(S, G) :-
         goal(Res),
         ord_subtract(S, Res, Diff),
@@ -435,6 +452,7 @@ calcola_h([_|Resto_Ok],H) :-
         H is H1 + 1,
         retract(h_val(_)),
         assert(h_val(H)).
+\end{lstlisting}
 
 Anche per il dominio del mondo dei blocchi l'euristica utilizzata è la stessa della ricerca ad approfondimento iterativo con stima (IDA*), riuscendo anche in questo a fornire una soluzione ottima a costo minimo. Per quanto riguarda l'esempio fornito dal professor Martelli l'algoritmo si comporta bene trovando una soluzione dopo 0.072 secondi appena, visitando 304 nodi e 396947 inferenze fatte.
 Per quanto riguarda l'esempio fornito dal professor Torasso l'algoritmo sfortunatamente non è in grado di fornire una soluzione, dato che esaurisce la memoria disponibile per poter fare inferenza.
@@ -456,6 +474,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \subsection{Il codice sviluppato}
 
+\begin{lstlisting}
 calcolo_euristica([at(Stazione1),_],[at(Stazione2),_]) :-
         stazione(Stazione1, R, C),
         stazione(Stazione2, R1, C1),
@@ -479,14 +498,14 @@ ric_astar([nodo(Fcost, Gcost, S, Lista_Az)| R_lista_open], Closed, Lista_Ris) :-
         ord_union(Lista_children, R_lista_open, Nuova_open),
         ric_astar(Nuova_open,[S|Closed], Lista_Ris).
 
-        
+
 open_node(nodo(Fcost, Gcost, S, Lista_Az), Lista_childern) :-
         findall(Az, applicabile(Az,S), Az_applicabili),
         best_node(nodo(Fcost, Gcost, S, Lista_Az), Az_applicabili, Lista_childern).
 
 best_node(_,[],[]).
 best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-
-        finale(Goal),        
+        finale(Goal),
         trasforma(Az, S, Nuovo_S),
         append(Lista_Az, [Az], Nuova_lista_az),
         % num_nodi_open,
@@ -495,18 +514,18 @@ best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-
         calcolo_euristica(Nuovo_S, Goal),
         f_val(F),
         ord_add_element(Old_children, nodo(F, G1, Nuovo_S, Nuova_lista_az), Lista_children).
-        
+
 num_nodi_open:-
         nb_getval(counter, N1),
         New1 is N1 + 1,
         nb_setval(counter, New1).
-        
+
 calcola_G(sali(_,_), Gcost, G1) :-
         G1 is Gcost + 10.
-        
+
 calcola_G(scendi(_), Gcost, G1) :-
         G1 is Gcost + 10.
-        
+
 calcola_G(vai(_,_,_,_), Gcost, G1) :-
         G1 is Gcost + 5.
 
@@ -518,6 +537,7 @@ astar :-
         writeln(Ris),
         write(N_res),
         write('\n').
+\end{lstlisting}
 
 \subsection{Analisi dettagliata della strategia}
 
@@ -537,6 +557,7 @@ Qui di seguito si trova il codice specifico per i vari test eseguiti sui domini 
 
 \subsection{Cammini 10x10}
 
+\begin{lstlisting}
 occupata(pos(2,5)).
 occupata(pos(3,5)).
 occupata(pos(4,5)).
@@ -558,9 +579,11 @@ occupata(pos(4,10)).
 
 iniziale(pos(4,2)).
 finale(pos(7,9)).
+\end{lstlisting}
 
 \subsection{Cammini 20x20}
 
+\begin{lstlisting}
 occupata(pos(7,15)).
 occupata(pos(8,15)).
 occupata(pos(9,15)).
@@ -593,9 +616,11 @@ occupata(pos(15,9)).
 iniziale(pos(10,10)).
 
 finale(pos(20,20)).
+\end{lstlisting}
 
 \subsection{Mondo dei blocchi del professor Martelli}
 
+\begin{lstlisting}
 block(a).
 block(b).
 block(c).
@@ -610,9 +635,11 @@ goal(G):- list_to_ord_set([on(a,b),on(b,c),on(c,d),ontable(d),
         ontable(e)],G).
 
 finale(S):- goal(G), ord_subset(G,S).
+\end{lstlisting}
 
 \subsection{Mondo dei blocchi del professor Torasso}
 
+\begin{lstlisting}
 block(a).
 block(b).
 block(c).
@@ -624,16 +651,18 @@ block(h).
 
 
 iniziale(S):-
-        list_to_ord_set([clear(a), clear(c), clear(d), clear(e), clear(f), clear(g), clear(h), on(a,b), 
+        list_to_ord_set([clear(a), clear(c), clear(d), clear(e), clear(f), clear(g), clear(h), on(a,b),
         ontable(b), ontable(c), ontable(d), ontable(e), ontable(f), ontable(g), ontable(h), handempty],S).
 
 goal(G):- list_to_ord_set([on(a,b),on(b,c),on(c,d),on(d,e),
         ontable(e)],G).
+\end{lstlisting}
 
 \subsection{La metropolitana di Londra}
 
 Esempio 1:
 
+\begin{lstlisting}
 stazione('Baker Street',4.5,5.6).
 stazione('Bank',12,4).
 stazione('Bayswater',1,3.7).
@@ -662,9 +691,12 @@ stazione('Westminster',8,1.8).
 iniziale([at('Bayswater'),ground]).
 
 finale([at('Covent Garden'),ground]).
+\end{lstlisting}
 
 Esempio 2:
 
+\begin{lstlisting}
 iniziale([at('Holborn'),ground]).
 
 finale([at('Waterloo'),ground]).
+\end{lstlisting}
