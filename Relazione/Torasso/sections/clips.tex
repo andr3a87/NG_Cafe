@@ -370,7 +370,7 @@ Total orders           & 10         & 10        & 10           & 10   \\ \hline
 \end{tabular}
 \end{table}
 
-Dalla tabella notiamo che la strategy HARD è quella che minimizza la nostra penalità. Questo risultato può essere forviante in quanto dipende dal numero di ordini che la strategia riesce a servire. Questo numero può variare a second della strategia in esecuzione in quanto ordini inseriti nella history non sono consistenti con tale esecuzione e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
+Dalla tabella notiamo che la strategy HARD è quella che minimizza la nostra penalità. Questo risultato può essere fuorviante in quanto dipende dal numero di ordini che la strategia riesce a servire. Questo numero può variare a second della strategia in esecuzione in quanto ordini inseriti nella history non sono consistenti con tale esecuzione e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
 
 Come precedentemente spiegato nel capitolo \ref{sec:modulo_astar} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
 
@@ -445,6 +445,21 @@ Total orders           & 12       & 12        & 12          & 12       \\ \hline
 
 \subsection{Grafici Mappa 10x10}
 
+\subsection{Risultati sulla mappa 20x20: hdefault}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|}
+\hline
+\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
+Penalty                & 2172       & 2172      & 2257         & 2208 \\ \hline
+Reused Planes          & 0          & 0         & 0            & 0    \\ \hline
+Order performed        & 6          & 6         & 6            & 6    \\ \hline
+Total orders           & 6          & 6         & 6            & 6    \\ \hline
+\end{tabular}
+\end{table}
+
+Il discorso precedentemente fatto per le mappe 10x10 vale anche nel caso in cui ci troviamo a lavorare con mappe 20x20.Le variabili considerate  in questo caso sono le stesse descritte precedentemente di modo da avere risultati consistenti ed equiparabili.
+Dall'esecuzione delle strategie su questa history si nota che si comportano più o meno tutte allo stesso modo con uno scarto minimo. Vista la semplicità della history sottoposta alle strategie, FIFO\_BASE e FIFO\_PRO si comportano un pochino meglio delle più complesse strategie LOW\_PENALTY e HARD anche se come abbiamo già detto la differenza è minima.
+
 \subsection{Risultati sulla mappa 20x20: hsimple}
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
@@ -452,12 +467,12 @@ Total orders           & 12       & 12        & 12          & 12       \\ \hline
 \multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
 Penalty                & 4694  & 4694       & 4439     & 3966 \\ \hline
 Reused Planes          & 1     & 1          & 1        & 0    \\ \hline
-Order performed        & 13    & 13         & 13       & 13   \\ \hline
-Total orders           & 12    & 12         & 12       & 12   \\ \hline
+Order performed        & 12    & 12         & 12       & 12   \\ \hline
+Total orders           & 13    & 13         & 13       & 13   \\ \hline
 \end{tabular}
 \end{table}
 
-testo random da aggiungere
+Dall'esecuzione delle strategie su questa history notiamo subito che nessuna riesce ad eseguire tutti gli ordini presenti nella history. FIFO\_BASE e FIFO\_PRO hanno un esecuzione identica e quindi penalità uguale, mentre LOW\_PENALITY si comporta un pochino meglio servendo lo stesso numero di ordini ma con 255 penalità in meno. HARD pur non riutilizzando nessun piano è la strategia che si comporta meglio di tutte risparmiando ulteriormente 473 penalità in confronto a LOW\_PENALTY.
 
 \subsection{Risultati sulla mappa 20x20: hhard}
 \begin{table}[h]
@@ -466,12 +481,12 @@ testo random da aggiungere
 \multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
 Penalty                & 38360  & 38360      & 26596    & 25422 \\ \hline
 Reused Planes          & 10     & 10         & 6        & 2    \\ \hline
-Order performed        & 15     & 15         & 15       & 15  \\ \hline
-Total orders           & 15     & 15         & 13       & 12  \\ \hline
+Order performed        & 15     & 15         & 13       & 12  \\ \hline
+Total orders           & 15     & 15         & 15       & 15  \\ \hline
 \end{tabular}
 \end{table}
 
-testo random da aggiungere
+Dall'esecuzione della strategia notiamo subito 2 cose: l'esecuzione di FIFO\_BASE e FIFO\_PRO è identica, questo perchè come già detto l'agente non incontra persone ad ostacolarlo lungo i suoi percorsi; la seconda cosa è che LOW\_PENALTY e HARD non servono tutti gli ordini della history e quindi hanno tempi di esecuzione decisamente minori delle strategie FIFO\_BASE e FIFO\_PRO. Un altro fatto che balza all'occhio è il forte riutilizzo dei piani (ben 10) da parte di FIFO\_BASE e FIFO\_PRO; in misura minore anche LOW\_PENALTY fa uso di questa feature mentre HARD la usa decisamente poco in questa history.
 
 \subsection{Risultati sulla mappa 20x20: hperson1}
 \begin{table}[h]
@@ -492,10 +507,10 @@ testo random da aggiungere
 \begin{tabular}{|c|c|c|c|l|}
 \hline
 \multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 0     & 0          & 0        & 0 \\ \hline
-Reused Planes          & 0     & 0          & 0        & 0    \\ \hline
-Order performed        & 0     & 0          & 0        & 0   \\ \hline
-Total orders           & 0     & 0          & 0        & 0   \\ \hline
+Penalty                & 0     & 21049      & 17665    & 13761 \\ \hline
+Reused Planes          & 0     & 7          & 6        & 2    \\ \hline
+Order performed        & 0     & 15         & 15       & 15   \\ \hline
+Total orders           & 0     & 13         & 15       & 15  \\ \hline
 \end{tabular}
 \end{table}
 
@@ -507,14 +522,14 @@ testo random da aggiungere
 \begin{tabular}{|c|c|c|c|l|}
 \hline
 \multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 0     & 0          & 0        & 0 \\ \hline
-Reused Planes          & 0     & 0          & 0        & 0    \\ \hline
-Order performed        & 0     & 0          & 0        & 0   \\ \hline
-Total orders           & 0     & 0          & 0        & 0   \\ \hline
+Penalty                & 16664 & 13961      & 13961    & 12780 \\ \hline
+Reused Planes          & 10    & 6          & 6        & 4    \\ \hline
+Order performed        & 15    & 15         & 15       & 15   \\ \hline
+Total orders           & 15    & 15         & 15       & 15  \\ \hline
 \end{tabular}
 \end{table}
 
-testo random da aggiungere
+Per quanto riguarda questa strategia tutte le strategie evadono tutti gli ordini. FIFO\_BASE risulta la peggiore di tutte dato che l'agente è costretto a perdere del tempo prezioso in attesa che le persone gli lascino campo libero per poter proseguire a servire i tavoli. FIFO\_PRO e LOW\_PENALTY risultano in questo caso identiche; questo è dovuto al semplice fatto che prendendo in carico gli ordini allo stesso modo i passi dell'agente risultano i medesimi per entrambe le strategie e dato che la gestione delle interferenza da parte delle persone è la medesima, la penalità accumulata è uguale. HARD si dimostra la migliore delle quattro riuscendo a portare a termine tutta la history con penalità più bassa
 
 
 \subsection{Grafici Mappa 20x20}
