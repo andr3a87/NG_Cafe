@@ -358,15 +358,15 @@ La history hcheckf presenta le seguenti caratteristiche:
 \end{itemize}
 
 
-\subsection{Risultati sulla mappa 10x10: hdefault}
+\subsubsection{Risultati sulla mappa 10x10: hdefault}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
-\multicolumn{1}{|l|}{} & BASE & PRO   & LOW\_PENALTY & PENDIST & HARD \\ \hline
-Penalty                & 5837 & 5616  & 4192         & 3810    & 4170 \\ \hline
-Reused Planes          & 2    & 4     & 5            & 2       & 0    \\ \hline
-Order performed        & 7    & 7     & 6            & 7       & 6    \\ \hline
-Total orders           & 10   & 10    & 10           & 10      & 10   \\ \hline
+\multicolumn{1}{|l|}{} & BASE  & PRO   & LOW\_PENALTY  & PENDIST & HARD \\ \hline
+Penalty                & 5837  & 5616  & 4192          & 3810    & 4170 \\ \hline
+Reused Planes          & 2     & 4     & 5             & 2       & 0    \\ \hline
+Order performed        & 7     & 7     & 6             & 7       & 6    \\ \hline
+Total orders           & 10    & 10    & 10            & 10      & 10   \\ \hline
 \end{tabular}
 \end{table}
 
@@ -378,9 +378,9 @@ Come precedentemente spiegato nel capitolo \ref{sec:modulo_astar} i piani princi
 Dall'esecuzione della FIFO BASE e FIFO PRO su questa history si ha un primo confronto tra l'idea di aspettare nel caso in cui vi sia una persona sul percorso del robot, e quella della FIFO PRO di ripianificare. Notiamo che anche se il robot deve ripianificare e allungare i tempi di consegna per via dell'esecuzione di un altro percorso, la penalità risulta migliore rispetto al fatto di aspettare anche se per pochi step (3 nella nostra esecuzione). La FIFO BASE completa i suoi ordini in 171 step mentre la FIFO PRO in 176.
 
 
-\subsection{Risultati sulla mappa 10x10: hsimple}
+\subsubsection{Risultati sulla mappa 10x10: hsimple}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO   & LOW\_PENALTY & PENDIST & HARD \\ \hline
 Penalty                & 1527 & 1527  & 1661         & 1543    & 1334 \\ \hline
@@ -392,9 +392,9 @@ Total orders           & 12   & 12    & 12           & 12      & 12   \\ \hline
 
 La strategy HARD riuscendo a serivire più ordini insieme risulta esser la migliore.
 
-\subsection{Risultati sulla mappa 10x10: hhard}
+\subsubsection{Risultati sulla mappa 10x10: hhard}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE  & PRO    & LOW\_PENALTY & PENDIST & HARD  \\ \hline
 Penalty                & 14966 & 14966  & 14651        & 13888   & 10543 \\ \hline
@@ -406,9 +406,9 @@ Total orders           & 12    & 12     & 12           & 12      & 12    \\ \hli
 
 La strategy HARD avendo per ogni ordine un numero molto alto di richieste costringe il robot a effettuare più volte delle consegne allo stesso tavolo. Questo giustiifica sia i valori di penalità molto alti sia il numero di piani riusati per arrivare a destinazione.
 
-\subsection{Risultati sulla mappa 10x10: hperson1}
+\subsubsection{Risultati sulla mappa 10x10: hperson1}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO   & LOW\_PENALTY & PENDIST & HARD    \\ \hline
 Penalty                & NaN  & 11711 & 6943         & 6943    & 6741    \\ \hline
@@ -420,9 +420,9 @@ Total orders           & NaN  & 12    & 12           & 12      & 12      \\ \hli
 
 La strategy FIFO WAIT non termina in quanto si arriva in una situazione di deadlock. LOW PENALTY e PENDIST servono gli ordini allo stesso modo e quindi hanno il medesimo comportamento. La strategy HARD effettua delle checkfinish.
 
-\subsection{Risultati sulla mappa 10x10: hperson2}
+\subsubsection{Risultati sulla mappa 10x10: hperson2}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO     & LOW\_PENALTY & PENDIST & HARD     \\ \hline
 Penalty                & NaN  & 7594    & 8235         & 8235    & 6755     \\ \hline
@@ -434,9 +434,9 @@ Total orders           & NaN  & 12      & 12           & 12      & 12       \\ \
 
 In questo caso le varie strategie riescono a servire un numero di ordini sensibilmente diverso, dai soli 7 della HARD ai ben 11 di PENDSIT e LOW PENALTY.
 
-\subsection{Risultati sulla mappa 10x10: hcheckf}
+\subsubsection{Risultati sulla mappa 10x10: hcheckf}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO     & LOW\_PENALTY & PENDIST & HARD     \\ \hline
 Penalty                & 4964 & 4964    & 3840         & 3796    & 3336     \\ \hline
@@ -448,11 +448,11 @@ Total orders           & 12   & 12      & 12           & 12      & 12       \\ \
 
 La strategy HARD su questa mappa almeno teoricamente dovrebbe avere un grosso vantaggio dato dal fato che se il robot è in uno stato di riposo in quanto ha già servito tutti gli ordini pendenti, invece di rimanere in uno stato non operativo controlla se ci sono tavoli che possono esser puliti, tramite il comando di checkfinish. In questo modo si trova in uno stato migliore rispetto le altre strategie dovessero arrivare nuovi ordini.
 
-\subsection{Grafici Mappa 10x10}
+\subsubsection{Grafici Mappa 10x10}
 
-\subsection{Risultati sulla mappa 20x20: hdefault}
+\subsubsection{Risultati sulla mappa 20x20: hdefault}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE   & PRO   & LOW\_PENALTY & PENDIST & HARD \\ \hline
 Penalty                & 2172   & 2172  & 2257         &         & 2208 \\ \hline
@@ -465,9 +465,9 @@ Total orders           & 6      & 6     & 6            &         & 6    \\ \hlin
 Il discorso precedentemente fatto per le mappe 10x10 vale anche nel caso in cui ci troviamo a lavorare con mappe 20x20.Le variabili considerate  in questo caso sono le stesse descritte precedentemente di modo da avere risultati consistenti ed equiparabili.
 Dall'esecuzione delle strategie su questa history si nota che si comportano più o meno tutte allo stesso modo con uno scarto minimo. Vista la semplicità della history sottoposta alle strategie, FIFO\_BASE e FIFO\_PRO si comportano un pochino meglio delle più complesse strategie LOW\_PENALTY e HARD anche se come abbiamo già detto la differenza è minima.
 
-\subsection{Risultati sulla mappa 20x20: hsimple}
+\subsubsection{Risultati sulla mappa 20x20: hsimple}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE  & PRO    & LOW\_PENALTY & PENDIST  & HARD \\ \hline
 Penalty                & 4694  & 4694   & 4439         &          & 3966 \\ \hline
@@ -479,9 +479,9 @@ Total orders           & 13    & 13     & 13           &          & 13   \\ \hli
 
 Dall'esecuzione delle strategie su questa history notiamo subito che nessuna riesce ad eseguire tutti gli ordini presenti nella history. FIFO\_BASE e FIFO\_PRO hanno un esecuzione identica e quindi penalità uguale, mentre LOW\_PENALITY si comporta un pochino meglio servendo lo stesso numero di ordini ma con 255 penalità in meno. HARD pur non riutilizzando nessun piano è la strategia che si comporta meglio di tutte risparmiando ulteriormente 473 penalità in confronto a LOW\_PENALTY.
 
-\subsection{Risultati sulla mappa 20x20: hhard}
+\subsubsection{Risultati sulla mappa 20x20: hhard}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE   & PRO        & LOW\_PENALTY & PENDIST & HARD \\ \hline
 Penalty                & 38360  & 38360      & 26596        &         & 25422 \\ \hline
@@ -493,9 +493,9 @@ Total orders           & 15     & 15         & 15           &         & 15  \\ \
 
 Dall'esecuzione della strategia notiamo subito 2 cose: l'esecuzione di FIFO\_BASE e FIFO\_PRO è identica, questo perchè come già detto l'agente non incontra persone ad ostacolarlo lungo i suoi percorsi; la seconda cosa è che LOW\_PENALTY e HARD non servono tutti gli ordini della history e quindi hanno tempi di esecuzione decisamente minori delle strategie FIFO\_BASE e FIFO\_PRO. Un altro fatto che balza all'occhio è il forte riutilizzo dei piani (ben 10) da parte di FIFO\_BASE e FIFO\_PRO; in misura minore anche LOW\_PENALTY fa uso di questa feature mentre HARD la usa decisamente poco in questa history.
 
-\subsection{Risultati sulla mappa 20x20: hperson1}
+\subsubsection{Risultati sulla mappa 20x20: hperson1}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO        & LOW\_PENALTY & PENDIST & HARD   \\ \hline
 Penalty                & 0    & 20873      & 18166        &         & 13607  \\ \hline
@@ -507,9 +507,9 @@ Total orders           & 0    & 15         & 15           &         & 13     \\ 
 
 testo random da aggiungere
 
-\subsection{Risultati sulla mappa 20x20: hperson2}
+\subsubsection{Risultati sulla mappa 20x20: hperson2}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO     & LOW\_PENALTY & PENDIST & HARD   \\ \hline
 Penalty                & 0    & 21049   & 17665        &         & 13761  \\ \hline
@@ -522,9 +522,9 @@ Total orders           & 0    & 15      & 15           &         & 15     \\ \hl
 testo random da aggiungere
 
 
-\subsection{Risultati sulla mappa 20x20: hcheckf}
+\subsubsection{Risultati sulla mappa 20x20: hcheckf}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|}
+\begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE  & PRO     & LOW\_PENALTY & PENDIST & HARD   \\ \hline
 Penalty                & 16664 & 13961   & 13961        &         & 12780  \\ \hline
@@ -537,5 +537,5 @@ Total orders           & 15    & 15      & 15           &         & 15     \\ \h
 Per quanto riguarda questa strategia tutte le strategie evadono tutti gli ordini. FIFO\_BASE risulta la peggiore di tutte dato che l'agente è costretto a perdere del tempo prezioso in attesa che le persone gli lascino campo libero per poter proseguire a servire i tavoli. FIFO\_PRO e LOW\_PENALTY risultano in questo caso identiche; questo è dovuto al semplice fatto che prendendo in carico gli ordini allo stesso modo i passi dell'agente risultano i medesimi per entrambe le strategie e dato che la gestione delle interferenza da parte delle persone è la medesima, la penalità accumulata è uguale. HARD si dimostra la migliore delle quattro riuscendo a portare a termine tutta la history con penalità più bassa
 
 
-\subsection{Grafici Mappa 20x20}
+\subsubsection{Grafici Mappa 20x20}
 
