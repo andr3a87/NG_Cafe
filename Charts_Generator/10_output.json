@@ -191,8 +191,8 @@
         "desc":"rispetto a fifo_pro e fifo_base non possiamo affermare che le persone non abbiano causati ritardi per via di ripianificazioni (anzi osservando il log si sono viste ripianificazioni), ma cmq la penalità risulta inferiore. Il numero di ordini serviti non è indicativo. Questa strategia utilizza un ottimizazzione per cui è possibili che faccia delle cose per cui degli ordini dopo non vengano presi. (Pulisco dei tavoli per cui successivamente arriverà una finish che non potrà esser presa in consegna in quanto il tavolo è pulito.). In genereale serve più tavoli in contemporanea, quindi il tempo per concludere un singolo tavolo è piu lungo di quello delle altra strategia che servono un tavolo alla volta (Altro motivo per cui servo meno ordini)."
       },
       "hperson1":{
-        "penalty":7781
-        "number-plane-reused":2,
+        "penalty":6741
+        "number-plane-reused":0,
         "number-order":12,
         "order-performed":11,
         "order-complete-by-checkfinish":2,

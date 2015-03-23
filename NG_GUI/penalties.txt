@@ -38,3 +38,6 @@ dom1_wait	FIFO_BASE	2435
 dom1_wait	FIFO_BASE	2435
 dom1_wait	FIFO_BASE	3117
 dom1_wait	FIFO_PRO	3425
+m10a_hdefault	HARD	4170
+m10a_hperson1	PENDIST	6943
+m10a_hperson1	HARD	62608

@@ -264,11 +264,11 @@ E' la history inclusa nel progetto.
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-                 & FIFO\_BASE & FIFO\_PRO & LOW\_PENALITY & PENDIST & HARD \\ \hline
-Penalty          & 1452       & 1452      & 1452          & 1452    & 676  \\ \hline
-Reused planes    & 1          & 1         & 1             & 1       & 0    \\ \hline
-Orders performed & 4          & 4         & 0             & 0       & 1    \\ \hline
-Total orders     & 4          & 4         & 4             & 4       & 2    \\ \hline
+                 & BASE & PRO   & LOW\_PENALTY  & PENDIST & HARD \\ \hline
+Penalty          & 1452 & 1452  & 1452          & 1452    & 676  \\ \hline
+Reused planes    & 1    & 1     & 1             & 1       & 0    \\ \hline
+Orders performed & 4    & 4     & 0             & 0       & 1    \\ \hline
+Total orders     & 4    & 4     & 4             & 4       & 2    \\ \hline
 \end{tabular}
 \end{table}
 
@@ -279,11 +279,11 @@ Le prime quattro strategie hanno il medesimo comportamento,in quanto l'ordine co
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-                 & FIFO\_BASE & FIFO\_PRO & LOW\_PENALITY & PENDIST & HARD  \\ \hline
-Penalty          & NaN       & 4080      & 5367          & 4348    & 4736   \\ \hline
-Reused planes    & NaN       & 3         & 4             & 4       & 1      \\ \hline
-Orders performed & NaN       & 8         & 9             & 8       & 6+(2)  \\ \hline
-Total orders     & NaN       & 9         & 9             & 9       & 9      \\ \hline
+                 & BASE & PRO   & LOW\_PENALTY  & PENDIST & HARD  \\ \hline
+Penalty          & NaN  & 4080  & 5367          & 4348    & 4736   \\ \hline
+Reused planes    & NaN  & 3     & 4             & 4       & 1      \\ \hline
+Orders performed & NaN  & 8     & 9             & 8       & 6+(2)  \\ \hline
+Total orders     & NaN  & 9     & 9             & 9       & 9      \\ \hline
 \end{tabular}
 \end{table}
 
@@ -295,11 +295,11 @@ La differenza tra FIFO PRO e LOW PENALITY ci porta a capire che la scelta di ser
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-                 & FIFO\_BASE & FIFO\_PRO & LOW\_PENALITY & PENDIST & HARD  \\ \hline
-Penalty          & NaN       & 3841      & 3841          & 3841    & 6092   \\ \hline
-Reused planes    & NaN       & 1         & 1             & 1       & 3      \\ \hline
-Orders performed & NaN       & 7         & 7             & 7       & 6+(5)  \\ \hline
-Total orders     & NaN       & 11        & 11            & 11      & 11     \\ \hline
+                 & BASE & PRO   & LOW\_PENALTY  & PENDIST & HARD    \\ \hline
+Penalty          & NaN  & 3841  & 3841          & 3841    & 6092   \\ \hline
+Reused planes    & NaN  & 1     & 1             & 1       & 3      \\ \hline
+Orders performed & NaN  & 7     & 7             & 7       & 6+(5)  \\ \hline
+Total orders     & NaN  & 11    & 11            & 11      & 11     \\ \hline
 \end{tabular}
 \end{table}
 
@@ -312,11 +312,11 @@ Un'altro importante commento che possiamo effettuare osservando i risultati è c
 \begin{table}[h]
 \begin{tabular}{|l|l|l|l|l|l|}
 \hline
-                 & FIFO\_BASE & FIFO\_PRO & LOW\_PENALITY & PENDIST & HARD   \\ \hline
-Penalty          & 3117       & 3425      & 2825          & 2875    & 2596   \\ \hline
-Reused planes    & 2          & 2         & 2             & 1       & 0      \\ \hline
-Orders performed & 5          & 5         & 5             & 5       & 5      \\ \hline
-Total orders     & 5          & 5         & 5             & 5       & 5      \\ \hline
+                 & BASE & PRO   & LOW\_PENALTY  & PENDIST & HARD   \\ \hline
+Penalty          & 3117 & 3425  & 2825          & 2875    & 2596   \\ \hline
+Reused planes    & 2    & 2     & 2             & 1       & 0      \\ \hline
+Orders performed & 5    & 5     & 5             & 5       & 5      \\ \hline
+Total orders     & 5    & 5     & 5             & 5       & 5      \\ \hline
 \end{tabular}
 \end{table}
 
@@ -362,15 +362,16 @@ La history hcheckf presenta le seguenti caratteristiche:
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 5837       & 5616      & 4192         & 4166 \\ \hline
-Reused Planes          & 2          & 4         & 5            & 0    \\ \hline
-Order performed        & 7          & 7         & 6            & 6    \\ \hline
-Total orders           & 10         & 10        & 10           & 10   \\ \hline
+\multicolumn{1}{|l|}{} & BASE & PRO   & LOW\_PENALTY & PENDIST & HARD \\ \hline
+Penalty                & 5837 & 5616  & 4192         & 3810    & 4170 \\ \hline
+Reused Planes          & 2    & 4     & 5            & 2       & 0    \\ \hline
+Order performed        & 7    & 7     & 6            & 7       & 6    \\ \hline
+Total orders           & 10   & 10    & 10           & 10      & 10   \\ \hline
 \end{tabular}
 \end{table}
 
-Dalla tabella notiamo che la strategy HARD è quella che minimizza la nostra penalità. Questo risultato può essere fuorviante in quanto dipende dal numero di ordini che la strategia riesce a servire. Questo numero può variare a second della strategia in esecuzione in quanto ordini inseriti nella history non sono consistenti con tale esecuzione e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
+Dalla tabella notiamo che la strategy PENDIST è quella che minimizza la nostra penalità su quest'history. 
+Un'altro dato importante è il numero di ordini presi in carico dal sistema. Questo numero può variare a seconda della strategia in esecuzione in quanto ordini inseriti nella history non sono consistenti con tale esecuzione e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
 
 Come precedentemente spiegato nel capitolo \ref{sec:modulo_astar} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
 
@@ -381,67 +382,71 @@ Dall'esecuzione della FIFO BASE e FIFO PRO su questa history si ha un primo conf
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 1527       & 1527      & 1661         & 1345 \\ \hline
-Reused Planes          & 5          & 5         & 4            & 3    \\ \hline
-Order performed        & 11         & 11        & 11           & 11   \\ \hline
-Total orders           & 12         & 12        & 12           & 12   \\ \hline
+\multicolumn{1}{|l|}{} & BASE & PRO   & LOW\_PENALTY & PENDIST & HARD \\ \hline
+Penalty                & 1527 & 1527  & 1661         & 1543    & 1334 \\ \hline
+Reused Planes          & 5    & 5     & 4            & 2       & 1    \\ \hline
+Order performed        & 11   & 11    & 11           & 11      & 11   \\ \hline
+Total orders           & 12   & 12    & 12           & 12      & 12   \\ \hline
 \end{tabular}
 \end{table}
 
-Nel caso in cui le penalità tra FIFO WAIT e FIFO PRO risultino uguali, significa che le persone non hanno inciso sull' esecuzione della strategia, e che quindi non ci sono state nè ripianificazioni nè attese.
+La strategy HARD riuscendo a serivire più ordini insieme risulta esser la migliore.
 
 \subsection{Risultati sulla mappa 10x10: hhard}
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD  \\ \hline
-Penalty                & 14966      & 14966     & 14651        & 12089 \\ \hline
-Reused Planes          & 14         & 14        & 14           & 3     \\ \hline
-Order performed        & 9          & 9         & 9            & 9     \\ \hline
-Total orders           & 12         & 12        & 12           & 12    \\ \hline
+\multicolumn{1}{|l|}{} & BASE  & PRO    & LOW\_PENALTY & PENDIST & HARD  \\ \hline
+Penalty                & 14966 & 14966  & 14651        & 13888   & 10543 \\ \hline
+Reused Planes          & 14    & 14     & 14           & 14      & 3     \\ \hline
+Order performed        & 9     & 9      & 9            & 9       & 9     \\ \hline
+Total orders           & 12    & 12     & 12           & 12      & 12    \\ \hline
 \end{tabular}
 \end{table}
 
-Nel caso in cui le penalità tra FIFO WAIT e FIFO PRO risultino uguali, significa che le persone non hanno inciso sull' esecuzione della strategia, e che quindi non ci sono state nè ripianificazioni nè attese.In LOW PENALTY e HARD pur effettuando delle ripianificazioni la penalty risulta inferiore.
+La strategy HARD avendo per ogni ordine un numero molto alto di richieste costringe il robot a effettuare più volte delle consegne allo stesso tavolo. Questo giustiifica sia i valori di penalità molto alti sia il numero di piani riusati per arrivare a destinazione.
 
 \subsection{Risultati sulla mappa 10x10: hperson1}
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD  \\ \hline
-Penalty                & NaN      & 11711     & 6943        & 11423    \\ \hline
-Reused Planes          & 0        & 8         & 7           & 2        \\ \hline
-Order performed        & 2        & 11        & 11          & 11       \\ \hline
-Total orders           & 12       & 12        & 12          & 12       \\ \hline
+\multicolumn{1}{|l|}{} & BASE & PRO   & LOW\_PENALTY & PENDIST & HARD    \\ \hline
+Penalty                & NaN  & 11711 & 6943         & 6943    & 6741    \\ \hline
+Reused Planes          & NaN  & 8     & 7            & 7       & 0       \\ \hline
+Order performed        & NaN  & 11    & 11           & 11      & 11      \\ \hline
+Total orders           & NaN  & 12    & 12           & 12      & 12      \\ \hline
 \end{tabular}
 \end{table}
 
-La strategy FIFO WAIT non termina in quanto si arriva in una situazione di deadlock. Il valore molto alto riscontrato su HARD è dovuto al fatto che ripianifica un numero di volte maggiore rispetto alle altre penalità.
+La strategy FIFO WAIT non termina in quanto si arriva in una situazione di deadlock. LOW PENALTY e PENDIST servono gli ordini allo stesso modo e quindi hanno il medesimo comportamento. La strategy HARD effettua delle checkfinish.
 
 \subsection{Risultati sulla mappa 10x10: hperson2}
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD  \\ \hline
-Penalty                & NaN      & 7594      & 8235        & 6747     \\ \hline
-Reused Planes          & 0        & 7         & 8           & 3        \\ \hline
-Order performed        & 0        & 9         & 11          & 7        \\ \hline
-Total orders           & 12       & 12        & 12          & 12       \\ \hline
+\multicolumn{1}{|l|}{} & BASE & PRO     & LOW\_PENALTY & PENDIST & HARD     \\ \hline
+Penalty                & NaN  & 7594    & 8235         & 8235    & 6755     \\ \hline
+Reused Planes          & NaN  & 7       & 8            & 8       & 3        \\ \hline
+Order performed        & NaN  & 9       & 11           & 11      & 7        \\ \hline
+Total orders           & NaN  & 12      & 12           & 12      & 12       \\ \hline
 \end{tabular}
 \end{table}
+
+In questo caso le varie strategie riescono a servire un numero di ordini sensibilmente diverso, dai soli 7 della HARD ai ben 11 di PENDSIT e LOW PENALTY.
 
 \subsection{Risultati sulla mappa 10x10: hcheckf}
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD  \\ \hline
-Penalty                & 4964     & 4964      & 3840        & 3336     \\ \hline
-Reused Planes          & 8        & 8         & 5           & 5        \\ \hline
-Order performed        & 12       & 12        & 12          & 12       \\ \hline
-Total orders           & 12       & 12        & 12          & 12       \\ \hline
+\multicolumn{1}{|l|}{} & BASE & PRO     & LOW\_PENALTY & PENDIST & HARD     \\ \hline
+Penalty                & 4964 & 4964    & 3840         & 3796    & 3336     \\ \hline
+Reused Planes          & 8    & 8       & 5            & 8       & 5        \\ \hline
+Order performed        & 12   & 12      & 12           & 12      & 12       \\ \hline
+Total orders           & 12   & 12      & 12           & 12      & 12       \\ \hline
 \end{tabular}
 \end{table}
+
+La strategy HARD su questa mappa almeno teoricamente dovrebbe avere un grosso vantaggio dato dal fato che se il robot è in uno stato di riposo in quanto ha già servito tutti gli ordini pendenti, invece di rimanere in uno stato non operativo controlla se ci sono tavoli che possono esser puliti, tramite il comando di checkfinish. In questo modo si trova in uno stato migliore rispetto le altre strategie dovessero arrivare nuovi ordini.
 
 \subsection{Grafici Mappa 10x10}
 
@@ -449,11 +454,11 @@ Total orders           & 12       & 12        & 12          & 12       \\ \hline
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 2172       & 2172      & 2257         & 2208 \\ \hline
-Reused Planes          & 0          & 0         & 0            & 0    \\ \hline
-Order performed        & 6          & 6         & 6            & 6    \\ \hline
-Total orders           & 6          & 6         & 6            & 6    \\ \hline
+\multicolumn{1}{|l|}{} & BASE   & PRO   & LOW\_PENALTY & PENDIST & HARD \\ \hline
+Penalty                & 2172   & 2172  & 2257         &         & 2208 \\ \hline
+Reused Planes          & 0      & 0     & 0            &         & 0    \\ \hline
+Order performed        & 6      & 6     & 6            &         & 6    \\ \hline
+Total orders           & 6      & 6     & 6            &         & 6    \\ \hline
 \end{tabular}
 \end{table}
 
@@ -464,11 +469,11 @@ Dall'esecuzione delle strategie su questa history si nota che si comportano più
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 4694  & 4694       & 4439     & 3966 \\ \hline
-Reused Planes          & 1     & 1          & 1        & 0    \\ \hline
-Order performed        & 12    & 12         & 12       & 12   \\ \hline
-Total orders           & 13    & 13         & 13       & 13   \\ \hline
+\multicolumn{1}{|l|}{} & BASE  & PRO    & LOW\_PENALTY & PENDIST  & HARD \\ \hline
+Penalty                & 4694  & 4694   & 4439         &          & 3966 \\ \hline
+Reused Planes          & 1     & 1      & 1            &          & 0    \\ \hline
+Order performed        & 12    & 12     & 12           &          & 12   \\ \hline
+Total orders           & 13    & 13     & 13           &          & 13   \\ \hline
 \end{tabular}
 \end{table}
 
@@ -478,11 +483,11 @@ Dall'esecuzione delle strategie su questa history notiamo subito che nessuna rie
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 38360  & 38360      & 26596    & 25422 \\ \hline
-Reused Planes          & 10     & 10         & 6        & 2    \\ \hline
-Order performed        & 15     & 15         & 13       & 12  \\ \hline
-Total orders           & 15     & 15         & 15       & 15  \\ \hline
+\multicolumn{1}{|l|}{} & BASE   & PRO        & LOW\_PENALTY & PENDIST & HARD \\ \hline
+Penalty                & 38360  & 38360      & 26596        &         & 25422 \\ \hline
+Reused Planes          & 10     & 10         & 6            &         & 2    \\ \hline
+Order performed        & 15     & 15         & 13           &         & 12  \\ \hline
+Total orders           & 15     & 15         & 15           &         & 15  \\ \hline
 \end{tabular}
 \end{table}
 
@@ -492,11 +497,11 @@ Dall'esecuzione della strategia notiamo subito 2 cose: l'esecuzione di FIFO\_BAS
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 0     & 20873      & 18166    & 13607 \\ \hline
-Reused Planes          & 0     & 4          & 3        & 2    \\ \hline
-Order performed        & 0     & 15         & 15       & 15  \\ \hline
-Total orders           & 0     & 15         & 15       & 13  \\ \hline
+\multicolumn{1}{|l|}{} & BASE & PRO        & LOW\_PENALTY & PENDIST & HARD   \\ \hline
+Penalty                & 0    & 20873      & 18166        &         & 13607  \\ \hline
+Reused Planes          & 0    & 4          & 3            &         & 2      \\ \hline
+Order performed        & 0    & 15         & 15           &         & 15     \\ \hline
+Total orders           & 0    & 15         & 15           &         & 13     \\ \hline
 \end{tabular}
 \end{table}
 
@@ -506,11 +511,11 @@ testo random da aggiungere
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 0     & 21049      & 17665    & 13761 \\ \hline
-Reused Planes          & 0     & 7          & 6        & 2    \\ \hline
-Order performed        & 0     & 13         & 15       & 15   \\ \hline
-Total orders           & 0     & 15         & 15       & 15  \\ \hline
+\multicolumn{1}{|l|}{} & BASE & PRO     & LOW\_PENALTY & PENDIST & HARD   \\ \hline
+Penalty                & 0    & 21049   & 17665        &         & 13761  \\ \hline
+Reused Planes          & 0    & 7       & 6            &         & 2      \\ \hline
+Order performed        & 0    & 13      & 15           &         & 15     \\ \hline
+Total orders           & 0    & 15      & 15           &         & 15     \\ \hline
 \end{tabular}
 \end{table}
 
@@ -521,11 +526,11 @@ testo random da aggiungere
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|}
 \hline
-\multicolumn{1}{|l|}{} & FIFO\_BASE & FIFO\_PRO & LOW\_PENALTY & HARD \\ \hline
-Penalty                & 16664 & 13961      & 13961    & 12780 \\ \hline
-Reused Planes          & 10    & 6          & 6        & 4    \\ \hline
-Order performed        & 15    & 15         & 15       & 15   \\ \hline
-Total orders           & 15    & 15         & 15       & 15  \\ \hline
+\multicolumn{1}{|l|}{} & BASE  & PRO     & LOW\_PENALTY & PENDIST & HARD   \\ \hline
+Penalty                & 16664 & 13961   & 13961        &         & 12780  \\ \hline
+Reused Planes          & 10    & 6       & 6            &         & 4      \\ \hline
+Order performed        & 15    & 15      & 15           &         & 15     \\ \hline
+Total orders           & 15    & 15      & 15           &         & 15     \\ \hline
 \end{tabular}
 \end{table}
 

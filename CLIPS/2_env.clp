@@ -105,7 +105,7 @@
   (declare (salience 24))
   ?f1<- (create-history)
 =>
-  (load-facts "../dom1_wait/history.txt")
+  (load-facts "../m10a/m10a_hperson2.txt")
   (retract ?f1)
 )
 
