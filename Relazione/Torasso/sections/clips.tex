@@ -446,7 +446,7 @@ Total orders           & 12   & 12      & 12           & 12      & 12       \\ \
 \end{tabular}
 \end{table}
 
-La strategy HARD su questa mappa almeno teoricamente dovrebbe avere un grosso vantaggio dato dal fato che se il robot è in uno stato di riposo in quanto ha già servito tutti gli ordini pendenti, invece di rimanere in uno stato non operativo controlla se ci sono tavoli che possono esser puliti, tramite il comando di checkfinish. In questo modo si trova in uno stato migliore rispetto le altre strategie dovessero arrivare nuovi ordini.
+La strategy HARD su questa mappa almeno teoricamente dovrebbe avere un grosso vantaggio dato dal fatto che se il robot è in uno stato di riposo in quanto ha già servito tutti gli ordini pendenti, invece di rimanere in uno stato non operativo controlla se ci sono tavoli che possono esser puliti, tramite il comando di checkfinish. In questo modo si trova in uno stato migliore rispetto le altre strategie dovessero arrivare nuovi ordini.
 
 \subsubsection{Grafici Mappa 20x20}
 
@@ -544,25 +544,84 @@ Per quanto riguarda questa strategia tutte le strategie evadono tutti gli ordini
 \begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE   & PRO   & LOW\_PENALTY & PENDIST & HARD \\ \hline
-Penalty                & 2172   & 2172  & 2257         & 2257    & 2208 \\ \hline
-Reused Planes          & 0      & 0     & 0            & 0       & 0    \\ \hline
-Order performed        & 6      & 6     & 6            & 6       & 6    \\ \hline
-Total orders           & 6      & 6     & 6            & 6       & 6    \\ \hline
+Penalty                & 10763  & 10763 & 8737         & 8229    & 8469 \\ \hline
+Reused Planes          & 1      & 1     & 1            & 2       & 0    \\ \hline
+Order performed        & 7      & 7     & 7            & 7       & 7    \\ \hline
+Total orders           & 9      & 9     & 9            & 9       & 9    \\ \hline
 \end{tabular}
 \end{table}
 
-testo random da aggiungere
+Anche in questo caso vale quanto detto per le mappe 10x10 e 20x20. I paramentri di valutazione sono invariati anche per i test sulle mappe 30x30, sempre per poter avere tutti i risultati consistenti ed equiparabili.
+Dall'esecuzione della history notiamo che tutte le strategie eseguono 7 ordini su 9 e che l'esecuzione della FIFO\_BASE e FIFO\_PRO è identica. LOW\_PENALTY e HARD si comportano decisamente meglio delle semplici FIFO\_BASE e FIFO\_PRO, ma per questa history la migliore risulta PENDIST risparmiando ulteriori 267 penalità nei confronti della HARD.
 
 \subsubsection{Risultati sulla mappa 30x30: hsimple}
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE  & PRO    & LOW\_PENALTY & PENDIST  & HARD \\ \hline
-Penalty                & 4694  & 4694   & 4439         & 4016     & 3966 \\ \hline
-Reused Planes          & 1     & 1      & 1            & 1        & 0    \\ \hline
-Order performed        & 12    & 12     & 12           & 12       & 12   \\ \hline
-Total orders           & 13    & 13     & 13           & 13       & 13   \\ \hline
+Penalty                & 13352 & 13352  & 13041        & 14064    & 14052\\ \hline
+Reused Planes          & 0     & 0      & 1            & 1        & 0    \\ \hline
+Order performed        & 12    & 12     & 13           & 13       & 14   \\ \hline
+Total orders           & 20    & 20     & 20           & 20       & 20   \\ \hline
 \end{tabular}
 \end{table}
 
-testo random da aggiungere
+Per quanto riguarda l'esecuzione della history hsimple, abbiamo parecchi punti da chiarire. Prima di tutto FIFO\_BASE e FIFO\_PRO sembrano comportarsi disceramente bene per questa history, ma il loro ``buon risultato'' va preso con le pinze dato che, a differenza delle altre strategie, eseguono un numero minore di ordini. Stesso discorso vale per PENDIST ma sopratutto per LOW\_PENALTY che sembrerebbe essere la migliore; pur eseguendo un ordine in più di FIFO\_BASE e FIFO\_PRO ne esegue comunque 1 in meno di HARD. HARD, pur avendo un tempo di esecuzione relativamente alto rapportato con le altre strategie, è quella che è in grado di evadere il maggior numero di ordini in questa history.
+
+\subsubsection{Risultati sulla mappa 30x30: hhard}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|l|}
+\hline
+\multicolumn{1}{|l|}{} & BASE   & PRO        & LOW\_PENALTY & PENDIST & HARD \\ \hline
+Penalty                & 49344  & 49344      & 53459        & 51219   & 69313 \\ \hline
+Reused Planes          & 5      & 5          & 6            & 3       & 7    \\ \hline
+Order performed        & 12     & 12         & 12           & 12      & 12  \\ \hline
+Total orders           & 20     & 20         & 20           & 20      & 20  \\ \hline
+\end{tabular}
+\end{table}
+
+Dall'esecuzione della history notiamo subito che tutte le strategie evadono lo stesso numero di ordini. In questo caso possiamo dire effettivamente che FIFO\_BASE e FIFO\_PRO si comportano meglio delle altre strategie più complesse, riuscendo a risparmiare addirittura 1875 penalità da PENDIST che risulta essere la seconda migliore. HARD in questo caso è quella che si comporta peggio di tutti accumulando circa 20000 penalità in più da FIFO\_BASE e FIFO\_PRO.
+
+\subsubsection{Risultati sulla mappa 30x30: hperson1}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|l|}
+\hline
+\multicolumn{1}{|l|}{} & BASE & PRO        & LOW\_PENALTY & PENDIST & HARD   \\ \hline
+Penalty                & NaN  & 28816      & 27850        & 24781   & 33327  \\ \hline
+Reused Planes          & NaN  & 1          & 1            & 2       & 2      \\ \hline
+Order performed        & NaN  & 12         & 12           & 12      & 12     \\ \hline
+Total orders           & NaN  & 20         & 20           & 20      & 20     \\ \hline
+\end{tabular}
+\end{table}
+
+L'esecuzione di FIFO\_BASE si comporta esattamente come nel dominio precedente (mappe 20x20), lasciando l'agente bloccato in deadlock nell'attesa che la persona si sposti. Il numero di ordini serviti dalle altre strategie è lo stesso e anche in questo caso HARD si comporta peggio delle altre accumulando circa 11000 penalità in più della migliora, che in questo caso è PENDIST. FIFO\_PRO e LOW\_PENALTY risultano migliori di HARD ma hanno uno scarto di circa 3500 penalità da PENDIST.
+
+\subsubsection{Risultati sulla mappa 30x30: hperson2}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|l|}
+\hline
+\multicolumn{1}{|l|}{} & BASE & PRO     & LOW\_PENALTY & PENDIST & HARD   \\ \hline
+Penalty                & NaN  & 27495   & 29675        & 25809   & 34061  \\ \hline
+Reused Planes          & NaN  & 4       & 0            & 4       & 3      \\ \hline
+Order performed        & NaN  & 12      & 12           & 12      & 12     \\ \hline
+Total orders           & NaN  & 20      & 20           & 20      & 20     \\ \hline
+\end{tabular}
+\end{table}
+
+Anche in questa mappa FIFO\_BASE non termina la sua esecuzione, per la stessa ragione esposta per la mappa hperson1. Anche i risultati ottenuti dalle altre strategie sono molto simili a quelli ottenuti con hperson1. HARD è rimasta ancora la peggiore, FIFO\_PRO e LOW\_PENALTY sono decisamenti migliore, ma ancora una volta la migliore risulta PENDIST.
+
+\subsubsection{Risultati sulla mappa 30x30: hcheckf}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|l|l|}
+\hline
+\multicolumn{1}{|l|}{} & BASE  & PRO     & LOW\_PENALTY & PENDIST & HARD   \\ \hline
+Penalty                & 26142 & 26142   & 20737        & 17602   & 10387  \\ \hline
+Reused Planes          & 7     & 7       & 6            & 6       & 10     \\ \hline
+Order performed        & 20    & 20      & 20           & 20      & 21     \\ \hline
+Total orders           & 21    & 21      & 21           & 21      & 21     \\ \hline
+\end{tabular}
+\end{table}
+
+Dall'esecuzione della history notiamo subito che l'unica strategia che è in grado di evadere la history per intero e la HARD; oltretutto risulta anche essere la strategia più veloce con una penalità accumulata veramente bassa (10387) e uno scarto di circa 7000 penalità dalla seconda migliore che è PENDIST. LOW\_PENALTY si comporta discretamente, ma accumula comunque un numero di penalità superiore a PENDIST e HARD. Le peggiori risultano essere FIFO\_BASE e FIFO\_PRO.
+
+\subsubsection{Grafici Mappa 30x30}
