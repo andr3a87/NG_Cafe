@@ -19,11 +19,15 @@ block(f).
 %block(g).
 block(h).
 
-list_block(B):-list_to_ord_set([a,b,c,d,e,f,h],B).
+% list_block(B):-list_to_ord_set([a,b,c,d,e,f,h],B).
+% iniziale(S):-list_to_ord_set([clear(a), on(e,f), on(d,e), on(c,d),on(b,c),on(a,b), ontable(f),ontable(h),clear(h),handempty],S).
+% goal(G):-list_to_ord_set([clear(a), on(d,f), on(h,d), on(c,h),on(b,c),on(a,b), ontable(e),ontable(f),clear(e)],G).
 
-iniziale(S):-list_to_ord_set([clear(a), on(e,f), on(d,e), on(c,d),on(b,c),on(a,b), ontable(f),ontable(h),clear(h),handempty],S).
+list_block(B):-list_to_ord_set([a,b,c,d,e],B).
+iniziale(S):-list_to_ord_set([on(a,b),on(b,c),ontable(c),clear(a),on(d,e),ontable(e),clear(d),handempty],S).
+goal(G):- list_to_ord_set([on(a,b),on(b,c),on(c,d),ontable(d),ontable(e),clear(a),clear(e)],G).
 
-goal(G):-list_to_ord_set([clear(a), on(d,f), on(h,d), on(c,h),on(b,c),on(a,b), ontable(e),ontable(f),clear(e)],G).
+
 
 finale(S):- goal(G), ord_subset(G,S).
 
@@ -96,9 +100,16 @@ cost_of_state(S,Goal,[H|T]) :-
         check_pila(S,Goal,H),
         cost_of_state(S,Goal,T).
 
+% Caso in cui il blocco è sul tavolo.
 cost_of_state(S,Goal,[H|T]) :- 
         block(H),
         ord_memberchk(ontable(H),S),
+        cost_of_state(S,Goal,T).
+
+% Caso in cui il blocco è holding.
+cost_of_state(S,Goal,[H|T]) :- 
+        block(H),
+        ord_memberchk(holding(H),S),
         cost_of_state(S,Goal,T).
 
 % Caso in cui ci sia un blocco sul tavolo senza niente sopra. Assegno un +0.
@@ -117,9 +128,10 @@ check_pila(S,Goal,Blocco) :-    ord_memberchk(ontable(Blocco),S),
 
 % Caso in cui il supporto di un blocco sia uguale sia nello stato S sia nello stato Goal. Assegno un +1.                                
 check_pila(S,Goal,Blocco) :-    ord_memberchk(ontable(Blocco),S), 
-                                ord_memberchk(ontable(Blocco),Goal), 
-                                ord_memberchk(on(_,Blocco),S), 
-                                ord_memberchk(on(_,Blocco),Goal),
+                                ord_memberchk(ontable(Blocco),Goal),
+                                block(X),
+                                ord_memberchk(on(X,Blocco),S), 
+                                ord_memberchk(on(X,Blocco),Goal),
                                 cost(R),
                                 retract(cost(_)),
                                 R1 is R + 1,
