@@ -144,8 +144,9 @@ Nella fase 7 inoltre quando il robot svuota l'immondizia bisogna andare a settar
 \end{figure}
 
 \subsection{Vantaggi e Svantaggi}
-Il sistema riesce dinamicamente a servire i vari ordini ripianificando i percorsi o cambiando gli ordini da servire. Obiettivo di questa strategia è rendere il sistema più robusto e flessibile. Utilizzando questa strategia rispetto alla precedente non è detto che si migliori l'efficienza del sistema.
+Il sistema riesce dinamicamente a servire i vari ordini ripianificando i percorsi o cambiando gli ordini da servire. Obiettivo di questa strategia è rendere il sistema più robusto e flessibile. 
 Anche utilizzando questa strategia il sistema potrebbe rimanere bloccato, si veda la figura \ref{fig:figure6}. Si potrebbe ulteriormente ottimizzarla andando a imporre un numero di fallimenti massimo per arrivare a una specifica posizione; arrivati a tale limite l'ordine viene rimpiazzato dal successivo.
+
 
 \begin{SCfigure}[]
 \centering
@@ -164,7 +165,7 @@ Obiettivo di questa strategia è quella di minimizzare le penalità rispetto all
 \section{Strategia HARD}
 La strategia HARD è la più complessa e permette di servire più tavoli in contemporanea. In comune con la strategia precedente ha la ripianificazione nel caso il piano calcolato fallisca, e il cambio dell'ordine corrente per un altro nel caso non si riesca a trovare un piano per arrivare a destinazione.
 
-Iniziamo a vedere i\l meccanismo con il quale viene scelto l'ordine da evadere (\emph{FASE 1}).
+Iniziamo a vedere il meccanismo con il quale viene scelto l'ordine da evadere (\emph{FASE 1}).
 
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{HARD_fase1}
@@ -185,13 +186,13 @@ x3=\sum_{k=1}^n Ordine_\textup{finish,k}(pen).
 \]
 
 Dalla formula \eqref{eqn:ordine} si deduce qual'è l'insieme di ordini che a ogni istante di tempo introducono più penalità nel sistema. Una volta individuato questo insieme si cerca al suo interno l'ordine con penalità maggiore. Tale ordine verrà servito.
-In alcuni casi il robot prima di servire tale ordine deve compiere delle altre operazion:
+In alcuni casi il robot prima di servire tale ordine deve compiere delle altre operazioni:
 \begin{itemize}
   \item l'ordine da evadere è una finish o delayed ma ho delle consumazioni a bordo, il robot deve consegnare le consumazioni che ha prima di servire l'ordine finish o delayed. Di conseguenza bisogna cercare uno o più ordini accepted. L'idea che sta alla base della ricerca in questo caso è quella di trovare l' ordine o gli ordini che minimizzino il numero di consegne. Se il robot si trova in una situazione di 1drink e 1food preferirà consegnare le consumazioni a un singolo tavolo invece che a due diversi.
   \item l'ordine da evadere è un accepted ma il robot ha sporco a bordo, il sistema forza il robot a recarsi ai cestini.
 \end{itemize}
 
-La fase 2 e 3 sono quasi identiche alle precedenti. La fase 2 viene esegita solo nel caso di ordini accepted, quindi si ricercherà solo il dispenser più vicino al robot.
+La fase 2 e 3 sono quasi identiche alle precedenti. La fase 2 viene eseguita solo nel caso di ordini accepted, quindi si ricercherà solo il dispenser più vicino al robot.
 
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{HARD_fase2}
@@ -246,9 +247,16 @@ Si è dovuto gestire il caso in cui A* fallisca. Una prima soluzione in caso A* 
   \item effettuare delle checkfinish. Se non vi sono ordini finish possiamo cercare se vi sono degli ordini accepted le cui consumazioni sono state consumate e quindi è possibile effettuare un operazione di pulizia del tavolo.
 \end{itemize}
 
-
 \subsection{Checkfinish}
+La stategy HARD utilizza anche il comando checkfinish, per controllare se il tavolo ha finito di consumare. Questo comando può esser utilizzato per pulire un tavolo senza aspettare un ordine di finish. Questo non ha un impatto immediato sulle penalità, ma se il robot pulisce un tavolo tramite tale criterio, e successivamente arriva un ordine finish, allora il robot si troverà in uno stato in cui ha già pulito il tavolo e l'ordine non viene preso in cosiderazione. Al contrario dovrà prendere in consegna l'ordine e accumulare delle penalitò fin quando non sarà evaso.
+Questa modalità viene attivata quando il robot non ha ordini da evadere. L'idea è quella di portarsi avanti ipotizzando ordini successivi per i tavoli attualmente sporchi, e quindi decidendo di pulirli nel caso la risposta al comando checkfinish sia positiva. Quindi quando il robot non ha ordini pendenti, si reca a ogni tavolo sporco ed effettua una checkfinish. Se la risposta è positiva carica lo sporco. Se non sono arrivati altri ordini ripete tale operazione per il successivo tavolo sporco. Se non ci sono più tavoli sporchi o se è arrivato un ordine si reca ai cestini.
+
+
 \subsection{Vantaggi e Svantaggi}
+Anche in questa stategia è possibile come nelle precedenti una situazione di stallo(\ref{fig:figure6}).
+Ipotizziamo per questa strategia due grossi vantaggi. Il primo è quello che riesce a servire più ordini in contemporanea, quindi in particolari situazione è in grado di recarsi una sola volta ai vari dispenser e riuscire a completare più ordini provenienti da tavoli diversi. L'altro vantaggio è dato dalla checkfinish, che permette al robot di trovarsi in uno stato con tutti i tavoli puliti e quindi pronto a servire i successivi ordini.
+Questa strategia potrebbe dover tornare a un tavolo più volte rispetto alle precedenti, e con mappe molto grosse questo potrebbe risultare un problema. Supponiamo di avere 2 ordini uno proveniente dal tavolo T1 con la richiesta di 2 food e 2 drink, e uno dal tavolo T2 con 2 food e 1 drink. Le altre strategia che servono un ordine per volta, caricherebbero 2 food e 2 drink completando l'ordine T1. Mentre questa strategia caricherebbe 4 food e ne consegnerebbe 2 a T1 e 2 a T2. In questo modo deve tornare una seconda volta al tavolo T1 per la completare la richiesta con 2 drink.
+Un altro svantaggio potrebbe verificarsi durante le operazioni di checkfinish. Supponiamo che il robot non abbia ordini da evadere e inizia le operazioni di checkfinish e inizia a pulire i tavoli. Se arriva un ordine accepted il robot a differenze delle altre strategie non potrà iniziare subito le operazioni di evasione, ma dovrà prima completare l'ordine fittizio di checkfinish che ha preso in carico e poi recarsi ai cestini per svuotare lo sporco, accumulando penalità.
 
 \section{Risultati}
 Le quattro strategie sono state create in maniera incrementale, aggiungendo regole e modificandone alcune al fine di migliorare le prestazioni delle strategie e minimizzare la penalità accumulata. Al fine di confermare queste ipotesi abbiamo creato un gruppo di history per trarre conclusioni e fare assunzioni basate su dati certi, le \emph{Final Results History}.
@@ -448,7 +456,18 @@ Total orders           & 12   & 12      & 12           & 12      & 12       \\ \
 
 La strategy HARD su questa mappa almeno teoricamente dovrebbe avere un grosso vantaggio dato dal fatto che se il robot è in uno stato di riposo in quanto ha già servito tutti gli ordini pendenti, invece di rimanere in uno stato non operativo controlla se ci sono tavoli che possono esser puliti, tramite il comando di checkfinish. In questo modo si trova in uno stato migliore rispetto le altre strategie dovessero arrivare nuovi ordini.
 
-\subsubsection{Grafici Mappa 20x20}
+\subsubsection{Grafici Mappa 10x10}
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{10x10_penalties}
+  \caption{Grafico Penalità mappe 10x10}
+  \label{fig:figure11}
+\end{figure}
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{10x10_mean_pen}
+  \caption{Grafico penalità media per ordine}
+  \label{fig:figure12}
+\end{figure}
 
 \subsubsection{Risultati sulla mappa 20x20: hdefault}
 \begin{table}[h]
@@ -536,8 +555,19 @@ Total orders           & 15    & 15      & 15           & 15      & 15     \\ \h
 
 Per quanto riguarda questa strategia tutte le strategie evadono tutti gli ordini. FIFO\_BASE risulta la peggiore di tutte dato che l'agente è costretto a perdere del tempo prezioso in attesa che le persone gli lascino campo libero per poter proseguire a servire i tavoli.PENDIST risulta migliore della strategia di base, ma leggermente peggiore delle strategie FIFO\_PRO e LOW\_PENALTY le quali risultano in questo caso identiche; questo è dovuto al semplice fatto che prendendo in carico gli ordini allo stesso modo i passi dell'agente risultano i medesimi per entrambe le strategie e dato che la gestione delle interferenza da parte delle persone è la medesima, la penalità accumulata è uguale. HARD si dimostra la migliore delle cinque riuscendo a portare a termine tutta la history con penalità più bassa
 
-
 \subsubsection{Grafici Mappa 20x20}
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{20x20_penalties}
+  \caption{Grafico Penalità mappe 10x10}
+  \label{fig:figure11}
+\end{figure}
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{20x20_mean_pen}
+  \caption{Grafico penalità media per ordine}
+  \label{fig:figure12}
+\end{figure}
+
 
 \subsubsection{Risultati sulla mappa 30x30: hdefault}
 \begin{table}[h]
@@ -625,3 +655,17 @@ Total orders           & 21    & 21      & 21           & 21      & 21     \\ \h
 Dall'esecuzione della history notiamo subito che l'unica strategia che è in grado di evadere la history per intero e la HARD; oltretutto risulta anche essere la strategia più veloce con una penalità accumulata veramente bassa (10387) e uno scarto di circa 7000 penalità dalla seconda migliore che è PENDIST. LOW\_PENALTY si comporta discretamente, ma accumula comunque un numero di penalità superiore a PENDIST e HARD. Le peggiori risultano essere FIFO\_BASE e FIFO\_PRO.
 
 \subsubsection{Grafici Mappa 30x30}
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{30x30_penalties}
+  \caption{Grafico Penalità mappe 10x10}
+  \label{fig:figure11}
+\end{figure}
+
+\begin{figure}[htp]
+  \includegraphics[width=\textwidth]{30x30_mean_pen}
+  \caption{Grafico penalità media per ordine}
+  \label{fig:figure12}
+\end{figure}
+
+
+\section{Conclusioni}
