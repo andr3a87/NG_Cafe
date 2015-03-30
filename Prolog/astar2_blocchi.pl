@@ -104,7 +104,7 @@ calcolo_euristica(S, G) :-
         assert(cost(0)),
         cost_of_state(S,Goal,B),
         cost(Ris),
-        F is G + Ris,
+        F is G - Ris,
         retract(f_val(_)),
         assert(f_val(F)).
 
@@ -132,7 +132,7 @@ check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S)
                                                 ord_memberchk(clear(Blocco),Goal).
 
 % Caso in cui il supporto di un blocco è diverso nello stato S e nello stato Goal.In quanto il blocco nello stato S è sul tavolo, 
-% e nello stato Goal no. Assegno un -N_ok.                                
+% e nello stato Goal no. Assegno un -(N_ok + N_nok).                                
 check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S), 
                                                 \+ ord_memberchk(ontable(Blocco),Goal), 
                                                 cost(R),
@@ -140,7 +140,7 @@ check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S)
                                                 R1 is R - (N_ok + N_nok),
                                                 assert(cost(R1)).
 
-% Caso in cui il supporto di un blocco sia uguale sia nello stato S sia nello stato Goal. Assegno un +N_ok.                                
+% Caso in cui il supporto di un blocco sia uguale sia nello stato S sia nello stato Goal. Assegno un - (N_ok + N_nok).                                
 check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S), 
                                                 ord_memberchk(ontable(Blocco),Goal),
                                                 block(X),
@@ -152,7 +152,18 @@ check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S)
                                                 R1 is R - (N_ok + N_nok),
                                                 assert(cost(R1)).
 
-% Caso in cui il supporto di un blocco sia uguale sia nello stato S sia nello stato Goal. Assegno un +1.                                
+% Caso in cui il supporto di un blocco sia uguale sia nello stato S sia nello stato Goal. Assegno un - (N_ok + N_nok).                                
+check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S), 
+                                                ord_memberchk(ontable(Blocco),Goal),
+                                                block(X),
+                                                ord_memberchk(on(X,Blocco),S), 
+                                                \+ ord_memberchk(on(X,Blocco),Goal),
+                                                cost(R),
+                                                retract(cost(_)),
+                                                R1 is R - (N_ok + N_nok),
+                                                assert(cost(R1)).
+
+% Caso in cui il supporto di un blocco sia uguale sia nello stato S sia nello stato Goal. Assegno un +(N_ok + N_nok).                                
 check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S), 
                                                 ord_memberchk(ontable(Blocco),Goal),
                                                 block(X),
@@ -164,25 +175,15 @@ check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S)
                                                 R1 is R + (N_ok + N_nok),
                                                 assert(cost(R1)).
 
-% Caso in cui il supporto di un blocco non sia uguale sia nello stato S sia nello stato Goal. Assegno un - (N_ok + N_nok).                                
-check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S), 
-                                                ord_memberchk(ontable(Blocco),Goal),
-                                                block(X),
-                                                ord_memberchk(on(X,Blocco),S), 
-                                                \+ ord_memberchk(on(X,Blocco),Goal),
-                                                cost(R),
-                                                retract(cost(_)),
-                                                R1 is R - (N_ok + N_nok),
-                                                assert(cost(R1)).
 
-% Caso in cui il supporto fino adesso controllato non è uguale nello stato S e nello Stato Goal. Assegno un -1.
+% Caso in cui il supporto fino adesso controllato non è uguale nello stato S e nello Stato Goal. Itero aggiornando N_nok.
 check_pila(S,Goal,Blocco,N_ok,N_nok) :-         block(X),
                                                 ord_memberchk(on(Blocco,X),S),
                                                 \+ ord_memberchk(on(Blocco,X),Goal),
                                                 N is N_nok + 1,
                                                 check_pila(S,Goal,X,N_ok,N).
 
-% Caso in cui il supporto fino adesso controllato è uguale sia nello stato S sia nello Stato Goal. Itero.
+% Caso in cui il supporto fino adesso controllato è uguale sia nello stato S sia nello Stato Goal. Itero. Itero aggiornando N_ok.
 check_pila(S,Goal,Blocco,N_ok,N_nok) :-         block(X),
                                                 ord_memberchk(on(Blocco,X),S),
                                                 ord_memberchk(on(Blocco,X),Goal),
@@ -207,7 +208,7 @@ best_node(_,[],[]).
 best_node(nodo(Fcost, Gcost, S, Lista_Az), [Az|R_az], Lista_children) :-       
         trasforma(Az, S, Nuovo_S),
         append(Lista_Az, [Az], Nuova_lista_az),
-        % num_nodi_open,
+        % num_nodi_open, 
         best_node(nodo(Fcost, Gcost, S, Lista_Az), R_az, Old_children),
         G1 is Gcost + 1,
         calcolo_euristica(Nuovo_S, G1),
