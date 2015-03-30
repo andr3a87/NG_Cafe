@@ -6,26 +6,29 @@
 :- use_module(library(statistics)).
 :-dynamic(f_val/1). f_val(0).
 :-dynamic(h_val/1). h_val(0).
+?- set_prolog_stack(global, limit(2*10**9)).
 
 
-block(a).
-block(b).
-block(c).
-block(d).
-block(e).
-block(f).
-block(g).
-block(h).
+% esempio Prof. Torasso
 
-
-iniziale(S):-
-        list_to_ord_set([clear(a), clear(c), clear(d), clear(e), clear(f), clear(g), clear(h), on(a,b), ontable(b), ontable(c), ontable(d), ontable(e), ontable(f), ontable(g), ontable(h), handempty],S).
-
-goal(G):- list_to_ord_set([on(a,b),on(b,c),on(c,d),on(d,e),
-        ontable(e)],G).
-
-finale(S):- goal(G), ord_subset(G,S).
-
+ block(a).
+ block(b).
+ block(c).
+ block(d).
+ block(e).
+ block(f).
+ block(g).
+ block(h).
+ 
+ list_block(B):-list_to_ord_set([a,b,c,d,e,f,g,h],B).
+ 
+ iniziale(S):-
+         list_to_ord_set([clear(a), clear(c), clear(d), clear(e), clear(f), clear(g), clear(h), on(a,b), ontable(b), ontable(c), ontable(d), ontable(e), ontable(f), ontable(g), ontable(h), handempty],S).
+ 
+ goal(G):- list_to_ord_set([on(a,b),on(b,c),on(c,d),on(d,e),
+         ontable(e)],G).
+ 
+ finale(S):- goal(G), ord_subset(G,S).
 
 applicabile(pickup(X),S):-
         block(X),
