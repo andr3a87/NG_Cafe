@@ -45,11 +45,11 @@ ampiezza:- iniziale(S),
 La ricerca in ampiezza è stata implementata in modo classico, fornendo una regola \lstinline{ric_amp([nodo(S,LISTA_AZ)|_],LISTA_AZ)} per il caso base e una \lstinline{ric_amp([nodo(S,LISTA_AZ)|RESTO],SOL)} per il caso generico.
 La prima non fa altro che controllare che lo stato S sia lo stato finale, mentre la seconda invoca le regole \lstinline{ espandi(nodo(S,LISTA_AZ),LISTA_SUCC) } e \lstinline{append(RESTO, LISTA_SUCC,CODA)}, per poi richiamare ricorsivamente \lstinline{ric_amp}.
 La regola espandi non fa altro che prendere lo stato \lstinline{S}, espanderlo e cercare tutte le azioni applicabili(con \lstinline{findall} da quello stato; tramite la regola \lstinline{successori()} costruisce la lista dei nuovi stati disponibili a partire dallo stato \lstinline{S}, che saranno poi aggiunti agli stati ancora da espandere tramite la regola \lstinline{append()}.
-Infine richiama ricorsivamente la regola per controllare di aver raggiunto lo stato finale e in caso contrario proseguire con l'espansione dei nodi.
-Dato che vengono espansi tutti i nodi e dato che un nodo può essere espanso più volte questa strategia può non terminare, perchè fa raggiungere il limite di memoria disponibile.
+Infine richiama ricorsivamente la regola per controllare di aver raggiunto lo stato finale e in caso contrario proseguire con l'espansione dei nodi. 
+Se la soluzione si trova a una profondità d e il branching factor è b verranno espansi \begin{math} b^{d+1}-b \end{math}. Tutti questi nodi dovranno rimanere in memoria. Dato il numero elevato di nodi espansi e che un nodo può essere espanso più volte questa strategia può non terminare, perchè fa raggiungere il limite di memoria disponibile.
 
 \subsection{Dominio dei Cammini}
-Per quanto riguarda il dominio dei cammini, la ricerca in ampiezza risulta sensata solo se la soluzione si trova ad un livello di profondità relativamente basso, altrimenti si incorre nell'esaurimento di memoria. Per quanto riguarda l'esempio specifico fornito dal Prof. Martelli e quello del professor Torasso la ricerca della soluzione ha esito negativo perchè la soluzione si trova ad un livello di profondità che la ricerca in ampiezza non è in grado di raggiungere.
+Per quanto riguarda il dominio dei cammini, la ricerca in ampiezza risulta sensata solo se la soluzione si trova ad un livello di profondità basso, altrimenti si incorre nell'esaurimento di memoria. Per quanto riguarda l'esempio specifico fornito dal Prof. Martelli e quello del professor Torasso la ricerca della soluzione ha esito negativo perchè la soluzione si trova ad un livello di profondità che la ricerca in ampiezza non è in grado di raggiungere causando un esaurimento della memoria.
 
 \subsection{Dominio del Mondo Dei Blocchi}
 Anche per quanto riguarda il dominio del mondo dei blocchi il risultato non cambia. Infatti anche in questo caso l'esempio fornito dal professore ha esito negativo perchè nuovamente la soluzione risulta troppo in profondità per essere raggiunta.
@@ -99,8 +99,8 @@ node(nodo(S, Lista_Az), [Az|R_az], Lista_children) :-
 \subsection{Analisi dettagliata della strategia}
 
 La ricerca in ampiezza su grafi può essere considerata come un ottimizzazione della ricerca in ampiezza classica. Introduce il concetto di lista chiusa per migliorare la ricerca della soluzione. Una lista chiusa non è altro che una lista composta da tutti i nodi visitati. Quando
-dobbiamo espandere un nuovo nodo andiamo prima a verificare che questo nodo non sia nella lista dei nodi chiusi (nel codice con \lstinline{member(S, Closed) -> ric_ampiezza(R_lista_open, Closed, Lista_Ris);}); se appartiene a quella lista lo scartiamo semplicemente, se invece non appartiene a quella lista allora possiamo procedere con l'espansione con la regola  \lstinline{open_node(nodo(S, Lista_Az), Lista_children),}.
-Evitando di ri-espandere nodi già completamente visitati migliora di molto la versione base dell'algoritmo della visita in ampiezza, riducendo di molto il numero di nodi che vengono effettivamente visitati. Una volta aperto il nodo non si fa altro che verificare tutte le azioni applicabili da quel nodo \lstinline{findall(Az, applicabile(Az,S), Az_applicabili),}, dopodiche si invoca la regola \lstinline{node(nodo(S, Lista_Az), Az_applicabili, Lista_childern)} che non fa altro che applicare le azioni prese dalla lista delle azioni possibile ed inserire i nodi risultanti nei nodi da visitare ai passi successivi.
+dobbiamo espandere un nuovo nodo andiamo prima a verificare che questo nodo non sia nella lista dei nodi chiusi (nel codice con \lstinline{member(S, Closed) -> ric_ampiezza(R_lista_open, Closed, Lista_Ris);}); se appartiene a quella lista lo scartiamo, se invece non appartiene a quella lista allora possiamo procedere con l'espansione con la regola  \lstinline{open_node(nodo(S, Lista_Az), Lista_children),}.
+Evitando di ri-espandere nodi già completamente visitati migliora di molto la versione base dell'algoritmo della visita in ampiezza, riducendo di molto il numero di nodi che vengono effettivamente visitati, e di conseguenza lo spazio di memoria necessario per contenerli. Una volta aperto il nodo non si fa altro che verificare tutte le azioni applicabili da quel nodo \lstinline{findall(Az, applicabile(Az,S), Az_applicabili),}, dopodiche si invoca la regola \lstinline{node(nodo(S, Lista_Az), Az_applicabili, Lista_childern)} che non fa altro che applicare le azioni prese dalla lista delle azioni possibile ed inserire i nodi risultanti nei nodi da visitare nei passi successivi.
 
 \subsection{Dominio dei Cammini}
 Vista l'ottimizzazione apportata all'algoritmo di base per la ricerca in ampiezza, il nuovo algoritmo è in grado di trovare una soluzione agli esempi presi in esame precedentemente con la sola ricerca in ampiezza. Nello specifico sull'esempio del professor Martelli (cammini 10x10) l'algoritmo trova una soluzione in 0.017 secondi, visitando appena 66 nodi e facendo 19508 inferenze. Si è riusciti a passare dalla non terminazione ad avere una soluzione con appena 66 nodi visitati. Anche per quanto riguarda l'esempio del professor Torasso (cammini 20x20) l'algoritmo è in grado di trovare una soluzione in 0.031 secondi, visitando 374 nodi e facendo 178644 inferenze. Anche in questo caso abbiamo un aumento impressionante delle prestazioni, dato che ovviamente nella versione di base non era in grado di generare una soluzione.
@@ -119,7 +119,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 \end{figure}
 
 \subsection{Dominio del Mondo Dei Blocchi}
-Anche in questo caso la strategia è in grado di fornirci una soluzione a differenza della controparte di base. Per quanto riguarda l'esempio fornito dal professor Martelli l'algoritmo è in grado di generare una soluzione in 0.085 secondi, visitando 487 nodi e facendo 528177 inferenze.Sfortunatamente per quanto riguarda l'esempio del professor Torasso la situazione non cambia dalla versione base; l'algoritmo non è in grado di trovare la soluzione e Prolog ci ritorna out of memory che indica che il limite di memoria è stato raggiunto.
+Anche in questo caso la strategia è in grado di fornirci una soluzione a differenza della controparte di base. Per quanto riguarda l'esempio fornito dal professor Martelli l'algoritmo è in grado di generare una soluzione in 0.085 secondi, visitando 487 nodi e facendo 528177 inferenze. Per quanto riguarda l'esempio del professor Torasso la situazione non cambia dalla versione base; l'algoritmo non è in grado di trovare la soluzione in quanto lo spazio di ricerca rimane troppo vasto per esser esplorato tutto.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \begin{figure}[htp]
@@ -175,7 +175,9 @@ prof_id :-
 La ricerca in profondità è stato sviluppata in 2 versione; la prima riceve in input una profondità D oltre la quale la ricerca non può andare; la seconda invece parte con una profondità di 1 e man mano che vengono visitati tutti i nodi entro quella profondità senza trovare soluzione, la profondità viene aumentata di un livello. La seconda procedura è denominata Iterative Deepening.
 L'implementazione della prima versione è molto semplice. Come per la ricerca in ampiezza abbiamo 2 regole, una per il caso base e una per il caso generico. Nuovamente la regola per il caso base non fa altro che verificare che lo stato corrente \lstinline{S} sia lo stato finale. La regola del passo generico è stata sviluppata nel seguente modo: se la profondità non è minore di zero applico allo stato corrente S la prima delle azioni applicabili disponibili, dopodiche controllo che il nuovo stato non sia stato già visitato, decremento la profondità di 1 ed infine richiamo la regola ricorsivamente sul nuovo stato. Se la profondità risulta minore di zero, significa che ho superato il limite imposto e di conseguenza non posso scendere oltre nell'espansione.
 Prolog farà backtracking e procederà con l'applicazione di un'altra delle azioni applicabili per quel nodo e si procede nuovamente come descritto sopra. Se la soluzione è oltre il limite imposto a priori Prolog resituirà false, altrimenti viene restituita la lista delle azioni per raggiungerla.
+
 L'implementazione della seconda versione sfrutta la prima. Utilizza le due regole per scendere in profondità nei vari stati, ai quali viene aggiunta una regola per aumentare il limite di un livello, quando la ricerca non trova soluzione all'interno del limite corrente. Il limite che viene fornito a priori è di 1 e ci si ferma solo quando si trova la soluzione.
+La ricerca in profondità ha requisiti di memoria molto bassi, in quanto deve ricordare tutti i nodi di un solo cammino insieme a tutti i fratelli non espansi di ogni nodo del cammino. Una volta espanso e che tutti i suoi discendenti sono stati trovati il nodo può esser rimosso dalla memoria. A differenza della ricerca in ampiezza il numero massimo di nodi da mantenere in memoria con un fattore di ramificazione b e profondità massima m è \begin{math}bm + 1\end{math}.
 
 
 \subsection{Dominio dei Cammini}
@@ -211,7 +213,57 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 \end{figure}
 
 \chapter{Strategie informate}
-In questo capitolo verrà trattata l'implementazione delle strategie informate viste a lezione ovvero la ricerca in ampiezza sui grafi, la ricerca in profondità ad approfondimento iterativo con stima (IDA*) e la ricerca in ampiezza sui grafi con stima (A*); per ognuna di queste strategie verrà proposta l'implementazione generale e l'euristica specifica utilizzata per i due domini proposti che sono il dominio dei cammini e il dominio del mondo dei blocchi.
+In questo capitolo verrà trattata l'implementazione delle strategie informate viste: la ricerca in profondità ad approfondimento iterativo con stima (IDA*) e la ricerca in ampiezza sui grafi con stima (A*). Per ognuna di queste strategie verrà proposta l'implementazione generale e l'euristica specifica utilizzata per il dominio dei cammini, il dominio del mondo dei blocchi,il dominio della metropolitana.
+
+\section{Euristiche Utilizzate}
+
+\subsection{Euristica dei cammini}
+\begin{lstlisting}
+calcolo_euristica(pos(R,C),pos(R1,C1), G) :-
+        X is R - R1,
+        Y is C - C1,
+        abs(X, Xabs),
+        abs(Y, Yabs),
+        H is Xabs + Yabs,
+        F is G + H,
+        retract(f_val(_)),
+        assert(f_val(F)),
+        retract(h_val(_)),
+        assert(h_val(H)).
+\end{lstlisting}
+
+Per quanto riguarda il dominio dei cammini l'euristica utilizzata per generare i valori di \lstinline{f_val} è stata la classica distanza di Manhattan. Vengono presi in input le coordinate \lstinline{x} e \lstinline{y} del nodo corrente e del nodo goal e si esegue questo semplice calcolo:
+\begin{math}
+$$ L1(p1,p2) = |x1 - x2| + |y1 - y2|$$
+$$F = G + L1$$
+\end{math}
+
+\lstinline{G} viene passata come parametro nella regola, mentre il valore \lstinline{F} che viene calcolato viene asserito come \lstinline{f_val}.
+
+\subsection{Euristica dei blocchi locale}
+\begin{lstlisting}
+calcolo_euristica(S, G) :-
+        goal(Res),
+        ord_subtract(S, Res, Diff),
+        calcola_h(Diff, Ndiff),
+        h_val(Ndiff),
+        F is G + Ndiff,
+        retract(f_val(_)),
+        assert(f_val(F)).
+
+calcola_h([],0).
+calcola_h([_|Resto_Ok],H) :-
+        calcola_h(Resto_Ok, H1),
+        H is H1 + 1,
+        retract(h_val(_)),
+        assert(h_val(H)).
+\end{lstlisting}
+
+L'euristica utilizzata per il mondo dei blocchi fornisce il nostro valore di \lstinline{f_val} sommando il costo del cammino trovato dal nodo iniziale al nodo corrente, con il numero dei blocchi che si trovano nella posizione della configurazione finale. Questo viene fatto generando la lista dei nodi in posizione corretta tramite \lstinline{ord_subtract(List1,List2,Res)}. \lstinline{Ord_subtract} è una regola nativa di Prolog e non fa altro che sottrarre la \lstinline{List1} dalla \lstinline{List2} due e mettere la lista risultante in \lstinline{Res}. Infine tramite la regola \lstinline{calcola_h} contiamo gli elementi di \lstinline{Res} per trovare il numero dei blocchi in posizione correta che saranno poi sommati a G per avere la nostra \lstinline{f_val}.
+
+\subsection{Euristica dei blocchi globale}
+\subsection{Euristica della metropolitana di Londra}
+
 
 \section{Ricerca in profondità ad approfondimento iterativo con stima (IDA*)}
 
@@ -278,28 +330,7 @@ Più nel dettaglio l'algoritmo inizia il suo lavoro settando la \lstinline{f_val
 Nel caso base è stato aggiunto un controllo sulla profondità, ovvero che la nostra \lstinline{f_val} deve essere minore o uguale alla profondità; se è cosi si procede con il semplice controllo di S come stato finale, altrimenti si passa alla regola per aggiornare la soglia.
 Per quanto riguarda il caso generico, abbiamo sempre il controllo della \lstinline{f_val} sulla profondità e in più abbiamo il suo ricalcolo tramite l'euristica specifica del dominio. La regola \lstinline{try_prof(F)} ha una doppia funzione: oltre ad aggiornare la soglia quando questa risulta maggiore della nostra \lstinline{f_val} corrente, ci permette di bloccare la ricerca quando siamo nel caso opposto, ovvero che la \lstinline{f_val} risulta maggiore del nostro valore di soglia fissato. Infine quando la ricerca in profondità fallisce abbiamo una regola per riportare al valore di default la soglia e ricominciare nuovamente la ricerca in profondità.
 
-\subsection{Dominio dei Cammini}
-
-\begin{lstlisting}
-calcolo_euristica(pos(R,C),pos(R1,C1), G) :-
-        X is R - R1,
-        Y is C - C1,
-        abs(X, Xabs),
-        abs(Y, Yabs),
-        H is Xabs + Yabs,
-        F is G + H,
-        retract(f_val(_)),
-        assert(f_val(F)),
-        retract(h_val(_)),
-        assert(h_val(H)).
-\end{lstlisting}
-
-Per quanto riguarda il dominio dei cammini l'euristica utilizzata per generare i valori di \lstinline{f_val} è stata la classica distanza di Manhattan. Vengono presi in inpunt le coordinate \lstinline{x} e \lstinline{y} del nodo corrente e del nodo goal e si esegue questo semplice calcolo:
-
-$$ L1(p1,p2) = |x1 - x2| + |y1 - y2|$$
-$$F = G + L1$$
-
-\lstinline{G} viene passata come parametro nella regola, mentre il valore \lstinline{F} che viene calcolato viene asserto come \lstinline{f_val}. Per quanto riguarda l'esempio fornito dal Prof. Martelli (cammini 10x10) l'algoritmo precedentemente descritto, sfruttando quest'euristica, è in grado di fornire la soluzione ottima a costo minimo; nello specifico l'algoritmo fornisce una soluzione dopo 0.123 secondi, visitando solamente 13078 nodi e facendo 681842 inferenze. Anche sull'esempio del professor. Torasso (cammini 20x20) l'algoritmo si comporta egregiamente trovando soluzione in solamente 0.146 secondi, visitando 15796 nodi e facendo 791573 inferenze.
+ Per quanto riguarda l'esempio fornito dal Prof. Martelli (cammini 10x10) l'algoritmo precedentemente descritto, sfruttando quest'euristica, è in grado di fornire la soluzione ottima a costo minimo; nello specifico l'algoritmo fornisce una soluzione dopo 0.123 secondi, visitando solamente 13078 nodi e facendo 681842 inferenze. Anche sull'esempio del professor. Torasso (cammini 20x20) l'algoritmo si comporta egregiamente trovando soluzione in solamente 0.146 secondi, visitando 15796 nodi e facendo 791573 inferenze.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \begin{figure}[htp]
@@ -316,25 +347,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \subsection{Dominio del Mondo dei Blocchi}
 
-\begin{lstlisting}
-calcolo_euristica(S, G) :-
-        goal(Res),
-        ord_subtract(S, Res, Diff),
-        calcola_h(Diff, Ndiff),
-        h_val(Ndiff),
-        F is G + Ndiff,
-        retract(f_val(_)),
-        assert(f_val(F)).
-
-calcola_h([],0).
-calcola_h([_|Resto_Ok],H) :-
-        calcola_h(Resto_Ok, H1),
-        H is H1 + 1,
-        retract(h_val(_)),
-        assert(h_val(H)).
-\end{lstlisting}
-
-L'euristica utilizzata per il mondo dei blocchi fornisce il nostro valore di \lstinline{f_val} sommando il costo del cammino trovato dal nodo iniziale al nodo corrente, con il numero dei blocchi che si trovano nella posizione della configurazione finale. Questo viene fatto generando la lista dei nodi in posizione corretta tramite \lstinline{ord_subtract(List1,List2,Res)}. \lstinline{Ord_subtract} è una regola nativa di Prolog e non fa altro che sottrarre la \lstinline{List1} dalla \lstinline{List2} due e mettere la lista risultante in \lstinline{Res}. Infine tramite la regola \lstinline{calcola_h} contiamo gli elementi di \lstinline{Res} per trovare il numero dei blocchi in posizione correta che saranno poi sommati a G per avere la nostra \lstinline{f_val}. L'algoritmo si dimostra estremamente veloce anche in questo dominio risolvendo l'esempio del professor Martelli in soli 0.076 secondi, visitando appena 1444 nodi e facendo 477443 inferenze. Sull'esempio del professor Torasso si ha un significativo aumento nei tempi di risoluzione, ma l'algoritmo si comporta comunque ottimamente mettendoci 14.564 secondi per trovare la soluzione. Ovviamente tempi maggiori comportano un maggior numero di nodi visitati e di inferenze che in questo caso sono 183364 per quanto riguarda i nodi visitati e 89033213 per quanto riguarda il numero di inferenze eseguite.
+ L'algoritmo risolven l'esempio del professor Martelli in soli 0.076 secondi, visitando appena 1444 nodi e facendo 477443 inferenze. Sull'esempio del professor Torasso si l'algoritmo mpiega 14.564 secondi per trovare la soluzione. Ovviamente tempi maggiori comportano un maggior numero di nodi visitati e di inferenze che in questo caso sono 183364 per quanto riguarda i nodi visitati e 89033213 per quanto riguarda il numero di inferenze eseguite.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \begin{figure}[htp]
@@ -435,23 +448,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \subsection{Dominio del Mondo dei Blocchi}
 
-\begin{lstlisting}
-calcolo_euristica(S, G) :-
-        goal(Res),
-        ord_subtract(S, Res, Diff),
-        calcola_h(Diff, Ndiff),
-        h_val(Ndiff),
-        F is G + Ndiff,
-        retract(f_val(_)),
-        assert(f_val(F)).
 
-calcola_h([],0).
-calcola_h([_|Resto_Ok],H) :-
-        calcola_h(Resto_Ok, H1),
-        H is H1 + 1,
-        retract(h_val(_)),
-        assert(h_val(H)).
-\end{lstlisting}
 
 Anche per il dominio del mondo dei blocchi l'euristica utilizzata è la stessa della ricerca ad approfondimento iterativo con stima (IDA*), riuscendo anche in questo a fornire una soluzione ottima a costo minimo. Per quanto riguarda l'esempio fornito dal professor Martelli l'algoritmo si comporta bene trovando una soluzione dopo 0.072 secondi appena, visitando 304 nodi e 396947 inferenze fatte.
 Per quanto riguarda l'esempio fornito dal professor Torasso l'algoritmo sfortunatamente non è in grado di fornire una soluzione, dato che esaurisce la memoria disponibile per poter fare inferenza.
