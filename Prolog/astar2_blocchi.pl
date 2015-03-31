@@ -130,8 +130,7 @@ check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S)
                                                 ord_memberchk(clear(Blocco),S), 
                                                 ord_memberchk(clear(Blocco),Goal).
 
-% Caso in cui il supporto di un blocco è diverso nello stato S e nello stato Goal.In quanto il blocco nello stato S è sul tavolo, 
-% e nello stato Goal no. Assegno un -(N_ok + N_nok).                                
+% Simoa arrivat al ceh sta sul tavolo nello stato S, ma nello stato Goal no. na penalità pari alla lunghezza della pila.                                
 check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S), 
                                                 \+ ord_memberchk(ontable(Blocco),Goal), 
                                                 cost(R),
@@ -139,7 +138,7 @@ check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S)
                                                 R1 is R - (N_ok + N_nok),
                                                 assert(cost(R1)).
 
-% Caso in cui il supporto di un blocco sia uguale sia nello stato S sia nello stato Goal. Assegno un - (N_ok + N_nok).                                
+% Siamo arrivati al blocco che sta sul tavolo. Se ho trovato dei blocchi non a posto allora avrò una penalità pari alla lunghezza della pila.                               
 check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S), 
                                                 ord_memberchk(ontable(Blocco),Goal),
                                                 block(X),
@@ -151,7 +150,8 @@ check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S)
                                                 R1 is R - (N_ok + N_nok),
                                                 assert(cost(R1)).
 
-% Caso in cui il supporto di un blocco sia uguale sia nello stato S sia nello stato Goal. Assegno un - (N_ok + N_nok).                                
+% Siamo arrivati al blocco che sta sul tavolo. Ma il blocco sopra a questo è diverso nello stato S rispetto allo stato Goal. 
+% Assegno una penalità pari alla lunghezza della pila.                                
 check_pila(S,Goal,Blocco,N_ok,N_nok) :-         ord_memberchk(ontable(Blocco),S), 
                                                 ord_memberchk(ontable(Blocco),Goal),
                                                 block(X),
