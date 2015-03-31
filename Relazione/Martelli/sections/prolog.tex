@@ -259,9 +259,32 @@ calcola_h([_|Resto_Ok],H) :-
         assert(h_val(H)).
 \end{lstlisting}
 
-L'euristica utilizzata per il mondo dei blocchi fornisce il nostro valore di \lstinline{f_val} sommando il costo del cammino trovato dal nodo iniziale al nodo corrente, con il numero dei blocchi che si trovano nella posizione della configurazione finale. Questo viene fatto generando la lista dei nodi in posizione corretta tramite \lstinline{ord_subtract(List1,List2,Res)}. \lstinline{Ord_subtract} è una regola nativa di Prolog e non fa altro che sottrarre la \lstinline{List1} dalla \lstinline{List2} due e mettere la lista risultante in \lstinline{Res}. Infine tramite la regola \lstinline{calcola_h} contiamo gli elementi di \lstinline{Res} per trovare il numero dei blocchi in posizione correta che saranno poi sommati a G per avere la nostra \lstinline{f_val}.
+Le euristiche utilizzate per il mondo dei blocchi hanno richiesto delle considerazioni più complesse rispetto all'euristica del mondo dei cammini. L'idea che ha guidato l'euristica locale è stata quella di stimare il costo dallo stato attuale allo stato finale come la differenza di fatti tra questi due stati. L'avvicinarsi dello stato attuale a quello finale è stato, quindi, rendere l'insieme dei fatti dello stato attuale sempre più simile a quello dello stato finale, finendo poi per farli coincidere trovata una soluzione.
+L'euristica utilizzata fornisce il nostro valore di \lstinline{f_val} sommando il costo del cammino trovato dal nodo iniziale al nodo corrente, con la differenza insiemistica tra l'insieme degli elementi dello stato attuale e quello dello stato finale. Questo viene fatto tramite \lstinline{ord_subtract(List1,List2,Res)}. \lstinline{Ord_subtract} è una regola nativa di Prolog e non fa altro che sottrarre la \lstinline{List1} dalla \lstinline{List2} due e mettere la lista risultante in \lstinline{Res}. Infine tramite la regola \lstinline{calcola_h} contiamo gli elementi di \lstinline{Res}. Si cerca di trovare la mossa che più assottilia la differenza tra i due insiemi, fino al raggiungimento della parificazione degli stessi.
 
 \subsection{Euristica dei blocchi globale}
+Nella progettazione della prima euristica ci siamo accorti che l'euristica creata potrebbe non esser una buona euristica. Spieghiamo il perchè con il seguente esempio:
+\begin{figure}[p]
+  \includegraphics[width=300px]{euristica1.png}
+  \caption{Esempio Mondo dei Blocchi}
+  \label{fig:euristica1}
+\end{figure}
+Se dovessimo valutare se è preferibile espandere lo stato 1 o lo stato 2 per arrivare allo stato finale, la risposta, anche in maniera molto intuibile, sarebbe dallo stato 2. Questo perchè pur essendoci dei blocchi nello stato 1 che in una visione locale sono posizionati in maniera corretta rispetto allo stato finale (ad. esempio il blocco f è ontable, il blocco c è sopra il blocco e, ecc...) in una visione globale dello stato questo non è confermato. Valutando la pila  b-c-e-f pur avendo 3/4 blocchi in posizione corretta, per arrivare a una soluzione corretta bisogna smontare l'intera pila e ricostruirla.
+
+L'euristica globale per ogni blocco non ontable controlla che l'intero supporto del blocco sia corretto rispetto al supporto dello stato finale. In questo caso si ha un punteggio di 1 * N° blocchi del supporto, altrimenti -1 * N° blocchi del supporto. Per l'esempio precedente riportiamo i punteggi per ogni blocco.
+\begin{lstlisting}
+Stato 2: tutti i blocchi hanno punteggio 0 perchè sono ontable. L'idea che vi è dietro è che anche se un blocco si trova in una posizione sbagliata, ma è in una situazione in cui è immediatamente spostabile allora non si va ad assegnargli un punteggio negativo, perchè siamo in una condizione che ci permette di passare a costruire un pezzo della soluzione. Mentre se si deve distruggere qualcosa di precedentemente creato allora si ha una penalità.
+
+Stato 1:
+blocco A =  0
+blocco B = -3
+blocco C = -2
+blocco E = -1
+blocco F =  0
+
+Totale = -6
+\end{lstlisting}
+
 \subsection{Euristica della metropolitana di Londra}
 
 
@@ -447,8 +470,6 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 \end{figure}
 
 \subsection{Dominio del Mondo dei Blocchi}
-
-
 
 Anche per il dominio del mondo dei blocchi l'euristica utilizzata è la stessa della ricerca ad approfondimento iterativo con stima (IDA*), riuscendo anche in questo a fornire una soluzione ottima a costo minimo. Per quanto riguarda l'esempio fornito dal professor Martelli l'algoritmo si comporta bene trovando una soluzione dopo 0.072 secondi appena, visitando 304 nodi e 396947 inferenze fatte.
 Per quanto riguarda l'esempio fornito dal professor Torasso l'algoritmo sfortunatamente non è in grado di fornire una soluzione, dato che esaurisce la memoria disponibile per poter fare inferenza.
