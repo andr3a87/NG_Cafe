@@ -105,35 +105,29 @@ Evitando di ri-espandere nodi già completamente visitati migliora di molto la v
 \subsection{Dominio dei Cammini}
 Vista l'ottimizzazione apportata all'algoritmo di base per la ricerca in ampiezza, il nuovo algoritmo è in grado di trovare una soluzione agli esempi presi in esame precedentemente con la sola ricerca in ampiezza. Nello specifico sull'esempio del professor Martelli (cammini 10x10) l'algoritmo trova una soluzione in 0.017 secondi, visitando appena 66 nodi e facendo 19508 inferenze. Si è riusciti a passare dalla non terminazione ad avere una soluzione con appena 66 nodi visitati. Anche per quanto riguarda l'esempio del professor Torasso (cammini 20x20) l'algoritmo è in grado di trovare una soluzione in 0.031 secondi, visitando 374 nodi e facendo 178644 inferenze. Anche in questo caso abbiamo un aumento impressionante delle prestazioni, dato che ovviamente nella versione di base non era in grado di generare una soluzione.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
+\begin{landscape}
+\begin{sidewaysfigure}
+\centering
+{\includegraphics[width=300px,angle=-90]{nodi_visitati_amp_grafi_cammini.png}}\qquad\qquad
+{\includegraphics[width=300px,angle=-90]{tempi_amp_grafi_cammini.png}}\qquad\qquad
+\caption{Grafici per il dominio di cammini.}
+\end{sidewaysfigure}
+\end{landscape}
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{nodi_visitati_amp_grafi_cammini.png}
-  \caption{Nodi visitati per i domini dei cammini}
-  \label{fig:figure1}
-\end{figure}
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{tempi_amp_grafi_cammini.png}
-  \caption{Tempi di calcolo per i domini dei cammini}
-  \label{fig:figure2}
-\end{figure}
+
 
 \subsection{Dominio del Mondo Dei Blocchi}
 Anche in questo caso la strategia è in grado di fornirci una soluzione a differenza della controparte di base. Per quanto riguarda l'esempio fornito dal professor Martelli l'algoritmo è in grado di generare una soluzione in 0.085 secondi, visitando 487 nodi e facendo 528177 inferenze. Per quanto riguarda l'esempio del professor Torasso la situazione non cambia dalla versione base; l'algoritmo non è in grado di trovare la soluzione in quanto lo spazio di ricerca rimane troppo vasto per esser esplorato tutto.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
-
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{nodi_visitati_amp_grafi_blocchi.png}
-  \caption{Nodi visitati per i domini del mondo dei blocchi}
-  \label{fig:figure3}
+\begin{figure}[h!]
+\centering
+{\includegraphics[width=300px]{nodi_visitati_amp_grafi_blocchi.png}}\qquad\qquad
+{\includegraphics[width=270px]{tempi_amp_grafi_blocchi.png}}\qquad\qquad
+\caption{Grafici per il dominio dei blocchi.}
 \end{figure}
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{tempi_amp_grafi_blocchi.png}
-  \caption{Tempi di calcolo per i domini del mondo dei blocchi}
-  \label{fig:figure4}
-\end{figure}
-\newpage
+
 \section{Ricerca in profondità}
 
 \subsection{Il codice sviluppato}
@@ -184,30 +178,27 @@ La ricerca in profondità ha requisiti di memoria molto bassi, in quanto deve ri
 A differenza della ricerca in ampiezza, la ricerca a profondità limitata con approfondimento iterativo (iterative deepening) è in grado di fornire una soluzione ottima e di lunghezza minima per i problemi relativi al dominio dei cammini, dato che tutte le azioni relative a questo dominio hanno costo unitario. Per quanto riguarda l'esempio specifico fornito dal Prof. Martelli (cammino 10x10) la ricerca in profondità limitata con approfondimento iterativo è in grado di trovare una delle soluzioni di lunghezza minima (se si hanno più soluzioni con la stessa lunghezza possono essere visualizzate tramite il comando ; dopo la visualizzazione della prima soluzione). La soluzione viene trovata in tempo ragionevole, circa 3.203 secondi con un numero di nodi visitati pari a 548376 e un numero di inferenze pari a 21265407. Per quanto riguarda l'esempio fornito dal professor Torasso (cammino 20x20), la ricerca in profondità impiega un tempo taltmente elevato che ci è stato impossibile verificare la sua terminazione. Le nostre prove sul dominio sono durate 30 e 50 minuti senza riuscire ad ottenere una soluzione, di conseguenza possiamo affermare che non è una strategia ragionevole per risolvere quel determinato esempio.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{nodi_visitati_profondita_cammini.png}
-  \caption{Nodi visitati per i domini dei cammini}
-  \label{fig:figure5}
-\end{figure}
-
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{tempi_prof_cammini.png}
-  \caption{Tempi di calcolo per i domini dei cammini}
-  \label{fig:figure6}
-\end{figure}
+\begin{landscape}
+\begin{sidewaysfigure}
+\centering
+{\includegraphics[width=300px,angle=-90]{nodi_visitati_profondita_cammini.png}}\qquad\qquad
+{\includegraphics[width=300px,angle=-90]{tempi_amp_grafi_cammini.png}}\qquad\qquad
+\caption{Grafici per il dominio dei cammini.}
+\end{sidewaysfigure}
+\end{landscape}
 
 \subsection{Dominio del Mondo dei Blocchi}
 Anche in questo caso la strategia implementata è in grado di fornire la soluzione ottima a lunghezza minima. Per quanto riguarda l'esempio del professor Martelli l'algoritmo trova soluzione in 0.459 secondi circa, visitando 13222 nodi e facendo 3364820 inferenze. Invece sull'esempio fornito dal professor Torasso l'algoritmo si comporta decisamente peggio ma riesce comunque a trovare la soluzione in un tempo ragionevole che è di 232.268 secondi. Ovviamente visto l'elevato tempo richiesto per trovare la soluzione l'algoritmo ha visitato 4180656 nodi e ha compiuto 1548207210 inferenza.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{nodi_visitati_profodnita_blocchi.png}
+\begin{figure}[h!tp]
+  \includegraphics[width=290px]{nodi_visitati_profodnita_blocchi.png}
   \caption{Nodi visitati per i domini del mondo dei blocchi}
   \label{fig:figure7}
 \end{figure}
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{tempi_prof_blocchi.png}
+\begin{figure}[h!tp]
+  \includegraphics[width=290px]{tempi_prof_blocchi.png}
   \caption{Tempi di calcolo per i domini del mondo dei blocchi}
   \label{fig:figure8}
 \end{figure}
@@ -216,7 +207,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 In questo capitolo verrà trattata l'implementazione delle strategie informate viste: la ricerca in profondità ad approfondimento iterativo con stima (IDA*) e la ricerca in ampiezza sui grafi con stima (A*). Per ognuna di queste strategie verrà proposta l'implementazione generale e l'euristica specifica utilizzata per il dominio dei cammini, il dominio del mondo dei blocchi,il dominio della metropolitana.
 
 \section{Euristiche Utilizzate}
-
+\label{sec:Euristica dei cammini}
 \subsection{Euristica dei cammini}
 \begin{lstlisting}
 calcolo_euristica(pos(R,C),pos(R1,C1), G) :-
@@ -261,21 +252,36 @@ calcola_h([_|Resto_Ok],H) :-
 
 Le euristiche utilizzate per il mondo dei blocchi hanno richiesto delle considerazioni più complesse rispetto all'euristica del mondo dei cammini. L'idea che ha guidato l'euristica locale è stata quella di stimare il costo dallo stato attuale allo stato finale come la differenza di fatti tra questi due stati. L'avvicinarsi dello stato attuale a quello finale è stato, quindi, rendere l'insieme dei fatti dello stato attuale sempre più simile a quello dello stato finale, finendo poi per farli coincidere trovata una soluzione.
 L'euristica utilizzata fornisce il nostro valore di \lstinline{f_val} sommando il costo del cammino trovato dal nodo iniziale al nodo corrente, con la differenza insiemistica tra l'insieme degli elementi dello stato attuale e quello dello stato finale. Questo viene fatto tramite \lstinline{ord_subtract(List1,List2,Res)}. \lstinline{Ord_subtract} è una regola nativa di Prolog e non fa altro che sottrarre la \lstinline{List1} dalla \lstinline{List2} due e mettere la lista risultante in \lstinline{Res}. Infine tramite la regola \lstinline{calcola_h} contiamo gli elementi di \lstinline{Res}. Si cerca di trovare la mossa che più assottilia la differenza tra i due insiemi, fino al raggiungimento della parificazione degli stessi.
+\newpage
 
 \subsection{Euristica dei blocchi globale}
 Nella progettazione della prima euristica ci siamo accorti che l'euristica creata potrebbe non esser una buona euristica. Spieghiamo il perchè con il seguente esempio:
-\begin{figure}[p]
+
+\begin{figure}[!ht]
+  \centering
   \includegraphics[width=300px]{euristica1.png}
   \caption{Esempio Mondo dei Blocchi}
   \label{fig:euristica1}
 \end{figure}
+
 Se dovessimo valutare se è preferibile espandere lo stato 1 o lo stato 2 per arrivare allo stato finale, la risposta, anche in maniera molto intuibile, sarebbe dallo stato 2. Questo perchè pur essendoci dei blocchi nello stato 1 che in una visione locale sono posizionati in maniera corretta rispetto allo stato finale (ad. esempio il blocco f è ontable, il blocco c è sopra il blocco e, ecc...) in una visione globale dello stato questo non è confermato. Valutando la pila  b-c-e-f pur avendo 3/4 blocchi in posizione corretta, per arrivare a una soluzione corretta bisogna smontare l'intera pila e ricostruirla.
+L'euristica globale per ogni blocco non ontable controlla che l'intero supporto del blocco sia corretto rispetto al supporto dello stato finale.In questo caso si ha un punteggio di 1 x Nr blocchi del supporto, altrimenti -1 x Nr blocchi del supporto. 
 
-L'euristica globale per ogni blocco non ontable controlla che l'intero supporto del blocco sia corretto rispetto al supporto dello stato finale. In questo caso si ha un punteggio di 1 * N° blocchi del supporto, altrimenti -1 * N° blocchi del supporto. Per l'esempio precedente riportiamo i punteggi per ogni blocco.
+Per l'esempio precedente riportiamo i punteggi per ogni blocco.
+
+\textbf{Stato 2:}
 \begin{lstlisting}
-Stato 2: tutti i blocchi hanno punteggio 0 perchè sono ontable. L'idea che vi è dietro è che anche se un blocco si trova in una posizione sbagliata, ma è in una situazione in cui è immediatamente spostabile allora non si va ad assegnargli un punteggio negativo, perchè siamo in una condizione che ci permette di passare a costruire un pezzo della soluzione. Mentre se si deve distruggere qualcosa di precedentemente creato allora si ha una penalità.
+blocco A = B = C = E = F =0
 
-Stato 1:
+Totale = 0
+\end{lstlisting}
+Tutti i blocchi hanno punteggio 0 perchè sono ontable. L'idea che vi è dietro è che anche se un blocco si trova in una posizione
+sbagliata, ma è in una situazione in cui è immediatamente spostabile allora non si va ad assegnargli un punteggio negativo, perchè
+siamo in una condizione che ci permette di passare a costruire un pezzo della soluzione. Mentre se si deve distruggere qualcosa di
+precedentemente creato allora si ha una penalità.
+
+\textbf{Stato 1:}
+\begin{lstlisting}
 blocco A =  0
 blocco B = -3
 blocco C = -2
@@ -285,8 +291,105 @@ blocco F =  0
 Totale = -6
 \end{lstlisting}
 
-\subsection{Euristica della metropolitana di Londra}
+Di seguito riportiamo il codice per tale euristica.
+\begin{lstlisting}
+calcolo_euristica(S, G) :-
+        goal(Goal),
+        list_block(B),
+        retract(cost(_)),
+        assert(cost(0)),
+        cost_of_state(S,Goal,B),
+        cost(Ris),
+        F is G - Ris,
+        retract(f_val(_)),
+        assert(f_val(F)).
 
+cost_of_state(S,Goal,[]).
+
+cost_of_state(S,Goal,[H|T]) :-          block(H),
+                                        \+ ord_memberchk(ontable(H),S),
+                                        check_pila(S,Goal,H,0,0),
+                                        cost_of_state(S,Goal,T).
+
+cost_of_state(S,Goal,[H|T]) :-          block(H),
+                                        ord_memberchk(ontable(H),S),
+                                        cost_of_state(S,Goal,T).
+
+cost_of_state(S,Goal,[H|T]) :-          block(H),
+                                        ord_memberchk(holding(H),S),
+                                        cost_of_state(S,Goal,T).
+
+check_pila(S,Goal,Blocco,N_ok,N_nok) :-     
+    ord_memberchk(ontable(Blocco),S), 
+    ord_memberchk(ontable(Blocco),Goal), 
+    ord_memberchk(clear(Blocco),S), 
+    ord_memberchk(clear(Blocco),Goal).
+
+check_pila(S,Goal,Blocco,N_ok,N_nok) :-     
+    ord_memberchk(ontable(Blocco),S), 
+    \+ ord_memberchk(ontable(Blocco),Goal), 
+    cost(R),
+    retract(cost(_)),
+    R1 is R - (N_ok + N_nok),
+    assert(cost(R1)).
+                               
+check_pila(S,Goal,Blocco,N_ok,N_nok) :-     
+    ord_memberchk(ontable(Blocco),S), 
+    ord_memberchk(ontable(Blocco),Goal),
+    block(X),
+    ord_memberchk(on(X,Blocco),S), 
+    ord_memberchk(on(X,Blocco),Goal),
+    N_nok > 0,
+    cost(R),
+    retract(cost(_)),
+    R1 is R - (N_ok + N_nok),
+    assert(cost(R1)).
+                               
+check_pila(S,Goal,Blocco,N_ok,N_nok) :-     
+    ord_memberchk(ontable(Blocco),S), 
+    ord_memberchk(ontable(Blocco),Goal),
+    block(X),
+    ord_memberchk(on(X,Blocco),S), 
+    \+ ord_memberchk(on(X,Blocco),Goal),
+    cost(R),
+    retract(cost(_)),
+    R1 is R - (N_ok + N_nok),
+    assert(cost(R1)).
+                              
+check_pila(S,Goal,Blocco,N_ok,N_nok) :-     
+    ord_memberchk(ontable(Blocco),S), 
+    ord_memberchk(ontable(Blocco),Goal),
+    block(X),
+    ord_memberchk(on(X,Blocco),S), 
+    ord_memberchk(on(X,Blocco),Goal),
+    N_nok =:= 0,
+    cost(R),
+    retract(cost(_)),
+    R1 is R + (N_ok + N_nok),
+    assert(cost(R1)).
+
+check_pila(S,Goal,Blocco,N_ok,N_nok) :-     
+    block(X),
+    ord_memberchk(on(Blocco,X),S),
+    \+ ord_memberchk(on(Blocco,X),Goal),
+    N is N_nok + 1,
+    check_pila(S,Goal,X,N_ok,N).
+
+check_pila(S,Goal,Blocco,N_ok,N_nok) :-     
+    block(X),
+    ord_memberchk(on(Blocco,X),S),
+    ord_memberchk(on(Blocco,X),Goal),
+    N is N_ok + 1,
+    check_pila(S,Goal,X,N,N_nok).
+\end{lstlisting}
+
+\subsection{Euristica della metropolitana di Londra}
+Il dominio della metropolitana di Londra risulta leggermente differente dai due domini presi in esame precedentemente, perchè le azioni non hanno un costo unitario. Oltre a dover sviluppare un euristica adatta a calcolare un \lstinline{f_val()} per poter eseguire la ricerca, bisogna anche far fronte che non basta più un semplice incremento di uno del nostro \lstinline{g_val} dopo ogni azione, ma serve un incremento diverso in base all'azione che stiamo per intraprendere. Si è deciso quindi di dare 2 valori di incremento differenti al \lstinline{g_val}: +10 per le azioni di sali/scendi dalla metropolitana e un +5 per le azioni di vai. Con questi pesi le azioni di sali/scendi risultano molto più costose dell'azione di vai, facendo prediligere quindi percorsi più lunghi con pochi cambi di metro a percorsi più brevi ma con cambi più frequenti.
+Per quanto riguarda l'euristica scelta si è optati per una semplice distanza euclidea, visto che venivano fornite le coordinate delle stazioni. La distanza euclidea viene calcolata come segue:
+
+$$L1(p1,p2) = sqrt((x1 - x2)+(y1 - y2))$$
+
+Il risultato di questa semplice operazione sarà l'\lstinline{f_val} associata ad ogni nodo nella ricerca.
 
 \section{Ricerca in profondità ad approfondimento iterativo con stima (IDA*)}
 
@@ -300,13 +403,13 @@ ric_prof_lim(S,Depth,_,_,[]) :-
 ric_prof_lim(S,Depth,G,Visitati,[Az|Resto]) :-
         f_val(F),
         F =< Depth,
-                 applicabile(Az,S),
-                 trasforma(Az,S,Nuovo_S),
-                 \+ member(Nuovo_S,Visitati),
-                 num_nodi_open,
-                 G1 is G + 1,
-                 calcolo_euristica(Nuovo_S,G1),
-                 ric_prof_lim(Nuovo_S,Depth,G1,[S|Visitati],Resto).
+        applicabile(Az,S),
+        trasforma(Az,S,Nuovo_S),
+        \+ member(Nuovo_S,Visitati),
+        num_nodi_open,
+        G1 is G + 1,
+        calcolo_euristica(Nuovo_S,G1),
+        ric_prof_lim(Nuovo_S,Depth,G1,[S|Visitati],Resto).
 ric_prof_lim(_,Depth,_,_,_) :-
         f_val(F),
         F > Depth,
@@ -352,38 +455,44 @@ La soglia viene inizializzata con un valore di default molto grande, ma man mano
 Più nel dettaglio l'algoritmo inizia il suo lavoro settando la \lstinline{f_val} che verrà utilizzata come limite di ricerca e richiamando la ricerca in profondità già sviluppata precedentemente con alcune piccole modifiche.
 Nel caso base è stato aggiunto un controllo sulla profondità, ovvero che la nostra \lstinline{f_val} deve essere minore o uguale alla profondità; se è cosi si procede con il semplice controllo di S come stato finale, altrimenti si passa alla regola per aggiornare la soglia.
 Per quanto riguarda il caso generico, abbiamo sempre il controllo della \lstinline{f_val} sulla profondità e in più abbiamo il suo ricalcolo tramite l'euristica specifica del dominio. La regola \lstinline{try_prof(F)} ha una doppia funzione: oltre ad aggiornare la soglia quando questa risulta maggiore della nostra \lstinline{f_val} corrente, ci permette di bloccare la ricerca quando siamo nel caso opposto, ovvero che la \lstinline{f_val} risulta maggiore del nostro valore di soglia fissato. Infine quando la ricerca in profondità fallisce abbiamo una regola per riportare al valore di default la soglia e ricominciare nuovamente la ricerca in profondità.
-
- Per quanto riguarda l'esempio fornito dal Prof. Martelli (cammini 10x10) l'algoritmo precedentemente descritto, sfruttando quest'euristica, è in grado di fornire la soluzione ottima a costo minimo; nello specifico l'algoritmo fornisce una soluzione dopo 0.123 secondi, visitando solamente 13078 nodi e facendo 681842 inferenze. Anche sull'esempio del professor. Torasso (cammini 20x20) l'algoritmo si comporta egregiamente trovando soluzione in solamente 0.146 secondi, visitando 15796 nodi e facendo 791573 inferenze.
+\subsection{Dominio del Mondo dei Cammini}
+Per quanto riguarda l'esempio fornito dal Prof. Martelli (cammini 10x10) l'algoritmo precedentemente descritto, sfruttando l'euristica descritta al punto \ref{sec:Euristica dei cammini}, è in grado di fornire la soluzione ottima dopo 0.123 secondi, visitando 13078 nodi e facendo 681842 inferenze. Anche sull'esempio del professor. Torasso (cammini 20x20) l'algoritmo trova la soluzione in 0.146 secondi, visitando 15796 nodi e facendo 791573 inferenze.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
-
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{nodi_visitati_ida_cammini.png}
+\newpage
+\begin{figure}[!htp] 
+  \centering
+  \includegraphics[width=230px]{nodi_visitati_ida_cammini.png}
   \caption{Nodi visitati per i domini dei cammini}
   \label{fig:figure9}
 \end{figure}
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{tempi_ida_cammini.png}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=230px]{tempi_ida_cammini.png}
   \caption{Tempi di calcolo per i domini dei cammini}
   \label{fig:figure10}
 \end{figure}
 
 \subsection{Dominio del Mondo dei Blocchi}
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|l|}{} & \begin{tabular}[c]{@{}c@{}}Eur. Locale \\ (dom. 10x10)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Eur. Globale\\ (dom. 10x10)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Eur. Locale \\ (dom. 20x20)\end{tabular} & \multicolumn{1}{c|}{\begin{tabular}[c]{@{}c@{}}Eur. Globale\\ (dom. 20x20\end{tabular}} \\ \hline
+Tempo                  & 0.076                                                                       & 0.007                                                                       & 14.564                                                                      & 0.047                                                                                           \\ \hline
+Inferenze              & 477443                                                                      & 46834                                                                       & 89033213                                                                    & 433972                                                                                          \\ \hline
+Nodi Visitati          & 1444                                                                        & 71                                                                          & 183364                                                                      & 327                                                                                             \\ \hline
+\end{tabular}
+\end{table}
+Come possiamo notare dalle tabelle e dai successivi grafici, l'euristica globale risulta essere migliore rispetto a quella locale.
 
- L'algoritmo risolven l'esempio del professor Martelli in soli 0.076 secondi, visitando appena 1444 nodi e facendo 477443 inferenze. Sull'esempio del professor Torasso si l'algoritmo mpiega 14.564 secondi per trovare la soluzione. Ovviamente tempi maggiori comportano un maggior numero di nodi visitati e di inferenze che in questo caso sono 183364 per quanto riguarda i nodi visitati e 89033213 per quanto riguarda il numero di inferenze eseguite.
-Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
-
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{nodi_visitati_ida_blocchi.png}
-  \caption{Nodi visitati per i domini del mondo dei blocchi}
-  \label{fig:figure11}
-\end{figure}
-
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{tempi_ida_blocchi.png}
-  \caption{Tempi di calcolo per i domini del mondo dei blocchi}
-  \label{fig:figure12}
-\end{figure}
+\begin{landscape}
+\begin{sidewaysfigure}
+\centering
+{\includegraphics[width=300px,angle=-90]{nodi_visitati_ida_blocchi.png}}\qquad\qquad
+{\includegraphics[width=300px,angle=-90]{tempi_ida_blocchi.png}}\qquad\qquad
+\caption{Grafici per il dominio dei cammini.}
+\end{sidewaysfigure}
+\end{landscape}
 
 \newpage
 \section{Ricerca in ampiezza sui grafi con stima (A*)}
@@ -435,36 +544,23 @@ astar :-
 \subsection{Analisi dettagliata della strategia}
 
 L'implementazione dell'algoritmo di ricerca astar è stato fatto in modo molto semplice. Sfruttando le regole native di Prolog \lstinline{ord_union()} e \lstinline{ord_add_element} possiamo costruire delle liste di nodi ordinate secondo il loro \lstinline{f_val()} cosi da avere la certezza di analizzare sempre lo stato migliore fra quelli all'interno della lista degli stati da visitare. Vediamo più nel dettaglio l'implementazione. Come al solito la ricerca astar è composta di 2 regole principali, una per il caso base che non fa altro che controllare che lo stato in input S sia lo stato finale e una per caso generico. La regola per il caso generico controlla prima di tutto che lo stato in inpunt non faccia parte della lista dei nodi chiusi e quindi già visitato; in caso affermativo, richiamiamo la ricerca astar sul nodo successivo nella lista dei nodi aperti, mentre in caso negativo lo apriamo con la regola \lstinline{open_node()}. La regola non fa altro che cercare tutte le azioni applicabili dal nodo corrente, inserendole in una lista di azioni che verrà data in pasto alla regola \lstinline{best_node()}. La regola \lstinline{best_node()} non fa altro che costruire una lista ordinata di figli basata sul loro \lstinline{f_val()} in ordine crescente.
-La costruzione viene fatta grazie a \lstinline{ord_add_element (Set1,Elem,SetRes)} il quale prende in input una lista ordinata di elementi (\lstinline{Set1}) alla quale aggiunge in modo ordinato il nuovo elemento (\lstinline{Elem}) mettendo infine il risultato nella lista ordinata SetRes. \lstinline{Res}Terminata la costruzione di questa lista ordinata di nodi figlio, la aggiungiamo alla lista dei nodi aperti tramite la regola \lstinline{ord_union(Set1,Set2,SetRes)} la quale non fa altro che unire ordinatamente le due liste mettendo nuovamente il risultato in SetRes.
+La costruzione viene fatta grazie a \lstinline{ord_add_element (Set1,Elem,SetRes)} il quale prende in input una lista ordinata di elementi (\lstinline{Set1}) alla quale aggiunge in modo ordinato il nuovo elemento (\lstinline{Elem}) mettendo infine il risultato nella lista ordinata SetRes.Terminata la costruzione di questa lista ordinata di nodi figlio, la aggiungiamo alla lista dei nodi aperti tramite la regola \lstinline{ord_union(Set1,Set2,SetRes)} la quale non fa altro che unire ordinatamente le due liste mettendo nuovamente il risultato in SetRes.
 Come ultimo passo richiamiamo la ricerca astar sul primo nodo della lista dei nodi aperti e aggiungiamo il nodo corrente alla lista dei nodi chiusi.
 
-\subsection{Dominio dei Cammini}
-
-\begin{lstlisting}
-calcolo_euristica(pos(R,C),pos(R1,C1), G) :-
-        X is R - R1,
-        Y is C - C1,
-        abs(X, Xabs),
-        abs(Y, Yabs),
-        H is Xabs + Yabs,
-        F is G + H,
-        retract(f_val(_)),
-        assert(f_val(F)),
-        retract(h_val(_)),
-        assert(h_val(H)).
-\end{lstlisting}
-
-Per quanto riguarda il dominio dei cammini è stata utilizzata la stessa euristica descritta per la ricerca ad approfondimento iterativo con stima (IDA*) ovvero la distanza di Manhattan. Con l'esempio del professor Martelli (cammini 10x10) l'algoritmo impiega appena 0.029 secondi per trovare la soluzione; visita appena 53 nodi ed esegue solamente 19517 inferenze per arrivare al goal. Anche con l'esempio del professor Torasso (cammini 20x20) l'algoritmo si comporta ottimamente impiegando 0.037 secondi, visitando 128 nodi e facendo 65057 inferenze per trovare la soluzione.
+\subsection{Dominio del Mondo dei Cammini}
+Per quanto riguarda il dominio dei cammini è stata utilizzata la stessa euristica descritta per la ricerca ad approfondimento iterativo con stima (IDA*) ovvero la distanza di Manhattan. Con l'esempio del professor Martelli (cammini 10x10) l'algoritmo impiega 0.029 secondi per trovare la soluzione; visita 53 nodi ed esegue 19517 inferenze per arrivare al goal. Anche con l'esempio del professor Torasso (cammini 20x20) l'algoritmo impiega 0.037 secondi, visitando 128 nodi e facendo 65057 inferenze per trovare la soluzione.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{nodi_visitati_astar_cammini.png}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=300px]{nodi_visitati_astar_cammini.png}
   \caption{Nodi visitati per i domini dei cammini}
   \label{fig:figure13}
 \end{figure}
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{tempi_astar_cammini.png}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=300px]{tempi_astar_cammini.png}
   \caption{Tempi di calcolo per i domini dei cammini}
   \label{fig:figure14}
 \end{figure}
@@ -558,13 +654,7 @@ astar :-
 
 \section{Analisi dettagliata della strategia}
 
-Il dominio della metropolitana di Londra risulta leggermente differente dai due domini presi in esame precedentemente, perchè le azioni non hanno un costo unitario. Oltre a dover sviluppare un euristica adatta a calcolare un \lstinline{f_val()} per poter eseguire la ricerca, bisogna anche far fronte che non basta più un semplice incremento di uno del nostro \lstinline{g_val} dopo ogni azione, ma serve un incremento diverso in base all'azione che stiamo per intraprendere. Si è deciso quindi di dare 2 valori di incremento differenti al \lstinline{g_val}: +10 per le azioni di sali/scendi dalla metropolitana e un +5 per le azioni di vai. Con questi pesi le azioni di sali/scendi risultano molto più costose dell'azione di vai, facendo prediligere quindi percorsi più lunghi con pochi cambi di metro a percorsi più brevi ma con cambi più frequenti.
-Per quanto riguarda l'euristica scelta si è optati per una semplice distanza euclidea, visto che venivano fornite le coordinate delle stazioni. La distanza euclidea viene calcolata come segue:
 
-$$L1(p1,p2) = sqrt((x1 - x2)+(y1 - y2))$$
-
-Il risultato di questa semplice operazione sarà l'\lstinline{f_val} associata ad ogni nodo nella ricerca.
-Per quanto riguarda la ricerca vera e propria è stato utilizzato l'algoritmo astar precedentemente sviluppato per il dominio dei cammini e del mondo dei blocchi.
 Dato che l'algoritmo era stato sviluppato nel mondo più indipendente possibile dal dominio è stato possibile riutilizzarlo anche in questo dominio, aggiungendo ovviamente le regole per l'incremento del \lstinline{g_val} e l'euristica specifica. Infine è stato eseguito un test sul dominio fornito dal professor Martelli. L'algoritmo sviluppato risponde benissimo riuscendo a calcolare una soluzione in soli 0.126 secondi. Di particolare rilievo è il numero di nodi visitati per trovare la soluzione, che è di soli 10 nodi. Il numero coincide esattamente con i nodi della soluzione. Su un altro esempio generato manualmente (partenza da Holborn e arrivo a Waterloo), l'algoritmo continua ad essere in ottima forma trovando la soluzione in 0.071 secondi ma questa volta il numero di nodi aperti è più alto del numero dei nodi della soluzione (15 nodi aperti contro i 9 della soluzione).
 
 \newpage
