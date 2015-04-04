@@ -182,7 +182,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 \begin{sidewaysfigure}
 \centering
 {\includegraphics[width=300px,angle=-90]{nodi_visitati_profondita_cammini.png}}\qquad\qquad
-{\includegraphics[width=300px,angle=-90]{tempi_amp_grafi_cammini.png}}\qquad\qquad
+{\includegraphics[width=300px,angle=-90]{tempi_prof_cammini.png}}\qquad\qquad
 \caption{Grafici per il dominio dei cammini.}
 \end{sidewaysfigure}
 \end{landscape}
@@ -385,7 +385,7 @@ check_pila(S,Goal,Blocco,N_ok,N_nok) :-
 
 \subsection{Euristica della metropolitana di Londra}
 Il dominio della metropolitana di Londra risulta leggermente differente dai due domini presi in esame precedentemente, perchè le azioni non hanno un costo unitario. Oltre a dover sviluppare un euristica adatta a calcolare un \lstinline{f_val()} per poter eseguire la ricerca, bisogna anche far fronte che non basta più un semplice incremento di uno del nostro \lstinline{g_val} dopo ogni azione, ma serve un incremento diverso in base all'azione che stiamo per intraprendere. Si è deciso quindi di dare 2 valori di incremento differenti al \lstinline{g_val}: +10 per le azioni di sali/scendi dalla metropolitana e un +5 per le azioni di vai. Con questi pesi le azioni di sali/scendi risultano molto più costose dell'azione di vai, facendo prediligere quindi percorsi più lunghi con pochi cambi di metro a percorsi più brevi ma con cambi più frequenti.
-Per quanto riguarda l'euristica scelta si è optati per una semplice distanza euclidea, visto che venivano fornite le coordinate delle stazioni. La distanza euclidea viene calcolata come segue:
+Per quanto riguarda l'euristica abbiamo utilizzato la distanza euclidea. La distanza euclidea viene calcolata come segue:
 
 $$L1(p1,p2) = sqrt((x1 - x2)+(y1 - y2))$$
 
@@ -474,6 +474,7 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 \end{figure}
 
 \subsection{Dominio del Mondo dei Blocchi}
+Analizziamo il dominio dei blocchi con le due euristiche precedentemente descritte.
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|c|}
 \hline
@@ -548,7 +549,7 @@ La costruzione viene fatta grazie a \lstinline{ord_add_element (Set1,Elem,SetRes
 Come ultimo passo richiamiamo la ricerca astar sul primo nodo della lista dei nodi aperti e aggiungiamo il nodo corrente alla lista dei nodi chiusi.
 
 \subsection{Dominio del Mondo dei Cammini}
-Per quanto riguarda il dominio dei cammini è stata utilizzata la stessa euristica descritta per la ricerca ad approfondimento iterativo con stima (IDA*) ovvero la distanza di Manhattan. Con l'esempio del professor Martelli (cammini 10x10) l'algoritmo impiega 0.029 secondi per trovare la soluzione; visita 53 nodi ed esegue 19517 inferenze per arrivare al goal. Anche con l'esempio del professor Torasso (cammini 20x20) l'algoritmo impiega 0.037 secondi, visitando 128 nodi e facendo 65057 inferenze per trovare la soluzione.
+Per quanto riguarda l'esempio fornito dal Prof. Martelli (cammini 10x10) l'algoritmo precedentemente descritto, sfruttando l'euristica descritta al punto \ref{sec:Euristica dei cammini} impiega 0.029 secondi per trovare la soluzione; visita 53 nodi ed esegue 19517 inferenze per arrivare al goal. Anche con l'esempio del professor Torasso (cammini 20x20) l'algoritmo impiega 0.037 secondi, visitando 128 nodi e facendo 65057 inferenze per trovare la soluzione.
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
 \begin{figure}[!htp]
@@ -564,28 +565,37 @@ Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
   \caption{Tempi di calcolo per i domini dei cammini}
   \label{fig:figure14}
 \end{figure}
-
+\newpage
 \subsection{Dominio del Mondo dei Blocchi}
-
-Anche per il dominio del mondo dei blocchi l'euristica utilizzata è la stessa della ricerca ad approfondimento iterativo con stima (IDA*), riuscendo anche in questo a fornire una soluzione ottima a costo minimo. Per quanto riguarda l'esempio fornito dal professor Martelli l'algoritmo si comporta bene trovando una soluzione dopo 0.072 secondi appena, visitando 304 nodi e 396947 inferenze fatte.
-Per quanto riguarda l'esempio fornito dal professor Torasso l'algoritmo sfortunatamente non è in grado di fornire una soluzione, dato che esaurisce la memoria disponibile per poter fare inferenza.
+Analizziamo il dominio dei blocchi con le due euristiche precedentemente descritte.
+\begin{table}[h]
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|l|}{} & \begin{tabular}[c]{@{}c@{}}Eur. Locale \\ (dom. 10x10)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Eur. Globale\\ (dom. 10x10)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Eur. Locale \\ (dom. 20x20)\end{tabular} & \begin{tabular}[c]{@{}c@{}}Eur. Globale\\ (dom. 20x20\end{tabular} \\ \hline
+Tempo                  & 0.072                                                                       & 0.036                                                                       & N.P.                                                                        & 1.60                                                                       \\ \hline
+Inferenze              & 396947                                                                      & 191916                                                                      & N.P.                                                                        & 949393                                                                     \\ \hline
+Nodi Visitati          & 304                                                                         & 99                                                                          & N.P.                                                                        & 150                                                                        \\ \hline
+\end{tabular}
+\end{table}
 Qui di seguito abbiamo i grafici riassuntivi dei risultati ottenuti.
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{nodi_visitati_astar_blocchi.png}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=270px]{nodi_visitati_astar_blocchi.png}
   \caption{Nodi visitati per i domini del mondo dei blocchi}
   \label{fig:figure15}
 \end{figure}
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{tempi_astar_blocchi.png}
+\begin{figure}[!htp]
+  \centering
+  \includegraphics[width=270px]{tempi_astar_blocchi.png}
   \caption{Tempi di calcolo per i domini del mondo dei blocchi}
   \label{fig:figure16}
 \end{figure}
 
-\chapter{Metropolitana di Londra}
+\subsection{Dominio Metropolitana di Londra}
 
-\section{Il codice sviluppato}
+\subsubsection{Il codice sviluppato}
 
 \begin{lstlisting}
 calcolo_euristica([at(Stazione1),_],[at(Stazione2),_]) :-
@@ -652,11 +662,9 @@ astar :-
         write('\n').
 \end{lstlisting}
 
-\section{Analisi dettagliata della strategia}
+\subsection{Analisi dettagliata della strategia}
 
-
-Dato che l'algoritmo era stato sviluppato nel mondo più indipendente possibile dal dominio è stato possibile riutilizzarlo anche in questo dominio, aggiungendo ovviamente le regole per l'incremento del \lstinline{g_val} e l'euristica specifica. Infine è stato eseguito un test sul dominio fornito dal professor Martelli. L'algoritmo sviluppato risponde benissimo riuscendo a calcolare una soluzione in soli 0.126 secondi. Di particolare rilievo è il numero di nodi visitati per trovare la soluzione, che è di soli 10 nodi. Il numero coincide esattamente con i nodi della soluzione. Su un altro esempio generato manualmente (partenza da Holborn e arrivo a Waterloo), l'algoritmo continua ad essere in ottima forma trovando la soluzione in 0.071 secondi ma questa volta il numero di nodi aperti è più alto del numero dei nodi della soluzione (15 nodi aperti contro i 9 della soluzione).
-
+L'algoritmo sviluppato calcola una soluzione in soli 0.126 secondi. Di particolare rilievo è il numero di nodi visitati per trovare la soluzione, che è di soli 10 nodi. Il numero coincide esattamente con i nodi della soluzione. Su un altro esempio generato manualmente (partenza da Holborn e arrivo a Waterloo), l'algoritmo trova la soluzione in 0.071 secondi ma questa volta il numero di nodi aperti è più alto del numero dei nodi della soluzione (15 nodi aperti contro i 9 della soluzione).
 \newpage
 
 \appendix
