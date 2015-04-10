@@ -1,36 +1,88 @@
-#const lastlev=1.
+#const lastlev=8.
 
 level(0..lastlev).
 state(0..lastlev+1).
 
 % AZIONI
 
-1 {
-    load(C,P,A,S) : cargo(C), plane(P), airport(A), state(S),
-    unload(C,P,A,S) : cargo(C), plane(P), airport(A), state(S),
-    fly(P,A1,A2,S) : plane(P), airport(A1), airport(A2), state(S)
-} :- level(S).
+action(load(C,P,A))   : cargo(C), plane(P), airport(A).
+action(unload(C,P,A)) : cargo(C), plane(P), airport(A).
+action(fly(P,A1,A2))  : plane(P), airport(A1), airport(A2), A1 != A2.
+
+1{occurs(A,S): action(A)} :- level(S).
+
+% FLUENTI
+
+fluent(in(C,P))  :- cargo(C), plane(P).
+fluent(at(C,A))  :- cargo(C), airport(A).
 
 % EFFETTI
+%holds(F,S) :- fluent(F), state(S)
+%-holds(F,S) :- not fluent(F), state(S)
 
 % afferma la -posizione di un cargo in un areoporto quando viene caricato su un aereo
--at(C,A,S+1) :- load(C,P,A,S),state(S).
+-holds(at(C,A), S+1) :- occurs(load(C,P,A),S),state(S).
 
 % afferma che un cargo è su un aereo, quando viene caricato
-in(C,P,S+1) :- load(C,P,A,S),state(S).
+holds(in(C,P),S+1) :- occurs(load(C,P,A),S),state(S).
 
 % rimette i cargo in un areoporto quando vengono scaricati
-at(C,A,S+1) :- unload(C,P,A,S),state(S).
+holds(at(C,A),S+1) :- occurs(unload(C,P,A),S),state(S).
 
 % nega che un cargo è su un aereo, quando viene scaricato
--in(C,P,S+1) :- unload(C,P,A,S),state(S).
+-holds(in(C,P),S+1) :- occurs(unload(C,P,A),S),state(S).
 
 % togliere un aereo da un areoporto quando vola
--at(P,AS,S+1) :- fly(P,AS,AD,S),state(S).
+-holds(at(P,AS),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 
 % rimetterlo nella posizione
-at(P,AD,S+1) :- fly(P,AS,AD,S),state(S).
+holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 
 % PRECONDIZIONI
 
-:-
+% DEVE ESSERE FALSO che ci sia contemporaneamente un'azione di load di un cargo in un plane da un areoporto
+% E (ci sia un fatto che indichi che il plane NON sia in quell'areoporto
+% O che il cargo NON sia in quell'areoporto
+% O che il cargo NON sia su quell'areo)
+:- occurs(load(C,P,A),S), not holds(at(P,A),S).
+:- occurs(load(C,P,A),S), not holds(at(C,A),S).
+:- occurs(load(C,P,A),S), not holds(in(C,P),S).
+
+% DEVE ESSERE FALSO che ci sia contemporaneamente un'azione di unload di un cargo da un plane in un areoporto
+% E (ci sia un fatto che indichi che il cargo NON sia in quello stesso aereo)
+:- occurs(unload(C,P,A),S), not holds(in(C,P),S).
+% o che l'aereo NON sia in quell'areoporto
+:- occurs(unload(C,P,A),S), not holds(at(P,A),S).
+% o che il cargo SIA in un altro areoporto
+:- occurs(unload(C,P,A),S), holds(at(C1,A1),S), C1 != C, A1 != A.
+
+%
+:- occurs(fly(P,A1,A2), S), not holds(at(P,A3)), A3 != A2, holds(at(P,A2)).
+
+% PERSISTENZA
+holds(F, S+1) :-
+  fluent(F), state(S),
+  holds(F,S), not -holds(F,S+1).
+
+-holds(F,S+1) :-
+  fluent(F), state(S),
+  -holds(F, S), not holds(F, S+1).
+
+% STATO INIZIALE
+cargo(c1).
+cargo(c2).
+plane(p1).
+plane(p2).
+airport(jfk).
+airport(sfo).
+
+holds(at(c1,sfo),0).
+holds(at(c2,jfk),0).
+holds(at(p1,sfo),0).
+holds(at(p2,jfk),0).
+
+% GOAL
+
+goal:- holds(at(c1,jfk),lastlev+1), holds(at(c2,sfo),lastlev+1).
+:- not goal.
+
