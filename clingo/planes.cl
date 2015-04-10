@@ -1,15 +1,15 @@
-#const lastlev=8.
+#const lastlev=10.
 
 level(0..lastlev).
 state(0..lastlev+1).
 
 % AZIONI
 
-action(load(C,P,A))   : cargo(C), plane(P), airport(A).
-action(unload(C,P,A)) : cargo(C), plane(P), airport(A).
-action(fly(P,A1,A2))  : plane(P), airport(A1), airport(A2), A1 != A2.
+action(load(C,P,A)) :- cargo(C), plane(P), airport(A).
+action(unload(C,P,A)) :- cargo(C), plane(P), airport(A).
+action(fly(P,A1,A2)) :- plane(P), airport(A1), airport(A2), A1 != A2.
 
-1{occurs(A,S): action(A)} :- level(S).
+1{occurs(A,S): action(A)}1 :- level(S).
 
 % FLUENTI
 
@@ -47,6 +47,7 @@ holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 :- occurs(load(C,P,A),S), not holds(at(P,A),S).
 :- occurs(load(C,P,A),S), not holds(at(C,A),S).
 :- occurs(load(C,P,A),S), not holds(in(C,P),S).
+:- occurs(load(C,P,A),S), holds(at(C,A1),S), holds(at(P,A2),S), A1 != A2.
 
 % DEVE ESSERE FALSO che ci sia contemporaneamente un'azione di unload di un cargo da un plane in un areoporto
 % E (ci sia un fatto che indichi che il cargo NON sia in quello stesso aereo)
@@ -57,7 +58,7 @@ holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 :- occurs(unload(C,P,A),S), holds(at(C1,A1),S), C1 != C, A1 != A.
 
 %
-:- occurs(fly(P,A1,A2), S), not holds(at(P,A3)), A3 != A2, holds(at(P,A2)).
+:- occurs(fly(P,A1,A2),S), not holds(at(P,A1),S), holds(at(P,A2),S).
 
 % PERSISTENZA
 holds(F, S+1) :-
@@ -67,6 +68,12 @@ holds(F, S+1) :-
 -holds(F,S+1) :-
   fluent(F), state(S),
   -holds(F, S), not holds(F, S+1).
+
+% REGOLE CAUSALI
+-holds(in(C,P),S) :- cargo(C), plane(P), plane(P1), state(S), holds(in(C,P1),S), P1!=P.
+-holds(at(C,A),S) :- cargo(C), airport(A), airport(A1), state(S), holds(at(C,A1),S), A1!=A.
+-holds(at(C,A),S) :- cargo(C), airport(A), plane(P), state(S), holds(in(C,P),S).
+-holds(at(P,A),S) :- plane(P), airport(A1), airport(A), state(S), holds(at(P,A1),S), A1!=A.
 
 % STATO INIZIALE
 cargo(c1).
