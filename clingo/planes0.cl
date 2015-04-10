@@ -23,6 +23,8 @@ fluent(at(C,A))  :- cargo(C), airport(A).
 
 % afferma che un cargo è su un aereo, quando viene caricato
 holds(in(C,P),S+1) :- occurs(load(C,P,A),S),state(S).
+holds(at(C,A),S+1) :- occurs(unload(C,P,A),S),state(S).
+holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 
 % PRECONDIZIONI
 
@@ -30,9 +32,10 @@ holds(in(C,P),S+1) :- occurs(load(C,P,A),S),state(S).
 % E (ci sia un fatto che indichi che il plane NON sia in quell'areoporto
 % O che il cargo NON sia in quell'areoporto
 % O che il cargo NON sia su quell'areo)
-:- occurs(load(C,P,A),S), -holds(in(C,P),S).
-:- occurs(load(C,P,A),S), holds(at(C,A1),S), holds(at(P,A2),S), A1 != A2.
-:- occurs(load(C,P,A),S), -holds(at(C,A),S), -holds(at(P,A),S).
+:- occurs(load(C,P,A),S), -holds(in(C,P),S). % il cargo deve non essere dentro il plane
+:- occurs(load(C,P,A),S), holds(at(C,A1),S), holds(at(P,A2),S), A1 != A2. % cargo e il plane devono essere nello stesso areoporto
+:- occurs(load(C,P,A),S), -holds(at(C,A),S).
+:- occurs(load(C,P,A),S), -holds(at(P,A),S).
 
 % REGOLE CAUSALI
 -holds(in(C,P),S) :- cargo(C), plane(P), plane(P1), state(S), holds(in(C,P1),S), P1!=P.

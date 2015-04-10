@@ -44,16 +44,16 @@ holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 % E (ci sia un fatto che indichi che il plane NON sia in quell'areoporto
 % O che il cargo NON sia in quell'areoporto
 % O che il cargo NON sia su quell'areo)
-:- occurs(load(C,P,A),S), not holds(at(P,A),S).
-:- occurs(load(C,P,A),S), not holds(at(C,A),S).
-:- occurs(load(C,P,A),S), not holds(in(C,P),S).
+%% :- occurs(load(C,P,A),S), not holds(at(P,A),S).
+%% :- occurs(load(C,P,A),S), not holds(at(C,A),S).
+:- occurs(load(C,P,A),S), -holds(in(C,P),S).
 :- occurs(load(C,P,A),S), holds(at(C,A1),S), holds(at(P,A2),S), A1 != A2.
 
 % DEVE ESSERE FALSO che ci sia contemporaneamente un'azione di unload di un cargo da un plane in un areoporto
 % E (ci sia un fatto che indichi che il cargo NON sia in quello stesso aereo)
-:- occurs(unload(C,P,A),S), not holds(in(C,P),S).
+:- occurs(unload(C,P,A),S), -holds(in(C,P),S).
 % o che l'aereo NON sia in quell'areoporto
-:- occurs(unload(C,P,A),S), not holds(at(P,A),S).
+:- occurs(unload(C,P,A),S), -holds(at(P,A),S).
 % o che il cargo SIA in un altro areoporto
 :- occurs(unload(C,P,A),S), holds(at(C1,A1),S), C1 != C, A1 != A.
 
