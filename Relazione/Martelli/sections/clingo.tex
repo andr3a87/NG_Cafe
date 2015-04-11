@@ -1,2 +1,100 @@
 % !TEX root = ../main.tex
 \part{Clingo}
+
+\chapter{Answer Set Programming}
+In questo capitolo mostriamo le soluzioni realizzate per i problemi sui vincoli
+proposti. Per risolvere questi problemi abbiamo fatto uso dell Answer Set
+Solver Clingo.
+\section{Problema delle Cinque Case}
+In questa parte verrà descritto lo svolgimento dell'esercizio delle Cinque Case.
+Il problema viene così enunciato:
+\small{\begin{quote}
+    Cinque persone di nazionalità diverse vivono in cinque case allineate lungo una
+    strada, esercitano cinque professioni distinte, e ciascuna persona ha un animale favorito e una
+    bevanda favorita, tutti diversi fra loro. Le cinque case sono dipinte con colori diversi. Sono noti i
+    seguenti fatti:
+    \begin{enumerate}
+        \item{L'inglese vive nella casa rossa.}
+        \item{Lo spagnolo possiede un cane.}
+        \item{Il giapponese è un pittore.}
+        \item{L'italiano beve tè.}
+        \item{Il norvegese vive nella prima casa a sinistra.}
+        \item{Il proprietario della casa verde beve caffè.}
+        \item{La casa verde è immediatamente sulla destra di quella bianca.}
+        \item{Lo scultore alleva lumache.}
+        \item{Il diplomatico vive nella casa gialla.}
+        \item{Nella casa di mezzo si beve latte.}
+        \item{La casa del norvegese è adiacente a quella blu.}
+        \item{Il violinista beve succo di frutta.}
+        \item{La volpe è nella casa adiacente a quella del dottore.}
+        \item{Il cavallo è nella casa adiacente a quella del diplomatico.}
+    \end{enumerate}
+    Trovare chi possiede una zebra.
+\end{quote}}
+\begin{lstlisting}
+% houses
+house_position(1..5).
+house_col(red;green;blue;yellow;white).
+house_per(eng;spa;jap;ita;nor).
+house_prof(painter;sculptor;diplomatic;doctor;violinist;).
+house_ani(dog;zebra;horse;fox;snail).
+house_bev(coffee;milk;tea;juice;beer).
+
+% (Directed) Edges
+adj(1,2).
+adj(2,3).
+adj(3,4).
+adj(4,5).
+
+% Generate
+1 { house(P,C,N,PR,A,B) : house_col(C), house_per(N), house_prof(PR), house_ani(A), house_bev(B)} 1 :- house_position(P).
+
+% different colors
+:- X != Y, house(X,C,_,_,_,_), house(Y,C,_,_,_,_).
+% different nationality
+:- X != Y, house(X,_,N,_,_,_), house(Y,_,N,_,_,_).
+% different prof
+:- X != Y, house(X,_,_,PR,_,_), house(Y,_,_,PR,_,_).
+% different animals
+:- X != Y, house(X,_,_,_,AN,_), house(Y,_,_,_,AN,_).
+% different beverage
+:- X != Y, house(X,_,_,_,_,B), house(Y,_,_,_,_,B).
+% inglese rosso
+:- house(_,red,P,_,_,_), P != eng.
+% spagnolo possiede cane
+:- house(_,_,P,_,dog,_), P != spa.
+% giapponese pittore
+:- house(_,_,P,painter,_,_), P != jap.
+% italiano beve te
+:- house(_,_,P,_,_,tea), P != ita.
+% norvegese prima casa a sinistra
+:- house(1,_,P,_,_,_), P != nor.
+% proprietario casa verde beve caffé
+:- house(_,C,_,_,_,coffee), C != green.
+% casa verde destra bianca
+:- house(X,white,_,_,_,_), house(Y,green,_,_,_,_), not adj(X,Y).
+% scultore alleva lumache
+:- house(_,_,_,P,snail,_), P != sculptor.
+% diplomatico nella casa gialla
+:- house(_,yellow,_,P,_,_), P != diplomatic.
+% casa 3 si beve latte
+:- house(3,_,_,_,_,B), B != milk.
+% norv adiacente blue
+:- house(2,C,_,_,_,_), C != blue.
+% violinista succo di frutta
+:- house(_,_,_,P,_,juice), P != violinist.
+% volpe adiacente dottore
+:- house(X,_,_,_,fox,_), house(Y,_,_,doctor,_,_), not adj(X,Y), not adj(Y,X).
+% cavallo adiacente diplomatico
+:- house(X,_,_,_,horse,_), house(Y,_,_,diplomatic,_,_), not adj(X,Y), not adj(Y,X).
+\end{lstlisting}
+Dalla linea 2 alla linea 7 (codice sottostante) sono stati dichiarati i fatti del problema: il numero delle case, i colori disponibili, le nazionalità, le professioni
+gli animali e le bevande. Le linee dalla 10 alla 13 servono per descrivere il concetto di adiacenza delle case. La linea 16 serve per generare tutti i possibili modelli. Le linee dalla 19 alla 55 servono per descrivere i vincoli che il nostro modello dovrà soddisfare.
+Di seguito la soluzione trovata dal programma:
+\begin{lstlisting}
+house(1,yellow,nor,diplomatic,fox,beer) 
+house(2,blue,ita,doctor,horse,tea) 
+house(3,red,eng,sculptor,snail,milk) 
+house(4,white,spa,violinist,dog,juice) 
+house(5,green,jap,painter,zebra,coffee)
+\end{lstlisting}

@@ -6,7 +6,6 @@
 
 \documentclass[a4paper,11pt,oneside]{book}
 \usepackage[T1]{fontenc}
-\usepackage[utf8]{inputenc}
 \usepackage{lmodern}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Source: http://en.wikibooks.org/wiki/LaTeX/Hyperlinks %
@@ -42,17 +41,14 @@
 \usepackage{subfiles}
 \usepackage{blindtext}
 \usepackage{listings}
-\lstset{frame=tb,
-  language=Prolog,
-  aboveskip=3mm,
-  belowskip=3mm,
-  showstringspaces=false,
-  columns=flexible,
-  basicstyle={\small\ttfamily},
-  numbers=none,
-  breaklines=true,
-  breakatwhitespace=true,
-  tabsize=3
+\lstset{
+language=Prolog,
+basicstyle=\scriptsize\sffamily,
+numbers=left,
+numberstyle=\scriptsize,
+frame=tb,
+columns=fullflexible,
+showstringspaces=false
 }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Math %
@@ -84,7 +80,7 @@
 \makeatletter
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% First page of book which contains 'stuff' like: %
+% First page of book which contains 'stuff' like: % 
 %  - Book title, subtitle                         %
 %  - Book author name                             %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -128,5 +124,6 @@
 %%%%%%%%%%%%%%%%
 \subfile{sections/prolog}
 \subfile{sections/clingo}
+\subfile{sections/appendix}
 
 \end{document}

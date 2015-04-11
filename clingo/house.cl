@@ -71,7 +71,7 @@ adj(4,5).
 % volpe adiacente dottore
 :- house(X,_,_,_,fox,_), house(Y,_,_,doctor,_,_), not adj(X,Y), not adj(Y,X).
 
-%% % cavallo adiacente diplomatico
+% cavallo adiacente diplomatico
 :- house(X,_,_,_,horse,_), house(Y,_,_,diplomatic,_,_), not adj(X,Y), not adj(Y,X).
 
 %% %
