@@ -9,56 +9,51 @@ action(load(C,P,A)) :- cargo(C), plane(P), airport(A).
 action(unload(C,P,A)) :- cargo(C), plane(P), airport(A).
 action(fly(P,A1,A2)) :- plane(P), airport(A1), airport(A2), A1 != A2.
 
-1{occurs(A,S): action(A)}1 :- level(S).
+% le azioni possono essere eseguite in parallelo
+1{occurs(A,S): action(A)} :- level(S).
 
 % FLUENTI
 
+% cargo C is in plane P
 fluent(in(C,P))  :- cargo(C), plane(P).
+% cargo C is at airport A
 fluent(at(C,A))  :- cargo(C), airport(A).
+% plane P is at airport A
+fluent(at(P,A))  :- plane(P), airport(A).
 
 % EFFETTI
-%holds(F,S) :- fluent(F), state(S)
-%-holds(F,S) :- not fluent(F), state(S)
-
-% afferma la -posizione di un cargo in un areoporto quando viene caricato su un aereo
--holds(at(C,A), S+1) :- occurs(load(C,P,A),S),state(S).
+% i -holds vengono generati dalle regole causali
 
 % afferma che un cargo è su un aereo, quando viene caricato
 holds(in(C,P),S+1) :- occurs(load(C,P,A),S),state(S).
-
 % rimette i cargo in un areoporto quando vengono scaricati
 holds(at(C,A),S+1) :- occurs(unload(C,P,A),S),state(S).
 
-% nega che un cargo è su un aereo, quando viene scaricato
--holds(in(C,P),S+1) :- occurs(unload(C,P,A),S),state(S).
-
-% togliere un aereo da un areoporto quando vola
--holds(at(P,AS),S+1) :- occurs(fly(P,AS,AD),S),state(S).
-
-% rimetterlo nella posizione
+% mette l'aereo nel nuovo areoporto quando l'azione fly deve essere fatta
 holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 
 % PRECONDIZIONI
 
-% DEVE ESSERE FALSO che ci sia contemporaneamente un'azione di load di un cargo in un plane da un areoporto
-% E (ci sia un fatto che indichi che il plane NON sia in quell'areoporto
-% O che il cargo NON sia in quell'areoporto
-% O che il cargo NON sia su quell'areo)
-%% :- occurs(load(C,P,A),S), not holds(at(P,A),S).
-%% :- occurs(load(C,P,A),S), not holds(at(C,A),S).
-:- occurs(load(C,P,A),S), -holds(in(C,P),S).
-:- occurs(load(C,P,A),S), holds(at(C,A1),S), holds(at(P,A2),S), A1 != A2.
+% precondizioni di laod
+% - il cargo non deve essere su un aereo
+% - il cargo e l'aereo devono essere nello stesso areoporto
+:- occurs(load(C,P0,A),S), holds(in(C,P1),S).
+:- occurs(load(C,P,A),S), -holds(at(C,A),S).
+:- occurs(load(C,P,A),S), -holds(at(P,A),S).
 
-% DEVE ESSERE FALSO che ci sia contemporaneamente un'azione di unload di un cargo da un plane in un areoporto
-% E (ci sia un fatto che indichi che il cargo NON sia in quello stesso aereo)
+% precondizioni di unload
+% - il cargo deve essere su quell'aereo, l'aereo in quell'areoporto
 :- occurs(unload(C,P,A),S), -holds(in(C,P),S).
-% o che l'aereo NON sia in quell'areoporto
 :- occurs(unload(C,P,A),S), -holds(at(P,A),S).
-% o che il cargo SIA in un altro areoporto
-:- occurs(unload(C,P,A),S), holds(at(C1,A1),S), C1 != C, A1 != A.
+% - il cargo non deve essere in un areoporto
+:- occurs(unload(C,P,A),S), holds(in(C,A),S).
 
-%
-:- occurs(fly(P,A1,A2),S), not holds(at(P,A1),S), holds(at(P,A2),S).
+% precondizioni di fly
+% - il l'aereo deve essere in A1 e non essere in A2
+:- occurs(fly(P,A1,A2),S), -holds(at(P,A1),S).
+:- occurs(fly(P,A1,A2),S), holds(at(P,A2),S).
+% - l'aereo deve avere qualcosa a bordo!
+:- occurs(fly(P,A1,A2),S), -holds(in(C,P),S).
 
 % PERSISTENZA
 holds(F, S+1) :-
@@ -70,10 +65,15 @@ holds(F, S+1) :-
   -holds(F, S), not holds(F, S+1).
 
 % REGOLE CAUSALI
--holds(in(C,P),S) :- cargo(C), plane(P), plane(P1), state(S), holds(in(C,P1),S), P1!=P.
--holds(at(C,A),S) :- cargo(C), airport(A), airport(A1), state(S), holds(at(C,A1),S), A1!=A.
+
+% cargo non è in nessun aereo, se è in areoporto
+-holds(in(C,P),S) :- cargo(C), airport(A), plane(P), state(S), holds(at(C,A),S).
+% cargo è in plane, cargo non è in nessun areoporto
 -holds(at(C,A),S) :- cargo(C), airport(A), plane(P), state(S), holds(in(C,P),S).
--holds(at(P,A),S) :- plane(P), airport(A1), airport(A), state(S), holds(at(P,A1),S), A1!=A.
+% cargo è in areoporto, non è in tutti gli altri
+-holds(at(C,A2),S) :- cargo(C), airport(A1), airport(A2), state(S), holds(at(C,A1),S), A1!=A2.
+% aereo in areoporto, non è in tutti gli altri
+-holds(at(P,A2),S) :- plane(P), airport(A1), airport(A2), state(S), holds(at(P,A1),S), A1!=A2.
 
 % STATO INIZIALE
 cargo(c1).
@@ -92,4 +92,6 @@ holds(at(p2,jfk),0).
 
 goal:- holds(at(c1,jfk),lastlev+1), holds(at(c2,sfo),lastlev+1).
 :- not goal.
-
+% unload(c2,p1,sfo),0)
+#hide.
+#show -holds/2.
