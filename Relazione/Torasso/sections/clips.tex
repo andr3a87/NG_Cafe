@@ -166,11 +166,17 @@ Obiettivo di questa strategia è quella di minimizzare le penalità rispetto all
 \section{Strategia PENDIST}
 La strategia PENDIST (acronimo di PENality DISTance) usa come base di partenza la strategia precedente, la LOW PENALITY [vd. \ref{sec:lowpen}]; ne condivide dunque gli stessi pregi, in particolare il tentativo di servire l'ordine con penalità massima.
 
-All'euristica che usiamo per cercare il tavolo da servire aggiungiamo
-; un pezzo, ossia minimizzare la distanza in step in modo da completare l'ordine
-; a massimo carico. (la strategia low-penality, cerca di servire quel tavolo caricando il più possibile per quel singolo ordine, poi una volta completato la fase di portare il cibo&drink al tavolo e c'è ancora roba da servire, rimette il tavolo nel pool degli ordini da evadere e ricalcola la penalità.)
-; moltiplichiamo la distanza del percorso in step, per la penalità, e cerchiamo il tavolo
-; con questo valore massimo;
+All'euristica che usiamo per cercare il tavolo da servire aggiungiamo un pezzo, ossia minimizzare la distanza in step in modo da completare l'ordine a massimo carico (la strategia low-penality, cerca di servire quel tavolo caricando il più possibile per quel singolo ordine, poi una volta completato la fase di portare il cibo&drink al tavolo e c'è ancora roba da servire, rimette il tavolo nel pool degli ordini da evadere e ricalcola la penalità.). Per minimizzare questo valore, utilizziamo il concetto di priorità, concetto che ci permette di scegliere l'obietivo con priorità più alta. La priorità di ogni obiettivo viene calcolata moltiplicando la sua penalità con il rapporto fra la distanza minima fra gli obiettivi disponibili e la sua distanza.
+
+Qui di segueito viene indicata la formula matematica che implementa l'euristica di pianificazione:
+
+$$ pen*(\frac{1}{2} + \frac{md}{dp}*\frac{1}{2}) $$
+
+dove $pen$ è la penalità data ad ogni step dell'ordine corrente, $md$ la distanza minima fra gli obiettivi disponibili, $dp$ la distanza dell'obiettivo corrente.
+
+Il secondo fattore, $(\frac{1}{2} + \frac{md}{dp}*\frac{1}{2})$, consente di vincolare il peso della distanza tra 0,5 e 1 (rispettivamente sarà prossimo 0,5 nel caso di un obiettivo molto lontano rispetto all'obiettivo più vicino tra quelli disponibili; sarà invece 1 nel caso in cui stiamo calcolando la priorità dell'obiettivo più vicino tra quelli esaminati). Questa parte di formula permette a parità di penalità di scegliere gli obiettivi più vicini, mentre a distanza costante gli obiettivi con penalità maggiore.
+
+Abbiamo infine provato una variante della formula di calcolo della priorità, ossia $pen*(md/dp)$; la variazione ha come effetto un maggior peso della distanza, che tende più facilmente a zero nel caso di obiettivi molto lontani; infatti nei nostri (pochi) test il risultato è stato una penalità globale leggermente minore e un minor numero di ordini serviti nel tempo prestabilito.
 
 \section{Strategia HARD}
 La strategia HARD è la più complessa e permette di servire più tavoli in contemporanea. In comune con la strategia precedente ha la ripianificazione nel caso il piano calcolato fallisca, e il cambio dell'ordine corrente per un altro nel caso non si riesca a trovare un piano per arrivare a destinazione.
