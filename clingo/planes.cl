@@ -1,4 +1,4 @@
-#const lastlev=4.
+#const lastlev=2.
 
 level(0..lastlev).
 state(0..lastlev+1).
@@ -36,20 +36,20 @@ holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 % precondizioni di laod
 % - il cargo non deve essere su un aereo
 % - il cargo e l'aereo devono essere nello stesso areoporto
-:- occurs(load(C,P0,A),S), holds(in(C,P1),S), airport(A), plane(P1), plane(P0).
-:- occurs(load(C,P,A),S), -holds(at(C,A),S), plane(P).
-:- occurs(load(C,P,A),S), -holds(at(P,A),S), cargo(C).
+:- occurs(load(C,P0,A),S), holds(in(C,P1),S).
+:- occurs(load(C,P,A),S), -holds(at(C,A),S).
+:- occurs(load(C,P,A),S), -holds(at(P,A),S).
 
 % precondizioni di unload
 % - il cargo deve essere su quell'aereo, l'aereo in quell'areoporto
-:- occurs(unload(C,P,A),S), -holds(in(C,P),S), airport(A).
-:- occurs(unload(C,P,A),S), -holds(at(P,A),S), cargo(C).
+:- occurs(unload(C,P,A),S), -holds(in(C,P),S).
+:- occurs(unload(C,P,A),S), -holds(at(P,A),S).
 % - il cargo non deve essere in un areoporto
-:- occurs(unload(C,P,A),S), holds(in(C,A),S), plane(P).
+:- occurs(unload(C,P,A),S), holds(in(C,A),S).
 
 % precondizioni di fly
 % - il l'aereo deve essere in A1 e non essere in A2
-:- occurs(fly(P,A1,A2),S), -holds(at(P,A1),S), holds(at(P,A2),S).
+:- occurs(fly(P,A1,A2),S), -holds(at(P,A1),S).
 
 % trick
 % lo stesso aereo non può eseguire più azioni nello stesso livello

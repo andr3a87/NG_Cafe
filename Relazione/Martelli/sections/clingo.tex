@@ -140,22 +140,14 @@ Un grafo di pianificazione in \emph{GRAPHPLAN} è un grafo orientato organizzato
 
 Il livello $S_i$ è l'insieme dei nodi che rappresentano fluenti validi in $S_i$. Il livello $A_i$ è l'insieme dei nodi che rappresentano le azioni applicabili in $S_i$. Ci sarà quindi un'alternanza di livelli $S_i$ e $A_i$, fino alla condizione di terminazione. Lo stato $S_{n+1}$ rappresenta lo stato che contiene il goal.
 
-Per rappresentare il problema di pianificazione attraverso \emph{GRAPHPLAN} abbiamo bisogno di due predicati che, rispettivamente, rappresentino i fluenti esistenti e le azioni esistenti nel dominio.
-
-In clingo i fluenti sono stati formulati attraverso il predicato \emph{fluent(F) :- proposition(term)}, mentre le azioni sono state formulate attraverso il predicato \emph{action(A) :- proposition(term)}.
-
-\begin{lstlisting}
-action(load(C,P,A)) :- cargo(C), plane(P), airport(A).
-action(unload(C,P,A)) :- cargo(C), plane(P), airport(A).
-action(fly(P,A1,A2)) :- plane(P), airport(A1), airport(A2), A1 != A2.
-\end{lstlisting}
-
-Per formulare i livelli abbiamo introdotto due predicati, \emph{holds(F,S)} e \emph{occurs(A,S)}, così descritti:
+Per rappresentare il problema di pianificazione attraverso \emph{GRAPHPLAN} abbiamo bisogno di due predicati che, rispettivamente, rappresentino i fluenti (sia veri che falsi) e le azioni eseguite in ogni stato.
 
 \begin{enumerate}
 \item \emph{holds(F,S)}: in cui F è un fluente ed S è il livello $S_i$, in F è valido.
 \item \emph{occurs(A,L)}: che indica che una action A è eseguito nel livello $L$ (in questo il livello L è un $A_i$).
 \end{enumerate}
+
+In clingo i fluenti enumerabili sono stati formulati attraverso il predicato \emph{fluent(F) :- proposition(term)}, mentre le azioni possibili nel dominio sono state formulate attraverso il predicato \emph{action(A) :- proposition(term)}.
 
 Abbiamo inoltre introdotto un costrutto sintattico per generare tutte le possibili \emph{occurs(A,L)} e permettere più azioni possibili contemporaneamente.
 
@@ -163,7 +155,7 @@ Abbiamo inoltre introdotto un costrutto sintattico per generare tutte le possibi
 1{occurs(A,L): action(A)} :- level(L).
 \end{lstlisting}
 
-Gli \emph{Effetti} delle \emph{occurs(A,L)} sono stati descritti con delle regole nella seguente forma:
+Gli \emph{Effetti} delle \emph{occurs(A,L)}, ossia delle azioni, sono stati descritti tramite la seguente regola che esprime l'aggiunta di un fluente allo stato successivo.
 
 \begin{lstlisting}
 holds(F,S+1) :- occurs(A,S), state(S)
@@ -194,17 +186,55 @@ goal :- descrizione stato finale
 :- not goal
 \end{lstlisting}
 
+Poiché dobbiamo mantenere gli stati completi, ossia mantengono $F$ o $\neg{F}$ per ogni fluent $F$, dobbiamo aggiungere le regole causali. Queste regole asseriscono i predicati \emph{-holds{F,S}} se nello stato S non è presente il fluente F o se non è possibile dedurlo.
+
 \section{Problema dell'Air Cargo}
 
-\begin{lstlisting}
-% cargo C is in plane P
-fluent(in(C,P))  :- cargo(C), plane(P).
-% cargo C is at airport A
-fluent(at(C,A))  :- cargo(C), airport(A).
-% plane P is at airport A
-fluent(at(P,A))  :- plane(P), airport(A).
-\end{lstlisting}
+Il codice sottostante illustra come il problema di pianificazione air cargo, descritto nel paragrafo 10.1.1 del \emph{Russel-Norvig}, possa essere implementato mediante l’utilizzo della ASP.
 
-Nel nostro caso i fluenti sono gli stessi descritti nella sezione 1.1 del capitolo 10 (Russel e Norvig), ossia \emph{in(cargo, plane)}, \emph{at(plane, airport)}, \emph{at(cargo, airport)}; mentre le azioni sono \emph{load(cargo, plane, airport)}, \emph{unload(cargo, plane, airport)} e \emph{fly(plane, airport, airport)}.
+Nella \emph{prima parte} del codice (righe 1-4) troviamo la generazione dei predicati che descrivno gli stati e i livelli.
 
-Nel nostro caso i fluenti sono gli stessi descritti nella sezione 1.1 del capitolo 10 (Russel e Norvig), ossia \emph{in(cargo, plane)}, \emph{at(plane, airport)}, \emph{at(cargo, airport)}; mentre le azioni sono \emph{load(cargo, plane, airport)}, \emph{unload(cargo, plane, airport)} e \emph{fly(plane, airport, airport)}.
+Nella \emph{seconda parte} troviamo, le \emph{azioni eseguibili} e i \emph{fluenti ammessi} nel dominio:
+
+\begin{enumerate}
+\item le azioni eseguibili (8,9,10)
+\begin{enumerate}
+\item load(C,P,A): carica un cargo $C$ all'interno dell'aereo $P$ da un aeroporto $A$.
+\item unload(C,P,A): scarica una cargo $C$ dall'aereo $P$ in un aeroporto (A).
+\item fly(P,A1,A2): sposta l'aereo P dall'aeroporto A1 all'aeroporto A2.
+\end{enumerate}
+
+\item la generazione delle \emph{occurs(F,S)}, che consente più azioni contemporaneamente (riga 13)
+
+\item i fluenti esistenti
+\begin{enumerate}
+\item in(C,P): il cargo $C$ è caricato nell'aereo $P$.
+\item at(P,A): il plane $P$ è nell'aeroporto $A$.
+\item at(C,A): il cargo $C$ è nell'aeroporto $A$.
+\end{enumerate}
+\end{enumerate}
+
+Nella \emph{terza parte} definiamo gli effetti delle azioni, le precondizioni, le regole di persistenza e le regole causali:
+
+\begin{enumerate}
+\item gli effetti delle azioni (28-32)
+\begin{enumerate}
+\item load: nello stato $S+1$, il cargo $C$ è nell'aereo $P$ se viene effettuata una azione di load.
+\item unload: nello stato $S+1$, il cargo $C$ è nell'aeroporto $A$ se viene effettuata una azione di unload.
+\item fly: l'aereo è in aeroporto A2 se viene effettuata una azione di fly.
+\end{enumerate}
+
+\item precondizioni delle azioni load, unload e fly:
+\begin{enumerate}
+\item load: non è possibile applicare l'azione di load se il cargo $C$ si trova in qualche altro aereo $P_1$ o se il cargo $C$ e l'aereo $P$ non si trovano nello stesso aeroporto $A$.
+\item unload: non è possibile applicare l'azione di unload se il cargo $C$ non è all'interno dell'aereo $P$ e se l'aereo $P$ non si trova nell'aeroporto $A$.
+\item fly: non è possibile applicare l'azione di fly se l'aereo $P$ non si trova nell'aeroporto $A1$
+\end{enumerate}
+
+\item regole di persistenza: svolgono il compito delle azioni di \emph{no-op}, già spiegate nella parte introduttiva.
+
+\item regole causali
+
+\end{enumerate}
+
+Nella \emph{quarta e ultima parte} definiamo lo stato iniziale, la descrizione del goal e le istruzioni di post-processing per specifiche di clingo.
