@@ -238,3 +238,102 @@ Nella \emph{terza parte} definiamo gli effetti delle azioni, le precondizioni, l
 \end{enumerate}
 
 Nella \emph{quarta e ultima parte} definiamo lo stato iniziale, la descrizione del goal e le istruzioni di post-processing per specifiche di clingo.
+
+\subsection{Problema 1}
+
+Questo primo problema di pianificazione \emph{air cargo} è lo stesso presente nel paragrafo 10.1.1 del \emph{Russel\&Norvig}
+
+Lo stato iniziale e il goal del problema sono:
+
+\begin{lstlisting}
+cargo(c1).
+cargo(c2).
+plane(p1).
+plane(p2).
+airport(jfk).
+airport(sfo).
+
+holds(at(c1,sfo),0).
+holds(at(c2,jfk),0).
+holds(at(p1,sfo),0).
+holds(at(p2,jfk),0).
+
+goal:-  holds(at(c1,jfk),lastlev+1),
+        holds(at(c2,sfo),lastlev+1).
+
+\end{lstlisting}
+
+Una soluzione ottima, ottenuta assegnando a \emph{lastlevel} il valore 2 é:
+
+\begin{lstlisting}
+occurs(load(c1,p1,sfo),0)
+occurs(load(c2,p2,jfk),0)
+occurs(fly(p1,sfo,jfk),1)
+occurs(fly(p2,jfk,sfo),1)
+occurs(unload(c1,p1,jfk),2)
+occurs(unload(c2,p2,sfo),2)
+\end{lstlisting}
+
+il tempo impiegato è \emph{infinitesimo}.
+
+\subsection{Problema 2}
+
+Il secondo problema è stato formulato in modo da ampliare il numero di cargo da spostare.
+
+\begin{lstlisting}
+cargo(c1).
+cargo(c2).
+cargo(c3).
+cargo(c4).
+cargo(c5).
+plane(p1).
+plane(p2).
+airport(jfk).
+airport(sfo).
+airport(bari).
+
+holds(at(p1,sfo),0).
+holds(at(p2,jfk),0).
+
+holds(at(c1,sfo),0).
+holds(at(c2,sfo),0).
+holds(at(c3,sfo),0).
+holds(at(c4,sfo),0).
+holds(at(c5,sfo),0).
+
+% GOAL
+goal:-  holds(at(p1,sfo), lastlev+1),
+        holds(at(p2,jfk), lastlev+1),
+        holds(at(c1,bari),lastlev+1),
+        holds(at(c2,bari),lastlev+1),
+        holds(at(c3,bari),lastlev+1),
+        holds(at(c4,bari),lastlev+1),
+        holds(at(c5,bari),lastlev+1).
+\end{lstlisting}
+
+Una delle soluzioni ottenute, impostando \emph{lastlev} a 3 è la seguente.
+
+\begin{lstlisting}
+occurs(load(c5,p1,sfo),0)
+occurs(load(c4,p1,sfo),0)
+occurs(load(c3,p1,sfo),0)
+occurs(load(c2,p1,sfo),0)
+occurs(load(c1,p1,sfo),0)
+occurs(fly(p2,jfk,bari),0)
+occurs(fly(p2,bari,jfk),1)
+occurs(fly(p1,sfo,bari),1)
+occurs(unload(c5,p1,bari),2)
+occurs(unload(c4,p1,bari),2)
+occurs(unload(c3,p1,bari),2)
+occurs(unload(c2,p1,bari),2)
+occurs(unload(c1,p1,bari),2)
+occurs(fly(p2,jfk,bari),2)
+occurs(fly(p2,bari,jfk),3)
+occurs(fly(p1,bari,sfo),3)
+\end{lstlisting}
+
+Come si può notare, dato che non abbiamo inserito un vincolo di carico del plane, l'aereo $P1$ carica e scarica tutti i cargo in uno solo level, il secondo. L'aereo $P2$, inoltre, fa voli a vuoto, non essendo stata specificata nessuna regola di \emph{viaggia a vuoto solo se c'è da caricare un cargo nell'altro areoporto.}
+
+Il tempo, aumentando di un solo livello il grafo, è aumentato di 10millisecondi.
+
+Usando lo stesso esempio, se aumentassimo il livello massimo (\emph{lastlev}) a 30, invece che a 3, il tempo di esecuzione per trovare almeno una soluzione è di 110millisecondi, ovvero un aumento di 10 volte. Possiamo stimare quindi che il tempo di esecuzione è pari ad $O(n)$, dove $n$ è il numero di livelli.

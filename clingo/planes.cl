@@ -1,4 +1,4 @@
-#const lastlev=2.
+#const lastlev=300.
 
 level(0..lastlev).
 state(0..lastlev+1).
@@ -76,23 +76,54 @@ holds(F, S+1) :-
 % aereo in areoporto, non è in tutti gli altri
 -holds(at(P,A2),S) :- plane(P), airport(A1), airport(A2), state(S), holds(at(P,A1),S), A1!=A2.
 
+% #Problema 1
+% STATO INIZIALE
+%% cargo(c1).
+%% cargo(c2).
+%% plane(p1).
+%% plane(p2).
+%% airport(jfk).
+%% airport(sfo).
+
+%% holds(at(c1,sfo),0).
+%% holds(at(c2,jfk),0).
+%% holds(at(p1,sfo),0).
+%% holds(at(p2,jfk),0).
+
+%% % GOAL
+%% goal:- holds(at(c1,jfk),lastlev+1), holds(at(c2,sfo),lastlev+1).
+
+% #Problema 2
 % STATO INIZIALE
 cargo(c1).
 cargo(c2).
+cargo(c3).
+cargo(c4).
+cargo(c5).
 plane(p1).
 plane(p2).
 airport(jfk).
 airport(sfo).
+airport(bari).
 
-holds(at(c1,sfo),0).
-holds(at(c2,jfk),0).
 holds(at(p1,sfo),0).
 holds(at(p2,jfk),0).
 
-% GOAL
+holds(at(c1,sfo),0).
+holds(at(c2,sfo),0).
+holds(at(c3,sfo),0).
+holds(at(c4,sfo),0).
+holds(at(c5,sfo),0).
 
-goal:- holds(at(c1,jfk),lastlev+1), holds(at(c2,sfo),lastlev+1).
-%goal :- holds(at(p1,jfk), lastlev+1).
+% GOAL
+goal:-  holds(at(p1,sfo), lastlev+1),
+        holds(at(p2,jfk), lastlev+1),
+        holds(at(c1,bari),lastlev+1),
+        holds(at(c2,bari),lastlev+1),
+        holds(at(c3,bari),lastlev+1),
+        holds(at(c4,bari),lastlev+1),
+        holds(at(c5,bari),lastlev+1).
+
 :- not goal.
 
 #hide.
