@@ -1,4 +1,4 @@
-#const lastlev=10.
+#const lastlev=4.
 
 level(0..lastlev).
 state(0..lastlev+1).
@@ -10,7 +10,7 @@ action(unload(C,P,A)) :- cargo(C), plane(P), airport(A).
 action(fly(P,A1,A2)) :- plane(P), airport(A1), airport(A2), A1 != A2.
 
 % le azioni possono essere eseguite in parallelo
-1{occurs(A,S): action(A)} :- level(S).
+1{occurs(A,L): action(A)} :- level(L).
 
 % FLUENTI
 
@@ -50,6 +50,11 @@ holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 % precondizioni di fly
 % - il l'aereo deve essere in A1 e non essere in A2
 :- occurs(fly(P,A1,A2),S), -holds(at(P,A1),S), holds(at(P,A2),S).
+
+% trick
+% lo stesso aereo non può eseguire più azioni nello stesso livello
+:- occurs(fly(P,A1,A2),S), occurs(load(C,P,A1),S), plane(P), airport(A1), airport(A2), cargo(C).
+:- occurs(fly(P,A1,A2),S), occurs(unload(C,P,A1),S), plane(P), airport(A1), airport(A2), cargo(C).
 
 % PERSISTENZA
 holds(F, S+1) :-
@@ -91,4 +96,4 @@ goal:- holds(at(c1,jfk),lastlev+1), holds(at(c2,sfo),lastlev+1).
 :- not goal.
 
 #hide.
-#show holds/2.
+#show occurs/2.

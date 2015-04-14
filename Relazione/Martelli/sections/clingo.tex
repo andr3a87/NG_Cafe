@@ -3,11 +3,13 @@
 
 \chapter{Answer Set Programming}
 In questo capitolo mostriamo le soluzioni realizzate per i problemi sui vincoli
-proposti. Per risolvere questi problemi abbiamo fatto uso dell Answer Set
-Solver Clingo.
+proposti. Per risolvere questi problemi abbiamo fatto uso dell Answer Set Solver \emph{Clingo}.
+
 \section{Problema delle Cinque Case}
-In questa parte verrà descritto lo svolgimento dell'esercizio delle Cinque Case.
+In questa parte verrà descritto lo svolgimento dell'esercizio delle Cinque Case. In questo caso è stato utilizzata la versione 4.4.0 di clingo.
+
 Il problema viene così enunciato:
+
 \small{\begin{quote}
     Cinque persone di nazionalità diverse vivono in cinque case allineate lungo una
     strada, esercitano cinque professioni distinte, e ciascuna persona ha un animale favorito e una
@@ -29,8 +31,10 @@ Il problema viene così enunciato:
         \item{La volpe è nella casa adiacente a quella del dottore.}
         \item{Il cavallo è nella casa adiacente a quella del diplomatico.}
     \end{enumerate}
-    Trovare chi possiede una zebra.
 \end{quote}}
+
+L'obiettivo consiste nel trovare chi ha come animale domenstico la \emph{giraffa}.
+
 \begin{lstlisting}
 % houses
 house_position(1..5).
@@ -88,13 +92,117 @@ adj(4,5).
 % cavallo adiacente diplomatico
 :- house(X,_,_,_,horse,_), house(Y,_,_,diplomatic,_,_), not adj(X,Y), not adj(Y,X).
 \end{lstlisting}
+
+
 Dalla linea 2 alla linea 7 (codice sottostante) sono stati dichiarati i fatti del problema: il numero delle case, i colori disponibili, le nazionalità, le professioni
-gli animali e le bevande. Le linee dalla 10 alla 13 servono per descrivere il concetto di adiacenza delle case. La linea 16 serve per generare tutti i possibili modelli. Le linee dalla 19 alla 55 servono per descrivere i vincoli che il nostro modello dovrà soddisfare.
+gli animali e le bevande. Le linee dalla 10 alla 13 servono per descrivere il concetto di adiacenza delle case. La linea 16 serve per generare tutti i possibili modelli. Le linee dalla 19 alla 55 servono per descrivere i vincoli (\emph{integrity constraint}) che il nostro modello dovrà soddisfare.
+
+In particolare i vincoli per assegnare ogni casa consistono di:
+
+\begin{enumerate}
+\item color: non possono esserci case diverse con colore uguale (riga 19).
+\item nationality: non possono esistere due case diverse il cui abitante ha la stessa nazionalità (riga 21).
+\item profession: non possono esserci due case diverse con uguale professione (riga 23).
+\item animal: stesso vincolo di sopra ma prendendo in considerazione gli animali (riga 27).
+\item beverage: stesso vincolo di sopra ma prendendo in considerazione le bevande (riga 27).
+\end{enumerate}
+
+Dalla riga 28 alla 55 vengono descritti i vincoli specifici dei fatti conosciuti.
+
+Il concetto generale qui applicato consiste nel creare un solo predicato contenente tutti i termini che descrivono una singola casa. In particolare il predicato $house$ è definito nel seguente modo:
+
+\begin{lstlisting}
+house(id_position,
+      color,
+      resident_nationality,
+      resident_profession,
+      resident_pet,
+      resident_best_beverage)
+\end{lstlisting}
+
+I termini del predicato dovrebbero essere auto-esplicanti. Nel codice i vincolo sono espressi tramite l'uso della sintassi con underscore (es. $pred(N,_)$), che equivale ad una wild-card.
+
 Di seguito la soluzione trovata dal programma:
 \begin{lstlisting}
-house(1,yellow,nor,diplomatic,fox,beer) 
-house(2,blue,ita,doctor,horse,tea) 
-house(3,red,eng,sculptor,snail,milk) 
-house(4,white,spa,violinist,dog,juice) 
+house(1,yellow,nor,diplomatic,fox,beer)
+house(2,blue,ita,doctor,horse,tea)
+house(3,red,eng,sculptor,snail,milk)
+house(4,white,spa,violinist,dog,juice)
 house(5,green,jap,painter,zebra,coffee)
 \end{lstlisting}
+
+\section{Pianificazione tramite Answer Set Programming}
+
+Un approccio alla pianificazione è basato sulla verifica di soddisfacibilità di una formula proposizionale, che rappresenta il problema di pianificazione.
+In ASP il problema viene modellato tramite regole della programmazione proposizionale, che ammette la negazione per fallimento. Questo approccio (oltre a SATPLAN) ha una affinità con i grafi di pianificazione descritti da \emph{GRAPHPLAN}.
+
+Un grafo di pianificazione in \emph{GRAPHPLAN} è un grafo orientato organizzato in livelli: $S_0, A_0, S_1, A_1, ... , A_2, S_{n+1}$.
+
+Il livello $S_i$ è l'insieme dei nodi che rappresentano fluenti validi in $S_i$. Il livello $A_i$ è l'insieme dei nodi che rappresentano le azioni applicabili in $S_i$. Ci sarà quindi un'alternanza di livelli $S_i$ e $A_i$, fino alla condizione di terminazione.
+
+Per rappresentare il problema di pianificazione attraverso \emph{GRAPHPLAN} abbiamo bisogno di due predicati che, rispettivamente, rappresentino i fluenti esistenti e le azioni esistenti nel dominio. Nel nostro caso i fluenti sono gli stessi descritti nella sezione 1.1 del capitolo 10 (Russel e Norvig), ossia \emph{in(cargo, plane)}, \emph{at(plane, airport)}, \emph{at(cargo, airport)}; mentre le azioni sono \emph{load(cargo, plane, airport)}, \emph{unload(cargo, plane, airport)} e \emph{fly(plane, airport, airport)}.
+
+In clingo i fluenti sono formulati attraverso il predicato \emph{fluent(F)}.
+
+\begin{lstlisting}
+% cargo C is in plane P
+fluent(in(C,P))  :- cargo(C), plane(P).
+% cargo C is at airport A
+fluent(at(C,A))  :- cargo(C), airport(A).
+% plane P is at airport A
+fluent(at(P,A))  :- plane(P), airport(A).
+\end{lstlisting}
+
+mentre le azioni sono state formulate attraverso il predicato \emph{action(A)}.
+
+\begin{lstlisting}
+action(load(C,P,A)) :- cargo(C), plane(P), airport(A).
+action(unload(C,P,A)) :- cargo(C), plane(P), airport(A).
+action(fly(P,A1,A2)) :- plane(P), airport(A1), airport(A2), A1 != A2.
+\end{lstlisting}
+
+Per formulare i livelli abbiamo introdotto due predicati, \emph{holds(F,S)} e \emph{occurs(A,S)}, così descritti:
+
+\begin{enumerate}
+\item \emph{holds(F,S)}: in cui F è un fluente ed S è il livello $S_i$, in F è valido.
+\item \emph{occurs(A,L)}: che indica che una action A è eseguito nel livello $L$ (in questo il livello L è un $A_i$).
+\end{enumerate}
+
+Abbiamo inoltre introdotto un costrutto sintattico per generare tutte le possibili \emph{occurs(A,L)} e permettere più azioni possibili contemporaneamente.
+
+\begin{lstlisting}
+1{occurs(A,L): action(A)} :- level(L).
+\end{lstlisting}
+
+Gli \emph{Effetti} delle \emph{occurs(A,L)} sono stati descritti con delle regole nella seguente forma:
+
+\begin{lstlisting}
+holds(F,S+1) :- occurs(A,S), state(S)
+\end{lstlisting}
+
+I mutex sono stati espressi nella forma di una \emph{regola false}, ossia:
+
+\begin{lstlisting}
+:- occurs(A,S), holds(F1,S), holds(F2,S), ..., holds(FN,S), state(S)
+\end{lstlisting}
+
+Per rappresentare le regole di persistenza (dette anche no-op), possiamo utilizzare delle regole non monotone espresse nel modo seguente:
+
+\begin{lstlisting}
+holds(F, S+1) :-
+  fluent(F), state(S),
+  holds(F,S), not -holds(F,S+1).
+\end{lstlisting}
+
+Queste regole ``copiano'' un fluente dallo stato S allo stato S+1 se e solo se nello stato S è presente il fluente F ma non la sua negazione nello stato S+1.
+
+La regola di persistenza è usata anche per rendere persistenti i predicati \emph{-holds(F,S)}, che esprimono una negazione forte.
+
+Il goal viene formulato tramite il vincolo:
+
+\begin{lstlisting}
+goal :- descrizione stato finale
+:- not goal
+\end{lstlisting}
+
+
