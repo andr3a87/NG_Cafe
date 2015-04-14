@@ -73,7 +73,7 @@ adj(4,5).
 :- house(_,_,P,_,_,tea), P != ita.
 % norvegese prima casa a sinistra
 :- house(1,_,P,_,_,_), P != nor.
-% proprietario casa verde beve caffé
+% proprietario casa verde beve caffe
 :- house(_,C,_,_,_,coffee), C != green.
 % casa verde destra bianca
 :- house(X,white,_,_,_,_), house(Y,green,_,_,_,_), not adj(X,Y).
@@ -138,22 +138,11 @@ In ASP il problema viene modellato tramite regole della programmazione proposizi
 
 Un grafo di pianificazione in \emph{GRAPHPLAN} è un grafo orientato organizzato in livelli: $S_0, A_0, S_1, A_1, ... , A_2, S_{n+1}$.
 
-Il livello $S_i$ è l'insieme dei nodi che rappresentano fluenti validi in $S_i$. Il livello $A_i$ è l'insieme dei nodi che rappresentano le azioni applicabili in $S_i$. Ci sarà quindi un'alternanza di livelli $S_i$ e $A_i$, fino alla condizione di terminazione.
+Il livello $S_i$ è l'insieme dei nodi che rappresentano fluenti validi in $S_i$. Il livello $A_i$ è l'insieme dei nodi che rappresentano le azioni applicabili in $S_i$. Ci sarà quindi un'alternanza di livelli $S_i$ e $A_i$, fino alla condizione di terminazione. Lo stato $S_{n+1}$ rappresenta lo stato che contiene il goal.
 
-Per rappresentare il problema di pianificazione attraverso \emph{GRAPHPLAN} abbiamo bisogno di due predicati che, rispettivamente, rappresentino i fluenti esistenti e le azioni esistenti nel dominio. Nel nostro caso i fluenti sono gli stessi descritti nella sezione 1.1 del capitolo 10 (Russel e Norvig), ossia \emph{in(cargo, plane)}, \emph{at(plane, airport)}, \emph{at(cargo, airport)}; mentre le azioni sono \emph{load(cargo, plane, airport)}, \emph{unload(cargo, plane, airport)} e \emph{fly(plane, airport, airport)}.
+Per rappresentare il problema di pianificazione attraverso \emph{GRAPHPLAN} abbiamo bisogno di due predicati che, rispettivamente, rappresentino i fluenti esistenti e le azioni esistenti nel dominio.
 
-In clingo i fluenti sono formulati attraverso il predicato \emph{fluent(F)}.
-
-\begin{lstlisting}
-% cargo C is in plane P
-fluent(in(C,P))  :- cargo(C), plane(P).
-% cargo C is at airport A
-fluent(at(C,A))  :- cargo(C), airport(A).
-% plane P is at airport A
-fluent(at(P,A))  :- plane(P), airport(A).
-\end{lstlisting}
-
-mentre le azioni sono state formulate attraverso il predicato \emph{action(A)}.
+In clingo i fluenti sono stati formulati attraverso il predicato \emph{fluent(F) :- proposition(term)}, mentre le azioni sono state formulate attraverso il predicato \emph{action(A) :- proposition(term)}.
 
 \begin{lstlisting}
 action(load(C,P,A)) :- cargo(C), plane(P), airport(A).
@@ -205,4 +194,17 @@ goal :- descrizione stato finale
 :- not goal
 \end{lstlisting}
 
+\section{Problema dell'Air Cargo}
 
+\begin{lstlisting}
+% cargo C is in plane P
+fluent(in(C,P))  :- cargo(C), plane(P).
+% cargo C is at airport A
+fluent(at(C,A))  :- cargo(C), airport(A).
+% plane P is at airport A
+fluent(at(P,A))  :- plane(P), airport(A).
+\end{lstlisting}
+
+Nel nostro caso i fluenti sono gli stessi descritti nella sezione 1.1 del capitolo 10 (Russel e Norvig), ossia \emph{in(cargo, plane)}, \emph{at(plane, airport)}, \emph{at(cargo, airport)}; mentre le azioni sono \emph{load(cargo, plane, airport)}, \emph{unload(cargo, plane, airport)} e \emph{fly(plane, airport, airport)}.
+
+Nel nostro caso i fluenti sono gli stessi descritti nella sezione 1.1 del capitolo 10 (Russel e Norvig), ossia \emph{in(cargo, plane)}, \emph{at(plane, airport)}, \emph{at(cargo, airport)}; mentre le azioni sono \emph{load(cargo, plane, airport)}, \emph{unload(cargo, plane, airport)} e \emph{fly(plane, airport, airport)}.
