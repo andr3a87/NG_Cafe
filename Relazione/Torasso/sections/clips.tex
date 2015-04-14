@@ -144,7 +144,7 @@ Nella fase 7 inoltre quando il robot svuota l'immondizia bisogna andare a settar
 \end{figure}
 
 \subsection{Vantaggi e Svantaggi}
-Il sistema riesce dinamicamente a servire i vari ordini ripianificando i percorsi o cambiando gli ordini da servire. Obiettivo di questa strategia è rendere il sistema più robusto e flessibile. 
+Il sistema riesce dinamicamente a servire i vari ordini ripianificando i percorsi o cambiando gli ordini da servire. Obiettivo di questa strategia è rendere il sistema più robusto e flessibile.
 Anche utilizzando questa strategia il sistema potrebbe rimanere bloccato, si veda la figura \ref{fig:figure6}. Si potrebbe ulteriormente ottimizzarla andando a imporre un numero di fallimenti massimo per arrivare a una specifica posizione; arrivati a tale limite l'ordine viene rimpiazzato dal successivo.
 
 
@@ -156,11 +156,21 @@ Anche utilizzando questa strategia il sistema potrebbe rimanere bloccato, si ved
 \end{SCfigure}
 
 \section{Strategia LOW PENALITY}
+\label{sec:lowpen}
 La strategia LOW PENALITY si differenzia dalla precedente soprattutto per la Fase 1, ovvero per la ricerca dell'ordine da evadere. Si abbandona la politica FIFO per individuare e servire l'ordine che a ogni step porterebbe una penalità maggiore. Ogni qual volta arriva un ordine, viene calcolata la relativa penalità. Quando bisogna scegliere un ordine si sceglie quello con penalità maggiore. L' obiettivo è quello di minimizzare la penalità.
 Altra differenza con le precedenti strategia sta nella gestione dell'ordine accepted. Nelle precedenti strategie l'ordine viene evaso completamente. In questa strategia si vuole minimizzare le penalità, quindi se un ordine ha richiesto 3 food e 3 drink, l'agente consegnerà le consumazioni secondo la sua massima capienza. Consegnate le consumazioni l'ordine o è stato completato o viene rimesso negli ordini da evadere aggiornando le consumazioni (e le penalità) in base a quelle già consegnate.
 
 \subsection{Vantaggi e Svantaggi}
 Obiettivo di questa strategia è quella di minimizzare le penalità rispetto alle strategia precedenti. Vedremo nella sezione Analisi Strategia se i risultati sono stati raggiunti. Gli svantaggi sono i medesimi della strategia FIFO PRO.
+
+\section{Strategia PENDIST}
+La strategia PENDIST (acronimo di PENality DISTance) usa come base di partenza la strategia precedente, la LOW PENALITY [vd. \ref{sec:lowpen}]; ne condivide dunque gli stessi pregi, in particolare il tentativo di servire l'ordine con penalità massima.
+
+All'euristica che usiamo per cercare il tavolo da servire aggiungiamo
+; un pezzo, ossia minimizzare la distanza in step in modo da completare l'ordine
+; a massimo carico. (la strategia low-penality, cerca di servire quel tavolo caricando il più possibile per quel singolo ordine, poi una volta completato la fase di portare il cibo&drink al tavolo e c'è ancora roba da servire, rimette il tavolo nel pool degli ordini da evadere e ricalcola la penalità.)
+; moltiplichiamo la distanza del percorso in step, per la penalità, e cerchiamo il tavolo
+; con questo valore massimo;
 
 \section{Strategia HARD}
 La strategia HARD è la più complessa e permette di servire più tavoli in contemporanea. In comune con la strategia precedente ha la ripianificazione nel caso il piano calcolato fallisca, e il cambio dell'ordine corrente per un altro nel caso non si riesca a trovare un piano per arrivare a destinazione.
@@ -378,7 +388,7 @@ Total orders           & 10    & 10    & 10            & 10      & 10   \\ \hlin
 \end{tabular}
 \end{table}
 
-Dalla tabella notiamo che la strategy PENDIST è quella che minimizza la nostra penalità su quest'history. 
+Dalla tabella notiamo che la strategy PENDIST è quella che minimizza la nostra penalità su quest'history.
 Un'altro dato importante è il numero di ordini presi in carico dal sistema. Questo numero può variare a seconda della strategia in esecuzione in quanto ordini inseriti nella history non sono consistenti con tale esecuzione e non vengono presi in carico dal sistema. Per questo motivo un metro di giudizio non è stato il valore della penalty, ma la penalty media per ogni ordine.
 
 Come precedentemente spiegato nel capitolo \ref{sec:modulo_astar} i piani principali vengono salvati. I risultati sulla riga Reused Plane codificano l'informazione riguardante questa idea. Ricordiamo che il fatto di riutilizzare un piano non ci dà dei guadagni dal punto di vista della penalità. Notiamo che la strategy HARD non riutilizza nessun piano (prima di commentare questo risultato valuteremo anche i dati provenienti dalle altre history per vedere se è una casualità o se è un risultato determinato da come la strategy HARD serve gli ordini)
@@ -460,13 +470,13 @@ La strategy HARD su questa mappa almeno teoricamente dovrebbe avere un grosso va
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{10x10_penalties}
   \caption{Grafico Penalità mappe 10x10}
-  \label{fig:figure11}
+  \label{fig:10x10figure11}
 \end{figure}
 
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{10x10_mean_pen}
   \caption{Grafico penalità media per ordine}
-  \label{fig:figure12}
+  \label{fig:10x10figure12}
 \end{figure}
 
 \subsubsection{Risultati sulla mappa 20x20: hdefault}
@@ -559,13 +569,13 @@ Per quanto riguarda questa strategia tutte le strategie evadono tutti gli ordini
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{20x20_penalties}
   \caption{Grafico Penalità mappe 10x10}
-  \label{fig:figure11}
+  \label{fig:20x20pen}
 \end{figure}
 
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{20x20_mean_pen}
   \caption{Grafico penalità media per ordine}
-  \label{fig:figure12}
+  \label{fig:20x20meanpen}
 \end{figure}
 
 
