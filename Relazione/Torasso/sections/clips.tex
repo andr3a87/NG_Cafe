@@ -696,8 +696,14 @@ Dall'esecuzione della history notiamo subito che l'unica strategia che è in gra
 Come possiamo notare dai grafici riassuntivi di ogni mappa, non esiste una strategia in assoluto migliore. Nella 10x10 e 20x20 sui test effettuati possiamo concludere che la Hard è la strategia che funziona il più delle volte meglio. Per come è definita la strategy HARD e in base alle qualità delle history hcheckf abbiamo che su tutti i domini è quella che si comporta meglio.
 Notiamo che sulla 30x30 e quindi all'aumentare della dimensione della mappa la strategy HARD si comporta in maniera poco efficiente, mentre la strategy PENDIST che tiene conto delle distanze ha un comportamento migliore, il più delle volte. Sarebbe interessante modificare la strategy HARD con le qualità di PENDIST. 
 
-Il movimento delle persone introduce una variabile ulteriore nel sistema di simulazione, per la quale non è possibile definire almeno per queste history(hperson1, hperson2) una best strategy. 
+Il movimento delle persone introduce una variabile ulteriore nel sistema di simulazione, per la quale non è possibile definire almeno per queste history(hperson1, hperson2) una best strategy.
 
+Per quanto riguarda il riuso dei piani possiamo vedere dall'immagine \ref{fig:figure13} come il numero di piani riutilizzati diminuisce all'aumentare della mappa. Non vi sono strategie che riutilizzano di più i piani rispetto ad altre.
+\begin{figure}[h!tp]
+  \includegraphics[width=\textwidth]{planes}
+  \caption{Numero di Piani Riutilizzati da tutte le strategie sui vari domini}
+  \label{fig:figure13}
+\end{figure}
 
 
 \appendix
