@@ -1,4 +1,4 @@
-(maxduration 100)
+(maxduration 250)
 
 (initial_agentposition (pos-r 8) (pos-c 6) (direction south))
 (Table (table-id T1) (pos-r 8) (pos-c 3))
@@ -231,3 +231,6 @@
              (prior-cell (pos-r 10) (pos-c 10) (contains Wall))
 
              (prior-cell (pos-r 10) (pos-c 11) (contains Wall))
+
+
+
