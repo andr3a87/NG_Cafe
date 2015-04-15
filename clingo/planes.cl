@@ -1,4 +1,4 @@
-#const lastlev=300.
+#const lastlev=500.
 
 level(0..lastlev).
 state(0..lastlev+1).
@@ -100,31 +100,111 @@ cargo(c2).
 cargo(c3).
 cargo(c4).
 cargo(c5).
+cargo(c6).
+cargo(c7).
+cargo(c8).
+cargo(c9).
+cargo(c10).
+cargo(c11).
+cargo(c12).
+cargo(c13).
+cargo(c14).
+cargo(c15).
+cargo(c16).
+cargo(c17).
+cargo(c18).
+cargo(c19).
+cargo(c20).
+cargo(c21).
+cargo(c22).
+cargo(c23).
+cargo(c24).
+cargo(c25).
+cargo(c26).
+cargo(c27).
+cargo(c28).
+cargo(c29).
+cargo(c30).
 plane(p1).
 plane(p2).
-airport(jfk).
-airport(sfo).
-airport(bari).
+plane(p3).
+plane(p4).
+plane(p5).
+plane(p6).
+plane(p7).
+plane(p8).
+plane(p9).
+plane(p10).
+airport(a1).
+airport(a2).
+airport(a3).
+airport(a4).
+airport(a5).
+airport(a6).
+airport(a7).
+airport(a8).
+airport(a9).
+airport(a10).
+airport(a11).
+airport(a12).
+airport(a13).
+airport(a14).
+airport(a15).
+airport(a16).
+airport(a17).
+airport(a18).
+airport(a19).
+airport(a20).
 
-holds(at(p1,sfo),0).
-holds(at(p2,jfk),0).
+holds(at(p1,a1),0).
+holds(at(p2,a7),0).
+holds(at(p3,a2),0).
+holds(at(p4,a2),0).
+holds(at(p5,a5),0).
+holds(at(p6,a5),0).
+holds(at(p7,a5),0).
+holds(at(p8,a5),0).
+holds(at(p9,a9),0).
+holds(at(p10,a11),0).
 
-holds(at(c1,sfo),0).
-holds(at(c2,sfo),0).
-holds(at(c3,sfo),0).
-holds(at(c4,sfo),0).
-holds(at(c5,sfo),0).
+holds(at(c1,a2),0).
+holds(at(c2,a2),0).
+holds(at(c3,a3),0).
+holds(at(c4,a3),0).
+holds(at(c5,a3),0).
+holds(at(c6,a3),0).
+holds(at(c7,a6),0).
+holds(at(c8,a9),0).
+holds(at(c9,a11),0).
+holds(at(c10,a12),0).
+holds(at(c11,a14),0).
+holds(at(c12,a14),0).
+holds(at(c13,a14),0).
+holds(at(c14,a14),0).
+holds(at(c15,a14),0).
+holds(at(c16,a6),0).
+holds(at(c17,a7),0).
+holds(at(c18,a8),0).
+holds(at(c19,a9),0).
+holds(at(c20,a10),0).
+holds(at(c21,a12),0).
+holds(at(c22,a12),0).
+holds(at(c23,a13),0).
+holds(at(c24,a13),0).
+holds(at(c25,a13),0).
+holds(at(c26,a13),0).
+holds(at(c27,a16),0).
+holds(at(c28,a19),0).
+holds(at(c29,a20),0).
+holds(at(c30,a20),0).
 
 % GOAL
-goal:-  holds(at(p1,sfo), lastlev+1),
-        holds(at(p2,jfk), lastlev+1),
-        holds(at(c1,bari),lastlev+1),
-        holds(at(c2,bari),lastlev+1),
-        holds(at(c3,bari),lastlev+1),
-        holds(at(c4,bari),lastlev+1),
-        holds(at(c5,bari),lastlev+1).
+goal:-  holds(at(p1,a6), lastlev+1),
+        holds(at(p2,a3), lastlev+1),
+        holds(at(p3,a1), lastlev+1),
+        holds(at(p4,a1), lastlev+1),
+        holds(at(p5,a8), lastlev+1).
 
 :- not goal.
 
-#hide.
 #show occurs/2.
