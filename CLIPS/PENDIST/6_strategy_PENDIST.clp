@@ -74,8 +74,9 @@
   (min-distpath ?md)
   =>
   ;(halt)
-  (modify ?f1 (priority =(* ?pen (+ (* (/ ?md ?dp) 0.5) 0.5) )) (distpath -1))
- 
+  ;=(* ?pen (+ (* (/ ?md ?dp) 0.5) 0.5)
+  (modify ?f1 (priority =(* ?pen (/ ?md ?dp)) )) (distpath -1))
+
 )
 
 ;aggiornate le priorità rimuovo il fatto min-distpath
