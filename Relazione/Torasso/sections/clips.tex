@@ -155,7 +155,7 @@ Altra differenza con le precedenti strategia sta nella gestione dell'ordine acce
 Obiettivo di questa strategia è quella di minimizzare le penalità rispetto alle strategia precedenti. Vedremo nel capitolo \ref{ch:Risultati}  se i risultati sono stati raggiunti. Gli svantaggi sono i medesimi della strategia FIFO PRO.
 
 \section{Strategia PENDIST}
-La strategia PENDIST (acronimo di PENality DISTance) usa come base di partenza la strategia precedente, la LOW PENALITY [vd. \ref{sec:lowpen}]; ne condivide dunque gli stessi pregi, in particolare il tentativo di minimizzare le penalità. 
+La strategia PENDIST (acronimo di PENality DISTance) usa come base di partenza la strategia precedente, la LOW PENALITY [vd. \ref{sec:lowpen}]; ne condivide dunque gli stessi pregi, in particolare il tentativo di minimizzare le penalità.
 
 Per far questo a differenza di LOW PENALTY vogliamo tener in considerazione anche il numero di step necessari per evadere un ordine, e quindi tenere in considerazione il concetto di distanza. L'idea è quella di far pesare meno ordini più lontani e di più ordini più vicini. Ad esempio a parità di penalità preferiamo l'ordine con distanza minore.
 
@@ -282,7 +282,8 @@ Un altro svantaggio potrebbe verificarsi durante le operazioni di checkfinish. S
 \chapter{Risultati} \label{ch:Risultati}
 Le cinque strategie sono state create in maniera incrementale, aggiungendo regole e modificandone alcune al fine di migliorare le prestazioni delle strategie e minimizzare la penalità accumulate. Al fine di confermare queste ipotesi abbiamo creato un gruppo di history per trarre conclusioni e fare assunzioni basate su dati certi, le \emph{Final Results History}.
 
-Un altro gruppo di history, è stato creato per testare le strategie durante lo sviluppo. Oltre a testare le strategie possono già fornire delle indicazioni sulla loro bontà.
+
+Un altro gruppo di history è stato creato per testare le strategie durante lo sviluppo, che possono già fornire delle indicazioni sulla loro bontà.
 
 \subsection{Testing Histories}
 Le testing history sono cinque: default, complicata, dave, wait, andrea.
@@ -296,12 +297,13 @@ E' la history inclusa nel progetto.
                  & BASE & PRO   & LOW\_PENALTY  & PENDIST & HARD \\ \hline
 Penalty          & 1452 & 1452  & 1452          & 1452    & 676  \\ \hline
 Reused planes    & 1    & 1     & 1             & 1       & 0    \\ \hline
-Orders performed & 4    & 4     & 0             & 0       & 1    \\ \hline
-Total orders     & 4    & 4     & 4             & 4       & 2    \\ \hline
+Orders performed & 4    & 4     & 4             & 4       & 2+(2)\\ \hline
+Total orders     & 4    & 4     & 4             & 4       & 4    \\ \hline
 \end{tabular}
 \end{table}
 
-Le prime quattro strategie hanno il medesimo comportamento,in quanto l'ordine con cui vengono evasi gli ordini è il medesimo. La strategy HARD pur servendo gli ordini nello stesso ordine delle altre, ha bisogno di più step quando si reca al food-dispenser in quanto carica le consumazioni per più ordini. Questo fa si che il tavolo T4 venga servito in ritardo rispetto alle altre strategie e non permette al sistema di prendere in carico i successivi due ordini di quel tavolo che avvengono prima che il robot abbia finito di consegnare le consumazioni richieste.
+Le prime quattro strategie hanno il medesimo comportamento, in quanto l'ordine con cui vengono evasi gli ordini è il medesimo.
+La strategy HARD, pur servendo gli ordini nello stesso ordine delle altre, ha bisogno di più step per completare la fase di caricamento del food, in quanto quando si reca al food-dispenser carica le consumazioni per più ordini. Questo fa si che il tavolo T4 venga servito in ritardo rispetto alle altre strategie e non permette al sistema di prendere in carico i successivi due ordini di quel tavolo che avvengono prima che il robot abbia finito di consegnare le consumazioni richieste.
 
 \subsubsection{History \emph{complicata}}
 
@@ -374,7 +376,7 @@ La history hhard presenta le seguenti caratteristiche:
 La history hperson1 presenta le seguenti caratteristiche:
 \begin{itemize}
     \item molte persone che si muovono di continuo. Ogni persona si sposta da un punto A a B e viceversa.
-    \item presenza di ordini con quantità variabili di richieste.  
+    \item presenza di ordini con quantità variabili di richieste.
 \end{itemize}
 La history hperson2 presenta le seguenti caratteristiche:
 \begin{itemize}
@@ -492,7 +494,7 @@ La strategy HARD su questa mappa almeno teoricamente dovrebbe avere un grosso va
   \label{fig:10x10figure12}
 \end{figure}
 
-\newpage  
+\newpage
 \subsubsection{Risultati sulla mappa 20x20: hdefault}
 \begin{table}[h!]
 \begin{tabular}{|c|c|c|c|c|c|}
@@ -694,7 +696,7 @@ Dall'esecuzione della history notiamo subito che l'unica strategia che è in gra
 \newpage
 \section{Conclusioni}
 Come possiamo notare dai grafici riassuntivi di ogni mappa, non esiste una strategia in assoluto migliore. Nella 10x10 e 20x20 sui test effettuati possiamo concludere che la Hard è la strategia che funziona il più delle volte meglio. Per come è definita la strategy HARD e in base alle qualità delle history hcheckf abbiamo che su tutti i domini è quella che si comporta meglio.
-Notiamo che sulla 30x30 e quindi all'aumentare della dimensione della mappa la strategy HARD si comporta in maniera poco efficiente, mentre la strategy PENDIST che tiene conto delle distanze ha un comportamento migliore, il più delle volte. Sarebbe interessante modificare la strategy HARD con le qualità di PENDIST. 
+Notiamo che sulla 30x30 e quindi all'aumentare della dimensione della mappa la strategy HARD si comporta in maniera poco efficiente, mentre la strategy PENDIST che tiene conto delle distanze ha un comportamento migliore, il più delle volte. Sarebbe interessante modificare la strategy HARD con le qualità di PENDIST.
 
 Il movimento delle persone introduce una variabile ulteriore nel sistema di simulazione, per la quale non è possibile definire almeno per queste history(hperson1, hperson2) una best strategy.
 
