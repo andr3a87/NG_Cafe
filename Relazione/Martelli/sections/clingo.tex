@@ -268,7 +268,7 @@ fluent(at(P,A))  :- plane(P), airport(A).
 % EFFETTI
 % i -holds vengono generati dalle regole causali
 
-% afferma che un cargo è su un aereo, quando viene caricato
+% afferma che un cargo e' su un aereo, quando viene caricato
 holds(in(C,P),S+1) :- occurs(load(C,P,A),S),state(S).
 % rimette i cargo in un areoporto quando vengono scaricati
 holds(at(C,A),S+1) :- occurs(unload(C,P,A),S),state(S).
@@ -296,7 +296,7 @@ holds(at(P,AD),S+1) :- occurs(fly(P,AS,AD),S),state(S).
 :- occurs(fly(P,A1,A2),S), -holds(at(P,A1),S).
 
 % trick
-% lo stesso aereo non può eseguire più azioni nello stesso livello
+% lo stesso aereo non puo' eseguire piu' azioni nello stesso livello
 :- occurs(fly(P,A1,A2),S), occurs(load(C,P,A1),S), plane(P), airport(A1), airport(A2), cargo(C).
 :- occurs(fly(P,A1,A2),S), occurs(unload(C,P,A1),S), plane(P), airport(A1), airport(A2), cargo(C).
 
@@ -311,13 +311,13 @@ holds(F, S+1) :-
 
 % REGOLE CAUSALI
 
-% cargo non è in nessun aereo, se è in areoporto
+% cargo non e' in nessun aereo, se e' in areoporto
 -holds(in(C,P),S) :- cargo(C), airport(A), plane(P), state(S), holds(at(C,A),S).
-% cargo è in plane, cargo non è in nessun areoporto
+% cargo e' in plane, cargo non e' in nessun areoporto
 -holds(at(C,A),S) :- cargo(C), airport(A), plane(P), state(S), holds(in(C,P),S).
-% cargo è in areoporto, non è in tutti gli altri
+% cargo e' in areoporto, non e' in tutti gli altri
 -holds(at(C,A2),S) :- cargo(C), airport(A1), airport(A2), state(S), holds(at(C,A1),S), A1!=A2.
-% aereo in areoporto, non è in tutti gli altri
+% aereo in areoporto, non e' in tutti gli altri
 -holds(at(P,A2),S) :- plane(P), airport(A1), airport(A2), state(S), holds(at(P,A1),S), A1!=A2.
 
 :- not goal.
