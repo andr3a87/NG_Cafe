@@ -7,8 +7,9 @@ Per svolgere il progetto di IA-LAB sono state implementate 4 strategie in manier
 \begin{itemize}
   \item FIFO WAIT: la strategia usa la politica fifo come politica di scelta degli ordini.
   \item FIFO PRO: Simile alla precendente, ma in caso di ostacolo che non permette di servire un ordine, l'ordine viene messo al fondo.
-  \item LOW PENALITY: strategia che si basa sulla penalità per effettuare la scelta dell'ordine.
-  \item HARD: a differenza delle altre 3 strategie, questa permette di gestire più ordini in contemporanea. Come la precedente si basa sulle penalità.
+  \item LOW PENALTY: strategia che si basa sulla penalità per effettuare la scelta dell'ordine.
+  \item PENDIST: strategia che tiene in considerazione sia le distanze sia le penalità per effettuare la scelta del tavolo da servire.
+  \item HARD: a differenza delle altre 3 strategie, questa permette di gestire più ordini contemporaneamente. Come LOW PENALTY si basa solo sulle penalità.
 \end{itemize}
 
 Ogni strategia è stata suddivisa in fasi dove ogni fase si occupa di uno specifico sotto-problema. Questa suddivisione ci ha permesso sia uno sviluppo incrementale all'interno della stessa strategia, sia tra strategie diverse, dove è bastato andare a sviluppare in modo più articolato una fase oppure nell'inserire nuove fasi.
@@ -68,14 +69,13 @@ La prima strategia che illuestreremo è la FIFO WAIT. \'E una strategia molto se
 
 Come possiamo vedere dallo schema abbiamo suddiviso la nostre strategia in 7 fasi:
 \begin{itemize}
-  \item Fase 1: Nella prima fase viene individuato quale sarà l'ordine da servire. Ipotizzando di avere una coda in cui gli inserimenti vanno in coda e i prelievi avvengono dalla testa, l'ordine da evadere sarà l'ordine arrivato da più tempo cioè quello che ha un valore di step più basso.
+  \item Fase 1: Nella prima fase viene individuato quale sarà l'ordine da servire. Ipotizzando di avere una coda, l'ordine da evadere sarà l'ordine arrivato da più tempo cioè quello che ha un valore di step più basso.
   \item Fase 2: In questa fase si andrà ad individuare quale sarà il cestino o il dispenser presso il quale il nostro robot dovrà recarsi. La ricerca del cestino o del dispenser dipende dal tipo di ordine.
-  \item Fase 3: In questa fase il robot arriverà alla destinazione prefissata. Per far ciò deve prima calcolare un piano con A* e poi eseguirlo. Il piano viene calcolato solo se non ne esiste già uno. In caso A* non trovi soluzione il robot esegue una wait e prova a ricalcolare A* fin quando non trova una soluzione.
-  Quando il robot ha un piano per raggiungere la sua destinazione lo esegue. Nel caso in cui il piano fallisca il robot esegue una wait e prova a rieseguirlo.
+  \item Fase 3: In questa fase il robot arriverà alla destinazione prefissata. Per far ciò deve prima calcolare un piano con A* e poi eseguirlo. Il piano viene calcolato solo se non ne esiste già uno. In caso A* non trovi soluzione il robot esegue una wait e prova a ricalcolare A* fin quando non trova una soluzione. Quando il robot ha un piano per raggiungere la sua destinazione lo esegue.
   \item Fase 4: Il robot a seconda dell'ordine che sta servendo si troverà davanti un dispenser per caricare delle consumazioni (ordine \emph{accepted}) oppure davanti a un cestino per buttare lo sporco (ordine \emph{delayed} o \emph{finish}).
   \item Fase 4.5: Questa è la fase di controllo in cui il robot decide cosa deve fare, a seconda dell'ordine attivo. Per esempio se era un ordine accepted e ha caricato solo i \emph{food} e gli mancano i \emph{drink} dovrà ritornare alla fase 2; analogamente se era un ordine di finish o delayed e deve ancora buttare dello sporco.
   \item Fase 5: Identica alla fase 3 tranne per il fatto che la destinazione sarà un tavolo.
-  \item Fase 6: Il robot in questa fase si trova in una posizione in cui può operare sul tavolo. Nel caso di ordine accepted rilascio tuttle le consumazioni caricate; in caso di ordine finish o delayed pulisco il tavolo.
+  \item Fase 6: Il robot in questa fase si trova in una posizione in cui può operare sul tavolo. Nel caso di ordine accepted rilascio tutte le consumazioni caricate; in caso di ordine finish o delayed pulisco il tavolo.
   \item Fase 7: In questa fase controllo se l'ordine può essere considerato completato.
 \end{itemize}
 
@@ -96,7 +96,7 @@ Se prendiamo in considerazione le teorie di Rodney Brooks in cui afferma che un 
 \end{wrapfigure}
 
 Questo comportamento porta anche a situazioni di deadlock. Essendo in un ambiente simulato anche le persone non hanno un comportamento intelligente, supponendo che una persona si vuole spostare in direzione sud e il robot in direzione nord si arriva in una situazione di stallo. Per ovviare a questa problematica abbiamo implementato la strategia FIFO PRO.
-
+\newline
 \section{Strategia FIFO PRO}
 La strategia FIFO PRO è un estensione della strategia FIFO WAIT per risolvere il "problema" riscontrato precedentemente. I concetti chiave che differenziano questa strategia dalla precendente sono 2:
 \begin{itemize}
@@ -112,12 +112,6 @@ Il primo punto comporta delle modifiche nello schema visto in precedenza nella f
   \label{fig:figure3}
 \end{figure}
 
-\newpage
-\begin{wrapfigure}{r}{0.25\textwidth}
-    \centering
-    \includegraphics[width=0.25\textwidth]{Problema1_fifo_pro}
-\end{wrapfigure}
-
 Più complicate le conseguenze del secondo punto, che sono strettamente legate alla pianificazione. La pianificazione non trova sempre una soluzione. Nel caso in cui astar non riesca a trovare un percorso per raggiungere la nostra destinazione cambiamo l'ordine da servire. Questo comporta che l'ordine corrente verrà messo al fondo della nostra coda ordini e sarà servito successivamente. Questo commporta alcuni problemi che hanno complicato la stratgia FIFO PRO rispetto la precedente, e che saranno comuni anche alle successive strategie.
 
 La strategia FIFO WAIT aveva un grosso vantaggio: ogni volta che si serve un nuovo ordine sicuramente l'agente si trova nello stato adatto per iniziare a servirlo.
@@ -131,11 +125,9 @@ Nella fase 1 si ha un dispatcher che indica, a seconda dello stato dell'agente e
   \label{fig:figure4}
 \end{figure}
 
-Rimescolando gli ordini può succedere che ordini accepted vengano completati in ordine diverso dal quale siano arrivati. Nella stategia FIFO WAIT si era sicuri che una volta caricate le consumazioni dai dispenser, quelle consumazioni sarebbero state consegnata al tavolo che le aveva richieste. Nella strategia FIFO PRO questo non avviene. Supponendo di aver caricato dai dispenser un tot di consumazioni e che il robot non riesca ad arrivare al tavolo, il successivo ordine di accepted che verrà prelevato dalla coda potrebbe non aver bisogno di tornare ai dispenser (o di tornarci parzialmente), in quanto il robot ha già a bordo le consumazioni dell'ordine precedente. Si è dovuto implementare un meccanismo che permetta di capire al robot se e quanto deve caricare dai dispenser.
+Rimescolando gli ordini può succedere che ordini accepted vengano completati in ordine diverso rispetto al quale sono arrivati. Nella stategia FIFO WAIT si era sicuri che una volta caricate le consumazioni dai dispenser, quelle consumazioni sarebbero state consegnata al tavolo che le aveva richieste. Nella strategia FIFO PRO questo non avviene. Supponendo di aver caricato dai dispenser un tot di consumazioni e che il robot non riesca ad arrivare al tavolo, il successivo ordine di accepted che verrà prelevato dalla coda potrebbe non aver bisogno di tornare ai dispenser (o di tornarci parzialmente), in quanto il robot ha già a bordo le consumazioni dell'ordine precedente. Si è dovuto implementare un meccanismo che permetta di capire al robot se e quanto deve caricare dai dispenser.
 
-Altra piccola modifica avviene nella fase 6. Nella strategia FIFO WAIT gli ordini di tipo finish erano sicuramente eseguiti prima degli ordini di tipo delayed (questo comportava di andare a modificare l'ordine delayed in accepted una volta pulito il tavolo). Nella strategia FIFO PRO questo non è sempre vero, è possibile che un ordine finish venga rimesso al fondo della nostra coda e verrà eseguito un ordine di delayed (ovviamente ci riferiamo a ordini sullo stesso tavolo). In questo caso se l'ordine delayed riesce con successo a pulire il tavolo, il sistema dovrà settare come completata anche l'ordine finish.
-
-Nella fase 7 inoltre quando il robot svuota l'immondizia bisogna andare a settare a completato tutti gli ordini finish che sono stati rimessi in coda perchè il dispenser era occupato.
+Altra piccola modifica avviene nella fase 6. Nella strategia FIFO WAIT gli ordini di tipo finish erano sicuramente eseguiti prima degli ordini di tipo delayed (questo comportava di andare a modificare l'ordine delayed in accepted una volta pulito il tavolo). Nella strategia FIFO PRO questo non è sempre vero; è possibile che un ordine finish venga rimesso al fondo della nostra coda e verrà eseguito un ordine di delayed (ovviamente ci riferiamo a ordini sullo stesso tavolo). In questo caso se l'ordine delayed riesce con successo a pulire il tavolo, il sistema dovrà settare come completato anche l'ordine finish.
 
 \begin{figure}[htp]
   \includegraphics[width=\textwidth]{FIFO_PRO_fase6}
@@ -146,7 +138,6 @@ Nella fase 7 inoltre quando il robot svuota l'immondizia bisogna andare a settar
 \subsection{Vantaggi e Svantaggi}
 Il sistema riesce dinamicamente a servire i vari ordini ripianificando i percorsi o cambiando gli ordini da servire. Obiettivo di questa strategia è rendere il sistema più robusto e flessibile.
 Anche utilizzando questa strategia il sistema potrebbe rimanere bloccato, si veda la figura \ref{fig:figure6}. Si potrebbe ulteriormente ottimizzarla andando a imporre un numero di fallimenti massimo per arrivare a una specifica posizione; arrivati a tale limite l'ordine viene rimpiazzato dal successivo.
-
 
 \begin{SCfigure}[]
 \centering
@@ -161,25 +152,41 @@ La strategia LOW PENALITY si differenzia dalla precedente soprattutto per la Fas
 Altra differenza con le precedenti strategia sta nella gestione dell'ordine accepted. Nelle precedenti strategie l'ordine viene evaso completamente. In questa strategia si vuole minimizzare le penalità, quindi se un ordine ha richiesto 3 food e 3 drink, l'agente consegnerà le consumazioni secondo la sua massima capienza. Consegnate le consumazioni l'ordine o è stato completato o viene rimesso negli ordini da evadere aggiornando le consumazioni (e le penalità) in base a quelle già consegnate.
 
 \subsection{Vantaggi e Svantaggi}
-Obiettivo di questa strategia è quella di minimizzare le penalità rispetto alle strategia precedenti. Vedremo nella sezione Analisi Strategia se i risultati sono stati raggiunti. Gli svantaggi sono i medesimi della strategia FIFO PRO.
+Obiettivo di questa strategia è quella di minimizzare le penalità rispetto alle strategia precedenti. Vedremo nel capitolo \ref{ch:Risultati}  se i risultati sono stati raggiunti. Gli svantaggi sono i medesimi della strategia FIFO PRO.
 
 \section{Strategia PENDIST}
-La strategia PENDIST (acronimo di PENality DISTance) usa come base di partenza la strategia precedente, la LOW PENALITY [vd. \ref{sec:lowpen}]; ne condivide dunque gli stessi pregi, in particolare il tentativo di servire l'ordine con penalità massima.
+La strategia PENDIST (acronimo di PENality DISTance) usa come base di partenza la strategia precedente, la LOW PENALITY [vd. \ref{sec:lowpen}]; ne condivide dunque gli stessi pregi, in particolare il tentativo di minimizzare le penalità. 
 
-All'euristica che usiamo per cercare il tavolo da servire aggiungiamo un pezzo, ossia minimizzare la distanza in step in modo da completare l'ordine a massimo carico (la strategia low-penality, cerca di servire quel tavolo caricando il più possibile per quel singolo ordine, poi una volta completato la fase di portare il cibo&drink al tavolo e c'è ancora roba da servire, rimette il tavolo nel pool degli ordini da evadere e ricalcola la penalità.). Per minimizzare questo valore, utilizziamo il concetto di priorità, concetto che ci permette di scegliere l'obietivo con priorità più alta. La priorità di ogni obiettivo viene calcolata moltiplicando la sua penalità con il rapporto fra la distanza minima fra gli obiettivi disponibili e la sua distanza.
+Per far questo a differenza di LOW PENALTY vogliamo tener in considerazione anche il numero di step necessari per evadere un ordine, e quindi tenere in considerazione il concetto di distanza. L'idea è quella di far pesare meno ordini più lontani e di più ordini più vicini. Ad esempio a parità di penalità preferiamo l'ordine con distanza minore.
 
-Qui di segueito viene indicata la formula matematica che implementa l'euristica di pianificazione:
+Definiamo il concetto di distanza per ogni ordine accepted da evadere come la sommatoria tra:
+\begin{itemize}
+    \item min(Distanza dal robot al food dispancer, Distanza dal robot al drink dispancer), non considerando le distanze se l'ordine non contiene food o drink.
+    \item Distanza dal dispancer più vicino all'altro dispancer, se necessario
+    \item Distanza dall'ultimo dispancer al tavolo
+\end{itemize}
+
+Definiamo il concetto di distanza per ogni ordine finish/delayed da evadere come la sommatoria tra:
+\begin{itemize}
+    \item Distanza dal robot al tavolo
+    \item min(Distanza dal tavolo al trash basket, Distanza dal tavolo al recycable basket), non considerando le distanze se il robot non contiene food o drink.
+    \item Distanza dal basket più vicino all'altro basket, se necessario
+\end{itemize}
+
+La scelta dell'ordine da evadere viene effettuata in base alla priorità. La priorità viene calcolata moltiplicando la sua penalità con il rapporto fra la distanza minima fra gli ordini disponibili e la sua distanza.
+
+Qui di seguito viene indicata la formula matematica che implementa il calcolo della priorità:
 
 $$ pen*(\frac{1}{2} + \frac{md}{dp}*\frac{1}{2}) $$
 
-dove $pen$ è la penalità data ad ogni step dell'ordine corrente, $md$ la distanza minima fra gli obiettivi disponibili, $dp$ la distanza dell'obiettivo corrente.
+dove $pen$ è la penalità data ad ogni step dell'ordine corrente, $md$ la distanza minima fra gli ordini disponibili, $dp$ la distanza dell'ordine corrente.
 
-Il secondo fattore, $(\frac{1}{2} + \frac{md}{dp}*\frac{1}{2})$, consente di vincolare il peso della distanza tra 0,5 e 1 (rispettivamente sarà prossimo 0,5 nel caso di un obiettivo molto lontano rispetto all'obiettivo più vicino tra quelli disponibili; sarà invece 1 nel caso in cui stiamo calcolando la priorità dell'obiettivo più vicino tra quelli esaminati). Questa parte di formula permette a parità di penalità di scegliere gli obiettivi più vicini, mentre a distanza costante gli obiettivi con penalità maggiore.
+Il secondo fattore, $(\frac{1}{2} + \frac{md}{dp}*\frac{1}{2})$, consente di vincolare il peso della distanza tra 0,5 e 1 (rispettivamente sarà prossimo 0,5 nel caso di un ordine molto lontano rispetto all'ordine più vicino tra quelli disponibili; sarà invece 1 nel caso in cui stiamo calcolando la priorità dell'ordine più vicino tra quelli esaminati).
 
-Abbiamo infine provato una variante della formula di calcolo della priorità, ossia $pen*(md/dp)$; la variazione ha come effetto un maggior peso della distanza, che tende più facilmente a zero nel caso di obiettivi molto lontani; infatti nei nostri (pochi) test il risultato è stato una penalità globale leggermente minore e un minor numero di ordini serviti nel tempo prestabilito.
+Abbiamo infine provato una variante della formula di calcolo della priorità, ossia $pen*(md/dp)$; la variazione ha come effetto un maggior peso della distanza, che tende più facilmente a zero nel caso di ordini molto lontani; infatti nei nostri (pochi) test il risultato è stato una penalità globale leggermente minore e un minor numero di ordini serviti nel tempo prestabilito.
 
 \section{Strategia HARD}
-La strategia HARD è la più complessa e permette di servire più tavoli in contemporanea. In comune con la strategia precedente ha la ripianificazione nel caso il piano calcolato fallisca, e il cambio dell'ordine corrente per un altro nel caso non si riesca a trovare un piano per arrivare a destinazione.
+La strategia HARD è la più complessa e permette di servire più tavoli in contemporanea. In comune con la strategia LOW PENALTY ha la ripianificazione nel caso il piano calcolato fallisca, e il cambio dell'ordine corrente per un altro, nel caso non si riesca a trovare un piano per arrivare a destinazione.
 
 Iniziamo a vedere il meccanismo con il quale viene scelto l'ordine da evadere (\emph{FASE 1}).
 
@@ -210,26 +217,24 @@ In alcuni casi il robot prima di servire tale ordine deve compiere delle altre o
 
 La fase 2 e 3 sono quasi identiche alle precedenti. La fase 2 viene eseguita solo nel caso di ordini accepted, quindi si ricercherà solo il dispenser più vicino al robot.
 
-\begin{figure}[htp]
+\begin{figure}[h!tp]
   \includegraphics[width=\textwidth]{HARD_fase2}
   \caption{Fase 2 della strategia HARD}
   \label{fig:figure8}
 \end{figure}
 
-Nella fase 4, ovvero il caricamento dai dispenser delle consumazioni, abbiamo introdotto la possibilità di caricare le consumazioni per più ordini. Quando il robot arriva a un dispenser carica le consumazioni per l'ordine corrente. Se ha ancora spazio a disposizione e vi sono conumazioni di altri ordini da poter caricare vengono caricate fino al raggiungimento della capacità massima.
+Nella fase 4, ovvero il caricamento dai dispenser delle consumazioni, abbiamo introdotto la possibilità di caricare le consumazioni per più ordini. Quando il robot arriva a un dispenser carica le consumazioni per l'ordine corrente. Se ha ancora spazio a disposizione e vi sono consumazioni di altri ordini da poter caricare vengono caricate fino al raggiungimento della capacità massima.
 La fase 4.5 è molto più semplice delle precedenti. Il fatto di trattare e gestire la pulizia dei tavoli nel modulo EMPTY TRASH ha reso meno complicate alcune fasi.
 
-\begin{figure}[htp]
-  \includegraphics[width=\textwidth]{HARD_fase4_45}
+\begin{figure}[h!tp]
+  \centering
+  \includegraphics[width=275px]{HARD_fase4_45}
   \caption{Fase 4 e 4.5 della strategia HARD}
   \label{fig:figure9}
 \end{figure}
 
-La fase 5 ovvero la ricerca e l'esecuzione del piano per arrivare al tavolo rimane immutata, e non la descriviamo nuovamente.
-
-
-Nella fase 6 si consegnano le consumazioni al tavolo se era un ordine di accepted o si pulisce il tavolo se era un ordine di finish o delayed.
-Nel primo caso potrebbe capitare che l'ordine non risulti completamente evaso, e come nella strategia LOW PENALITY, quest'ordine torna nella lista di ordini da evadere aggiornando le consumazioni da portare in base a quelle già consegnate.
+La fase 5 ovvero la ricerca e l'esecuzione del piano per arrivare al tavolo rimane immutata, e non la descriviamo nuovamente. Nella fase 6 si consegnano le consumazioni al tavolo se era un ordine di accepted o si pulisce il tavolo se era un ordine di finish o delayed.
+Nel primo caso potrebbe capitare che l'ordine non risulti completamente evaso, e come nella strategia LOW PENALTY, quest'ordine torna nella lista di ordini da evadere aggiornando le consumazioni da portare in base a quelle già consegnate.
 Nel caso sia un ordine di finish oltre a pulire il tavolo l'ordine viene impostato come completato, cosa che non accadeva nelle altre strategie.
 Nel caso sia un ordine di delayed l'ordine viene impostato ad accepted e torna nella lista di ordini da evadere. In entrambi i casi il robot ha dello sporco a bordo, ma sarà la fase 1 della strategia che indicherà al robot di andare ai cestini.
 
@@ -260,11 +265,11 @@ Si è dovuto gestire il caso in cui A* fallisca. Una prima soluzione in caso A* 
 \begin{itemize}
   \item la ricerca di un altro cestino se esiste
   \item la ricerca di un altro ordine da servire. Questo significa tornare alla strategia HARD e forzare il robot a evadere un ordine finish o delayed (sono gli unici ordini su cui possiamo operare anche se il robot ha lo sporco).
-  \item effettuare delle checkfinish. Se non vi sono ordini finish possiamo cercare se vi sono degli ordini accepted le cui consumazioni sono state consumate e quindi è possibile effettuare un operazione di pulizia del tavolo.
+  \item effettuare delle checkfinish. Se non vi sono ordini finish possiamo cercare se vi sono degli ordini accepted completati le cui consumazioni sono state consumate e quindi è possibile effettuare un operazione di pulizia del tavolo.
 \end{itemize}
 
 \subsection{Checkfinish}
-La stategy HARD utilizza anche il comando checkfinish, per controllare se il tavolo ha finito di consumare. Questo comando può esser utilizzato per pulire un tavolo senza aspettare un ordine di finish. Questo non ha un impatto immediato sulle penalità, ma se il robot pulisce un tavolo tramite tale criterio, e successivamente arriva un ordine finish, allora il robot si troverà in uno stato in cui ha già pulito il tavolo e l'ordine non viene preso in cosiderazione. Al contrario dovrà prendere in consegna l'ordine e accumulare delle penalitò fin quando non sarà evaso.
+La stategy HARD utilizza anche il comando checkfinish, per controllare se il tavolo ha finito di consumare. Questo comando può esser utilizzato per pulire un tavolo senza aspettare un ordine di finish. Questo non ha un impatto immediato sulle penalità, ma se il robot pulisce un tavolo tramite tale criterio, e successivamente arriva un ordine finish, allora il robot si troverà in uno stato in cui ha già pulito il tavolo e l'ordine non viene preso in cosiderazione. Al contrario dovrà prendere in consegna l'ordine e accumulare delle penalità fin quando non sarà stato evaso.
 Questa modalità viene attivata quando il robot non ha ordini da evadere. L'idea è quella di portarsi avanti ipotizzando ordini successivi per i tavoli attualmente sporchi, e quindi decidendo di pulirli nel caso la risposta al comando checkfinish sia positiva. Quindi quando il robot non ha ordini pendenti, si reca a ogni tavolo sporco ed effettua una checkfinish. Se la risposta è positiva carica lo sporco. Se non sono arrivati altri ordini ripete tale operazione per il successivo tavolo sporco. Se non ci sono più tavoli sporchi o se è arrivato un ordine si reca ai cestini.
 
 
@@ -272,12 +277,12 @@ Questa modalità viene attivata quando il robot non ha ordini da evadere. L'idea
 Anche in questa stategia è possibile come nelle precedenti una situazione di stallo(\ref{fig:figure6}).
 Ipotizziamo per questa strategia due grossi vantaggi. Il primo è quello che riesce a servire più ordini in contemporanea, quindi in particolari situazione è in grado di recarsi una sola volta ai vari dispenser e riuscire a completare più ordini provenienti da tavoli diversi. L'altro vantaggio è dato dalla checkfinish, che permette al robot di trovarsi in uno stato con tutti i tavoli puliti e quindi pronto a servire i successivi ordini.
 Questa strategia potrebbe dover tornare a un tavolo più volte rispetto alle precedenti, e con mappe molto grosse questo potrebbe risultare un problema. Supponiamo di avere 2 ordini uno proveniente dal tavolo T1 con la richiesta di 2 food e 2 drink, e uno dal tavolo T2 con 2 food e 1 drink. Le altre strategia che servono un ordine per volta, caricherebbero 2 food e 2 drink completando l'ordine T1. Mentre questa strategia caricherebbe 4 food e ne consegnerebbe 2 a T1 e 2 a T2. In questo modo deve tornare una seconda volta al tavolo T1 per la completare la richiesta con 2 drink.
-Un altro svantaggio potrebbe verificarsi durante le operazioni di checkfinish. Supponiamo che il robot non abbia ordini da evadere e inizia le operazioni di checkfinish e inizia a pulire i tavoli. Se arriva un ordine accepted il robot a differenze delle altre strategie non potrà iniziare subito le operazioni di evasione, ma dovrà prima completare l'ordine fittizio di checkfinish che ha preso in carico e poi recarsi ai cestini per svuotare lo sporco, accumulando penalità.
+Un altro svantaggio potrebbe verificarsi durante le operazioni di checkfinish. Supponiamo che il robot non abbia ordini da evadere, inizia le operazioni di checkfinish pulendo i tavoli. Se arriva un ordine accepted il robot a differenze delle altre strategie non potrà iniziare subito le operazioni di evasione, ma dovrà prima completare l'ordine fittizio di checkfinish che ha preso in carico e poi recarsi ai cestini per svuotare lo sporco, accumulando penalità.
 
-\section{Risultati}
-Le quattro strategie sono state create in maniera incrementale, aggiungendo regole e modificandone alcune al fine di migliorare le prestazioni delle strategie e minimizzare la penalità accumulata. Al fine di confermare queste ipotesi abbiamo creato un gruppo di history per trarre conclusioni e fare assunzioni basate su dati certi, le \emph{Final Results History}.
+\chapter{Risultati} \label{ch:Risultati}
+Le cinque strategie sono state create in maniera incrementale, aggiungendo regole e modificandone alcune al fine di migliorare le prestazioni delle strategie e minimizzare la penalità accumulate. Al fine di confermare queste ipotesi abbiamo creato un gruppo di history per trarre conclusioni e fare assunzioni basate su dati certi, le \emph{Final Results History}.
 
-Un altro gruppo di history, creato per testare le strategie stesse, affinché si compostassero come previsto, è stato creato durante lo sviluppo. Oltre a testare le nostre strategie possono già fornire delle indicazioni sulla bontà della strategia.
+Un altro gruppo di history, è stato creato per testare le strategie durante lo sviluppo. Oltre a testare le strategie possono già fornire delle indicazioni sulla loro bontà.
 
 \subsection{Testing Histories}
 Le testing history sono cinque: default, complicata, dave, wait, andrea.
@@ -296,7 +301,7 @@ Total orders     & 4    & 4     & 4             & 4       & 2    \\ \hline
 \end{tabular}
 \end{table}
 
-Le prime quattro strategie hanno il medesimo comportamento,in quanto l'ordine con cui evadere gli ordini è lo stesso. La strategy HARD pur servendo gli ordini nello stesso ordine delle altre, ha bisogno di più step quando si reca al food-dispenser in quanto carica le consumazioni per più ordini. Questo fa si che il tavolo T4 venga servito in ritardo rispetto alle altre strategie e non permette al sistema di prendere in carico i successivi due ordini di quel tavolo che avvengono prima che il robot abbia finito di consegnare le consumazioni richieste.
+Le prime quattro strategie hanno il medesimo comportamento,in quanto l'ordine con cui vengono evasi gli ordini è il medesimo. La strategy HARD pur servendo gli ordini nello stesso ordine delle altre, ha bisogno di più step quando si reca al food-dispenser in quanto carica le consumazioni per più ordini. Questo fa si che il tavolo T4 venga servito in ritardo rispetto alle altre strategie e non permette al sistema di prendere in carico i successivi due ordini di quel tavolo che avvengono prima che il robot abbia finito di consegnare le consumazioni richieste.
 
 \subsubsection{History \emph{complicata}}
 
@@ -312,7 +317,8 @@ Total orders     & NaN  & 9     & 9             & 9       & 9      \\ \hline
 \end{table}
 
 La strategy FIFO BASE non ripianificando non termina in quanto il robot trova sul suo percorso una persona. La strategy HARD sembra servire meno tavoli rispetto le altre strategie. In realtà la strategy HARD effettua delle checkfinish pulendo i tavoli, quindi gli ordini successivi di finish non vengono presi in considerazione in quanto i tavoli sono già puliti. Tra parentesi sono indicati gli ordini di finish non ricevuti dal sistema perchè in precedenza erano già state effettuate delle checkfinish. La checkfinish viene attivata quando il robot non ha nessun ordine da servire. Se un ordine arriva mentre si stanno svolgendo le operazioni di checkfinish, prima di poterlo servire e quindi azzerare le penalità dovute a tale ordine, si dovranno concludere prima le operazioni di checkfinish. Nell'esempio l'operazione di checkfinish porta alla pulizia di tutti i tavoli sporchi.
-La differenza tra FIFO PRO e LOW PENALITY ci porta a capire che la scelta di servire prima i tavoli con più penalità non è sempre la migliore, in quanto bisogna tenere in considerazione anche le distanza che il robot deve coprire per servire tale ordine. Ciò nonostante anche la strategy PENDIST si comporta pegggio di FIFO PRO. Analizzando il numero di step imiegati per servire ciascun ordine da entrambe le strategie si nota come per servire il tavolo T3 con ordinazine food:3 e drink:2, FIFO PRO impiega 21 step mentre PENDIST ben 43. Questo perchè il robot troverà nel suo percorso una persona e dovrà ricalcolare e eseguire un piano diverso e più lungo per arrivare a destinazione.
+
+La differenza tra FIFO PRO e LOW PENALITY ci porta a capire che la scelta di servire prima i tavoli con più penalità non è sempre la migliore, in quanto bisogna tenere in considerazione anche le distanza che il robot deve coprire per servire tale ordine. Ciò nonostante anche la strategy PENDIST si comporta pegggio di FIFO PRO. Analizzando il numero di step impiegati per servire ciascun ordine da entrambe le strategie si nota come per servire il tavolo T3 con ordinazine food:3 e drink:2, FIFO PRO impiega 21 step mentre PENDIST ben 43. Questo perchè il robot troverà nel suo percorso una persona e dovrà ricalcolare e eseguire un piano diverso e più lungo per arrivare a destinazione.
 
 \subsubsection{History \emph{dave}}
 
@@ -329,7 +335,7 @@ Total orders     & NaN  & 11    & 11            & 11      & 11     \\ \hline
 
 La strategy FIFO BASE non ripianificando non termina in quanto il robot trova sul suo percorso una persona.
 La strategy HARD è l'unica strategia che riesce a servire tutti gli ordini. Con questo esempio notiamo come affidarci solo alle penalità per confrontare le varie strategie non è una buona idea. Si potrebbe calcolare la penalità media di ogni ordine. Ma anche in questo caso il risultato non riuscirebbe a fornirci un'indicazione molto precisa. Nell'esempio per le prime 4 strategia si avrebbe una penalità media per ordine di 549, mentre per la HARD di 553. I primi 4 ordini di questa history vengono serviti da tutte le strategie, ma mentre le prime 4 impiegano 136 step per servirli, la HARD solo 92. In seguito le altre strategie accumuleranno solo le penalità relative a 3 ordini, mentre la HARD le penalità relative a 7 ordini.
-Un'altro importante commento che possiamo effettuare osservando i risultati è come history con idee molto diverse tra di loro per servire gli ordini (una basata sull'ordine di arrivo, una basata sulle penalità e l'altra sulle penalità e distanze) abbiano un comportamento simile.
+Un'altro importante commento che possiamo effettuare osservando i risultati è come le varie strategie pur avendo idee molto diverse tra di loro per servire gli ordini (una basata sull'ordine di arrivo, una basata sulle penalità e l'altra sulle penalità e distanze) abbiano un comportamento simile.
 
 \subsubsection{History \emph{wait}}
 
@@ -348,12 +354,12 @@ La FIFO BASE si comporta meglio della FIFO PRO in quanto ricadiamo nel caso in c
 
 \subsection{Final Results Histories}
 
-Per ottenere i risultati finali sulle strategie sono state create tre mappe e sei history diverse per ogni mappa. Le mappe sono di tre dimensioni diverse: \emph{10x10} blocchi, \emph{20x20} e \emph{30x30}; mentre le cinque history sono state etichettate come: \emph{hdefault}, \emph{hsimple}, \emph{hhard}, \emph{hperson1}, \emph{hperson2} e \emph{hcheckf}. Ogni history rappresenta uno scenario particolare.
+Per ottenere i risultati finali sulle strategie sono state create tre mappe e sei history diverse per ogni mappa. Le mappe sono di tre dimensioni diverse: \emph{10x10}, \emph{20x20} e \emph{30x30}; mentre le cinque history sono state etichettate come: \emph{hdefault}, \emph{hsimple}, \emph{hhard}, \emph{hperson1}, \emph{hperson2} e \emph{hcheckf}. Ogni history rappresenta uno scenario particolare.
 
 La history default presenta le seguenti caratteristiche:
 \begin{itemize}
   \item poche persone che si muovono.
-  \item presenza sia di ordini con molte richieste, sia di ordini con poche richieste.
+  \item presenza di ordini con quantità variabili di richieste.
 \end{itemize}
 La history hsimple presenta le seguenti caratteristiche:
 \begin{itemize}
@@ -368,16 +374,17 @@ La history hhard presenta le seguenti caratteristiche:
 La history hperson1 presenta le seguenti caratteristiche:
 \begin{itemize}
     \item molte persone che si muovono di continuo. Ogni persona si sposta da un punto A a B e viceversa.
-    \item presenza sia di ordini con molte richieste, sia di ordini con poche richieste.
-  \end{itemize}
-La history hperson2 presenta le seguenti caratteristiche:\begin{itemize}
+    \item presenza di ordini con quantità variabili di richieste.  
+\end{itemize}
+La history hperson2 presenta le seguenti caratteristiche:
+\begin{itemize}
     \item molte persone che si muovono di continuo. Ogni persona si sposta da un punto A a B e viceversa. A differenza della hperson1 che ad ogni step una persona si muove, nella hperson2 lo spostamento avviene ogni x step. Con x che varia da 1 a 4.
-    \item presenza sia di ordini con molte richieste, sia di ordini con poche richieste.
-  \end{itemize}
+    \item presenza di ordini con quantità variabili di richieste.
+\end{itemize}
 La history hcheckf presenta le seguenti caratteristiche:
 \begin{itemize}
     \item non vi sono persone che si muovono.
-    \item presenza sia di ordini con molte richieste, sia di ordini con poche richieste.
+    \item presenza di ordini con quantità variabili di richieste.
     \item history create in modo tale da utilizzare l'azione di checkfinish da parte della strategia HARD.
 \end{itemize}
 
@@ -414,7 +421,7 @@ Total orders           & 12   & 12    & 12           & 12      & 12   \\ \hline
 \end{tabular}
 \end{table}
 
-La strategy HARD riuscendo a serivire più ordini insieme risulta esser la migliore.
+La strategy HARD riuscendo a servire più ordini insieme risulta esser la migliore.
 
 \subsubsection{Risultati sulla mappa 10x10: hhard}
 \begin{table}[h]
@@ -428,10 +435,10 @@ Total orders           & 12    & 12     & 12           & 12      & 12    \\ \hli
 \end{tabular}
 \end{table}
 
-La strategy HARD avendo per ogni ordine un numero molto alto di richieste costringe il robot a effettuare più volte delle consegne allo stesso tavolo. Questo giustiifica sia i valori di penalità molto alti sia il numero di piani riusati per arrivare a destinazione.
+La strategy HARD avendo per ogni ordine un numero molto alto di richieste costringe il robot a effettuare più volte delle consegne allo stesso tavolo. Questo giustifica sia i valori di penalità molto alti sia il numero di piani riusati per arrivare a destinazione.
 
 \subsubsection{Risultati sulla mappa 10x10: hperson1}
-\begin{table}[h]
+\begin{table}[h!]
 \begin{tabular}{|c|c|c|c|l|l|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO   & LOW\_PENALTY & PENDIST & HARD    \\ \hline
@@ -471,23 +478,24 @@ Total orders           & 12   & 12      & 12           & 12      & 12       \\ \
 \end{table}
 
 La strategy HARD su questa mappa almeno teoricamente dovrebbe avere un grosso vantaggio dato dal fatto che se il robot è in uno stato di riposo in quanto ha già servito tutti gli ordini pendenti, invece di rimanere in uno stato non operativo controlla se ci sono tavoli che possono esser puliti, tramite il comando di checkfinish. In questo modo si trova in uno stato migliore rispetto le altre strategie dovessero arrivare nuovi ordini.
-
+\newpage
 \subsubsection{Grafici Mappa 10x10}
-\begin{figure}[htp]
+\begin{figure}[h!tp]
   \includegraphics[width=\textwidth]{10x10_penalties}
   \caption{Grafico Penalità mappe 10x10}
   \label{fig:10x10figure11}
 \end{figure}
 
-\begin{figure}[htp]
+\begin{figure}[h!tp]
   \includegraphics[width=\textwidth]{10x10_mean_pen}
   \caption{Grafico penalità media per ordine}
   \label{fig:10x10figure12}
 \end{figure}
 
+\newpage  
 \subsubsection{Risultati sulla mappa 20x20: hdefault}
-\begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|l|}
+\begin{table}[h!]
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
 \multicolumn{1}{|l|}{} & BASE   & PRO   & LOW\_PENALTY & PENDIST & HARD \\ \hline
 Penalty                & 2172   & 2172  & 2257         & 2257    & 2208 \\ \hline
@@ -497,12 +505,12 @@ Total orders           & 6      & 6     & 6            & 6       & 6    \\ \hlin
 \end{tabular}
 \end{table}
 
-Il discorso precedentemente fatto per le mappe 10x10 vale anche nel caso in cui ci troviamo a lavorare con mappe 20x20.Le variabili considerate  in questo caso sono le stesse descritte precedentemente di modo da avere risultati consistenti ed equiparabili.
+Il discorso precedentemente fatto per le mappe 10x10 vale anche nel caso in cui ci troviamo a lavorare con mappe 20x20.Le variabili considerate  in questo caso sono le stesse descritte precedentemente in modo da avere risultati consistenti ed equiparabili.
 Dall'esecuzione delle strategie su questa history si nota che si comportano più o meno tutte allo stesso modo con uno scarto minimo. Vista la semplicità della history sottoposta alle strategie, FIFO\_BASE e FIFO\_PROsi comportano un pochino meglio delle più complesse strategie LOW\_PENALTY, HARD  e PENDIST  anche se come abbiamo già detto la differenza è minima.
 
 \subsubsection{Risultati sulla mappa 20x20: hsimple}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
 \multicolumn{1}{|l|}{} & BASE  & PRO    & LOW\_PENALTY & PENDIST  & HARD \\ \hline
 Penalty                & 4694  & 4694   & 4439         & 4016     & 3966 \\ \hline
@@ -516,7 +524,7 @@ Dall'esecuzione delle strategie su questa history notiamo subito che nessuna rie
 
 \subsubsection{Risultati sulla mappa 20x20: hhard}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
 \multicolumn{1}{|l|}{} & BASE   & PRO        & LOW\_PENALTY & PENDIST & HARD \\ \hline
 Penalty                & 38360  & 38360      & 26596        & 26925   & 25422 \\ \hline
@@ -530,7 +538,7 @@ Dall'esecuzione della strategia notiamo subito 2 cose: l'esecuzione di FIFO\_BAS
 
 \subsubsection{Risultati sulla mappa 20x20: hperson1}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO        & LOW\_PENALTY & PENDIST & HARD   \\ \hline
 Penalty                & NaN  & 20873      & 18166        & 15737   & 13607  \\ \hline
@@ -544,7 +552,7 @@ Dall'esecuzione della strategia notiamo subito l'assenza di valore per la strate
 
 \subsubsection{Risultati sulla mappa 20x20: hperson2}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
 \multicolumn{1}{|l|}{} & BASE & PRO     & LOW\_PENALTY & PENDIST & HARD   \\ \hline
 Penalty                & NaN  & 21049   & 17665        & 12830   & 13761  \\ \hline
@@ -559,7 +567,7 @@ Anche in questa mappa FIFO\_BASE non termina la sua esecuzione, per la stessa ra
 
 \subsubsection{Risultati sulla mappa 20x20: hcheckf}
 \begin{table}[h]
-\begin{tabular}{|c|c|c|c|l|l|}
+\begin{tabular}{|c|c|c|c|c|c|}
 \hline
 \multicolumn{1}{|l|}{} & BASE  & PRO     & LOW\_PENALTY & PENDIST & HARD   \\ \hline
 Penalty                & 16664 & 13961   & 13961        & 14145   & 12780  \\ \hline
@@ -570,21 +578,21 @@ Total orders           & 15    & 15      & 15           & 15      & 15     \\ \h
 \end{table}
 
 Per quanto riguarda questa strategia tutte le strategie evadono tutti gli ordini. FIFO\_BASE risulta la peggiore di tutte dato che l'agente è costretto a perdere del tempo prezioso in attesa che le persone gli lascino campo libero per poter proseguire a servire i tavoli.PENDIST risulta migliore della strategia di base, ma leggermente peggiore delle strategie FIFO\_PRO e LOW\_PENALTY le quali risultano in questo caso identiche; questo è dovuto al semplice fatto che prendendo in carico gli ordini allo stesso modo i passi dell'agente risultano i medesimi per entrambe le strategie e dato che la gestione delle interferenza da parte delle persone è la medesima, la penalità accumulata è uguale. HARD si dimostra la migliore delle cinque riuscendo a portare a termine tutta la history con penalità più bassa
-
+\newpage
 \subsubsection{Grafici Mappa 20x20}
-\begin{figure}[htp]
+\begin{figure}[h!tp]
   \includegraphics[width=\textwidth]{20x20_penalties}
   \caption{Grafico Penalità mappe 10x10}
   \label{fig:20x20pen}
 \end{figure}
 
-\begin{figure}[htp]
+\begin{figure}[h!tp]
   \includegraphics[width=\textwidth]{20x20_mean_pen}
   \caption{Grafico penalità media per ordine}
   \label{fig:20x20meanpen}
 \end{figure}
 
-
+\newpage
 \subsubsection{Risultati sulla mappa 30x30: hdefault}
 \begin{table}[h]
 \begin{tabular}{|c|c|c|c|l|l|}
@@ -669,19 +677,19 @@ Total orders           & 21    & 21      & 21           & 21      & 21     \\ \h
 \end{table}
 
 Dall'esecuzione della history notiamo subito che l'unica strategia che è in grado di evadere la history per intero e la HARD; oltretutto risulta anche essere la strategia più veloce con una penalità accumulata veramente bassa (10387) e uno scarto di circa 7000 penalità dalla seconda migliore che è PENDIST. LOW\_PENALTY si comporta discretamente, ma accumula comunque un numero di penalità superiore a PENDIST e HARD. Le peggiori risultano essere FIFO\_BASE e FIFO\_PRO.
-
+\newpage
 \subsubsection{Grafici Mappa 30x30}
-\begin{figure}[htp]
+\begin{figure}[h!tp]
   \includegraphics[width=\textwidth]{30x30_penalties}
   \caption{Grafico Penalità mappe 10x10}
   \label{fig:figure11}
 \end{figure}
 
-\begin{figure}[htp]
+\begin{figure}[h!tp]
   \includegraphics[width=\textwidth]{30x30_mean_pen}
   \caption{Grafico penalità media per ordine}
   \label{fig:figure12}
 \end{figure}
 
-
+\newpage
 \section{Conclusioni}
