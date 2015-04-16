@@ -42,7 +42,7 @@ ampiezza:- iniziale(S),
 
 \subsection{Analisi dettagliata della strategia}
 
-La ricerca in ampiezza è stata implementata in modo classico, fornendo una regola \lstinline{ric_amp([nodo(S,LISTA_AZ)|_],LISTA_AZ)} per il caso base e una \lstinline{ric_amp([nodo(S,LISTA_AZ)|RESTO],SOL)} per il caso generico.
+La ricerca in ampiezza è stata implementata in modo classico, fornendo una regola \lstinline{ric_amp([nodo (S,LISTA_AZ)|_],LISTA_AZ)} per il caso base e una \lstinline{ric_amp([nodo (S,LISTA_AZ)|RESTO],SOL)} per il caso generico.
 La prima non fa altro che controllare che lo stato S sia lo stato finale, mentre la seconda invoca le regole \lstinline{ espandi(nodo(S,LISTA_AZ),LISTA_SUCC) } e \lstinline{append(RESTO, LISTA_SUCC,CODA)}, per poi richiamare ricorsivamente \lstinline{ric_amp}.
 La regola espandi non fa altro che prendere lo stato \lstinline{S}, espanderlo e cercare tutte le azioni applicabili(con \lstinline{findall} da quello stato; tramite la regola \lstinline{successori()} costruisce la lista dei nuovi stati disponibili a partire dallo stato \lstinline{S}, che saranno poi aggiunti agli stati ancora da espandere tramite la regola \lstinline{append()}.
 Infine richiama ricorsivamente la regola per controllare di aver raggiunto lo stato finale e in caso contrario proseguire con l'espansione dei nodi. 
